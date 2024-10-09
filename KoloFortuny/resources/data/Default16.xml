@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+	<options>
+		<option color="green">A</option>
+		<option color="gray">B</option>
+		<option color="White">C</option>
+		<option color="red">D</option>
+		<option color="magenta">E</option>
+		<option color="yellow">F</option>
+		<option color="green">G</option>
+		<option color="gray">H</option>
+		<option color="White">I</option>
+		<option color="red">J</option>
+		<option color="magenta">K</option>
+		<option color="yellow">L</option>
+		<option color="green">M</option>
+		<option color="gray">0</option>
+		<option color="White">P</option>
+		<option color="red">Q</option>
+	</options>
+</root>

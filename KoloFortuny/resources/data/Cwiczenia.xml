@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+	<options>
+		<option color="green">Pogciaganie</option>
+		<option color="gray">Brzuszki</option>
+		<option color="white">Bieganie</option>
+		<option color="cyan">Pompki</option>
+		<option color="magenta">6k Waidera</option>
+		<option color="red">Przysiady</option>
+		<option color="yellow">Basen</option>
+		<option color="orange">Rozciaganie</option>
+		<!-- <option color="Qt::blue">Siłownia</option> -->
+	</options>
+</root>

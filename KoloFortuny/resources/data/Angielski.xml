@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+	<options>
+		<option color="255,165,0" colorName="Orange">Lotnisko</option>
+		<option color="173,255,47" colorName="GreenYellow">Branzowe</option>
+		<option color="255,0,255" colorName="Magenta">Programowanie</option>
+		<option color="0,255,255" colorName="Cyan">Anatomia ciala</option>
+		<option color="255,105,180" colorName="HotPink">Choroby</option>
+		<option color="154,205,50" colorName="YellowGreen">Dentysta</option>
+		<option color="138,43,226" colorName="BlueViolet">Mechanik</option>
+		<option color="255,0,0" colorName="Red">Silownia</option>
+		<option color="0,128,128" colorName="Teal">Sklep rybny</option>
+		<option color="75,0,130" colorName="Indygo">Rynek warzywny</option>
+		<option color="255,255,0" colorName="Yellow">Przyslowia</option>
+		<option color="148,0,211" colorName="DarkViolet">Excell</option>
+	</options>
+	<!-- https://www.chai3d.org/download/doc/html/chapter14-colors.html -->
+</root>
