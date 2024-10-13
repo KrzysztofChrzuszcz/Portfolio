@@ -1,12 +1,9 @@
 #include "color.h"
+
 #include <regex>
 #include <vector>
 
 using std::vector;
-
-// TODO:
-// Dodac opcjonalny kanal Alpha
-// Dac dla brakujacego alpha domyslna wartosc 1
 
 extern const Color g_DafaultColor(string("0.5,0.5,0.5,1.0"));
 
@@ -16,7 +13,8 @@ inline vector<string> split(string s, const string& delimiter) /// We would like
 	string subString;
 	size_t position = 0;
 
-	while ((position = s.find(delimiter)) != string::npos) {
+	while ((position = s.find(delimiter)) != string::npos)
+	{
 		subString = s.substr(0, position);
 		subStrings.push_back(subString);
 		s.erase(0, position + delimiter.length());
@@ -38,8 +36,21 @@ string Color::getHex()
 	if (isHex())
 		return m_RawColor;
 
-	// TODO: przerobic z m_ColorF na postac #RRGGBBAA
-	return m_RawColor;
+	string resultHex;
+	char redHex[2];
+	itoa(m_ColorF.m_R * 255, redHex, 16);
+	char greenHex[2];
+	itoa(m_ColorF.m_G * 255, greenHex, 16);
+	char blueHex[2];
+	itoa(m_ColorF.m_B * 255, blueHex, 16);
+	char alphaHex[2];
+	itoa(m_ColorF.m_A * 255, alphaHex, 16);
+
+	resultHex = string('#' + string(redHex) + greenHex + blueHex + alphaHex);
+	for (char& c : resultHex)
+		 c = toupper(c);
+
+	return resultHex;
 }
 
 ColorI Color::getInt() const
@@ -63,37 +74,24 @@ float Color::getBrightness() const
 }
 void Color::adjustBrightness(float minLevel)
 {
-	// TODO1: rozwazyc validacje minLevel np <0;1>
-	// TODO2: Dodac obsluge wyjatku dla czarnego
-	// 1. dodac 0.1
-	// 2. nastpenie dopiero rozjasnic
-	
 	float currentLevel = getBrightness();
 	if (minLevel > currentLevel)
 	{
 		m_IsBrighten = true;
 		float delta = minLevel - currentLevel;
-		// weighted product to fit brightness formula
-		m_ColorF.m_R = std::min(1.f, m_ColorF.m_R * (delta / 0.299f + 1.f));
-		m_ColorF.m_G = std::min(1.f, m_ColorF.m_G * (delta / 0.587f + 1.f));
-		m_ColorF.m_B = std::min(1.f, m_ColorF.m_B * (delta / 0.114f + 1.f));
-
-		// If that will be a little bit not enough then color will by incremented by small value.
-		currentLevel = getBrightness();
-		if (minLevel > currentLevel)
-		{
-			m_ColorF = m_ColorF + 0.01;
-		}
+		m_ColorF = m_ColorF + delta;
 	}
 }
 
 bool Color::isHex()
 {
-	// TODO dodac obsluge formatu 0xFFFFFFFF
-	//std::regex pattern("#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
-	std::regex pattern("#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{0,2})"); // TODO: poprawic na opcjonalny ostatni segment OBECNIE DOPUSZCZAM #RRGGBBA A MA BYC TYLKO DOPUSZCZONE #RRGGBB LUB #RRGGBBAA
-	// TODO : dwie wersja z ? lub z ilosca powtorzen par 3 lub 4 razy
+	std::regex pattern("#([0-9a-fA-F]{2}){3,4}");
 	std::smatch match;
+	if (std::regex_match(m_RawColor, match, pattern))
+		return true;
+
+	pattern = std::regex("0x([0-9a-fA-F]{2}){3,4}");
+
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;
 
@@ -116,17 +114,18 @@ bool Color::isText()
 
 bool Color::isKonwn()
 {
-	// Wersja Qt
+	// Qt version
 	if (QColor::colorNames().contains(QString(m_RawColor.c_str()), Qt::CaseInsensitive))
 		return true;
+
+	// TODO: non-Qt version
 
 	return false;
 }
 
-bool Color::isIntNo() // TODO: Poprawic tak by uwzgkednialo i RGB i RGBA w wariantach 001 jak i 1
+bool Color::isIntNo()
 {
-	//std::regex pattern("([0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3})");
-	std::regex pattern("([0-9]{1,3},[0-9]{1,3},[0-9]{1,3})");
+	std::regex pattern("([0-9]{1,3}[,]?){3,4}");
 	std::smatch match;
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;
@@ -136,7 +135,7 @@ bool Color::isIntNo() // TODO: Poprawic tak by uwzgkednialo i RGB i RGBA w waria
 
 bool Color::isFloatNo()
 {
-	std::regex pattern("([0-1].[0-9]{1,5},[0-1].[0-9]{1,5},[0-1].[0-9]{1,5},[0-1].[0-9]{1,5})");
+	std::regex pattern("([0-1].[0-9]{1,5}[,]?){3,4}");
 	std::smatch match;
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;
@@ -146,8 +145,6 @@ bool Color::isFloatNo()
 
 void Color::parse()
 {
-	//https://gist.github.com/olmokramer/82ccce673f86db7cda5e
-
 	if (isHex())
 	{
 		parseHex();
@@ -168,7 +165,7 @@ void Color::parse()
 
 	if (isText() && isKonwn())
 	{
-		parseText(); // TODO1: z uzyciem Qt ; TODO2: z wlasna lista kolorow
+		parseText(); // TODO: non-Qt version
 		return;
 	}
 
@@ -177,22 +174,21 @@ void Color::parse()
 
 void Color::parseHex()
 {
-	// TODO dodac obsluge formatu 0xFFFFFFFF
 	int r, g, b, a;
 	r = g = b = a = 255;
-	int foundAmmount = sscanf(m_RawColor.c_str(), "#%02x%02x%02x%02x", &r, &g, &b, &a); // TODO: podac tu sama wartosc po # lub 0x
-	// TODO: warning C4996 : 'sscanf' : This function or variable may be unsafe.Consider using sscanf_s instead.To disable deprecation, use _CRT_SECURE_NO_WARNINGS.See online help for details.
+	int foundAmmount = sscanf_s(m_RawColor.c_str(), "#%02x%02x%02x%02x", &r, &g, &b, &a);
+	if(foundAmmount == 0)
+		foundAmmount = sscanf_s(m_RawColor.c_str(), "0x%02x%02x%02x%02x", &r, &g, &b, &a);
 
-	/// kod martwy z uwagi na pattern isHex ale sluzy do demonstracji mozliwych wyjatkow 
-	// Jednak moze okazac sie pomocny po zmianach w wzorcu z isHex()
+
+	/// A dead code (due to previous isHex()), but serves as exception usage example
 	if (foundAmmount != 3 && foundAmmount != 4)
-	{
-		// TODO: dodac log gdy brakuje alphy ze dodalismy ja rowna 1
 		throw WrongChannelAmountException();
-		return;
-	}
 
-	m_ColorF = ColorF({ r / 255.f, g / 255.f, b / 255.f, a / 255.f });
+	//if ((foundAmmount == 3)
+		// TODO: Add log about missing alpha and info We fix that
+
+	m_ColorF = { r / 255.f, g / 255.f, b / 255.f, a / 255.f };
 }
 
 void Color::parseInt()
@@ -205,12 +201,10 @@ void Color::parseInt()
 	float a = chanels.size() == 4 ? atoi(chanels[3].c_str()) / 255.f : 1.0f;
 
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
-	{
 		throw ChanelOutOfRangeException();
-		return;
-	}
 
-	m_ColorF = ColorF({ r, g, b, a });
+
+	m_ColorF = { r, g, b, a };
 }
 
 void Color::parseFloat()
@@ -220,15 +214,13 @@ void Color::parseFloat()
 	float r = atof(chanels[0].c_str());
 	float g = atof(chanels[1].c_str());
 	float b = atof(chanels[2].c_str());
-	float a = atof(chanels[3].c_str());
+	float a = chanels.size() == 4 ? atof(chanels[3].c_str()) : 1.0f;
 
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
-	{
 		throw ChanelOutOfRangeException();
-		return;
-	}
 
-	m_ColorF = ColorF({ r, g, b, a });
+
+	m_ColorF = { r, g, b, a };
 }
 
 void Color::parseText()
@@ -238,12 +230,17 @@ void Color::parseText()
 			for example, "steelblue" or "gainsboro". These color names work on all platforms.
 	*/
 
+	// TODO: non-Qt version
+	// A. switch with listed color names
+	// B. use external file
+	// C. use third-party library for example : https://github.com/svgpp/svgpp
+
 	QColor qColor(m_RawColor.c_str());
 
 	if (!qColor.isValid())
-		throw WrongInputException(); /// A dead code, but serves as exception usage example
+		throw WrongInputException();
 
 	qreal r, g, b, a;
 	qColor.getRgbF(&r, &g, &b, &a);
-	m_ColorF = ColorF({ (float)r, (float)g, (float)b, (float)a }); /// For demonstration purposes I've used C style cast instead C++ static_cast which would be better
+	m_ColorF = { (float)r, (float)g, (float)b, (float)a }; /// For demonstration purposes I've used C style cast instead C++ static_cast which would be better
 }

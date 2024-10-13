@@ -15,6 +15,8 @@ GlWheelOfFortune::GlWheelOfFortune()
 void GlWheelOfFortune::configureCanvas()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 }
 
 void GlWheelOfFortune::drawIcon()
@@ -68,7 +70,7 @@ void GlWheelOfFortune::drawPointer()
 void GlWheelOfFortune::drawPiePiece(const string& text, const Color& color, float rotationAngle)
 {
     const ColorF& pieColor = color.getFloat();
-    glColor3f(pieColor.m_R, pieColor.m_G, pieColor.m_B);
+    glColor4f(pieColor.m_R, pieColor.m_G, pieColor.m_B, pieColor.m_A);
     drawPieShape(0.95f, m_PieAngle, rotationAngle);
     drawLabel(0.9f, 0.05f, rotationAngle, text, 1.75f);
 }
@@ -156,7 +158,7 @@ void GlWheelOfFortune::drawLabel(float x, float y, float angle, const string& na
         glLoadIdentity();
         gluOrtho2D(0.0, m_Size.m_Width, 0.0, m_Size.m_Height);
         glTranslatef((GLfloat)m_Size.m_Width / 2.f, (GLfloat)m_Size.m_Height / 2.f /* + textHeight * 0.15f / 2.f */, 0.f);
-        glColor3f(.0f, .0f, .0f); // mozna zapisac tez tak
+        glColor3f(.0f, .0f, .0f);
         glRotatef(-1.f * angle, 0.f, 0.f, 1.f);
         glTranslatef(-1.f * r * x, -1.f * r * y, 0.f);
         glScalef(0.15f, 0.15f, 1.f); // uzyc textWidth i textHeight do okreslenia skali

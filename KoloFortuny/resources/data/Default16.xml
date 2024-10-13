@@ -3,13 +3,13 @@
 
 <root>
 	<options>
-		<option color="green">A</option>
-		<option color="gray">B</option>
-		<option color="White">C</option>
-		<option color="red">D</option>
-		<option color="magenta">E</option>
+		<option color="5,55,255">A</option>
+		<option color="0,055,005,250">B</option>
+		<option color="0x00FFFF0A">C</option>
+		<option color="#FF00FFAA">D</option>
+		<option color="#FF0000">E</option>
 		<option color="yellow">F</option>
-		<option color="green">G</option>
+		<option color="0.155,0.2,0.008,1.0">G</option>
 		<option color="gray">H</option>
 		<option color="White">I</option>
 		<option color="red">J</option>

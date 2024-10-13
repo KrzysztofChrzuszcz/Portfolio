@@ -6,6 +6,7 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
+
 #include <QColor>
 
 using std::string;
@@ -56,6 +57,7 @@ struct ColorF
 		result.m_R = m_R + skalar > 1.f ? 1.f : m_R + skalar;
 		result.m_G = m_G + skalar > 1.f ? 1.f : m_G + skalar;
 		result.m_B = m_B + skalar > 1.f ? 1.f : m_B + skalar;
+		result.m_A = m_A;
 
 		return result;
 	}
@@ -66,6 +68,7 @@ struct ColorF
 		result.m_R = m_R * skalar > 1.f ? 1.f : m_R * skalar;
 		result.m_G = m_G * skalar > 1.f ? 1.f : m_G * skalar;
 		result.m_B = m_B * skalar > 1.f ? 1.f : m_B * skalar;
+		result.m_A = m_A;
 
 		return result;
 	}
@@ -82,37 +85,36 @@ struct ColorI
 // TODO: dodac tez ten opis do readme i do doxygena
 // Supported input RGB formating: hex (ex. #FF00FF) ; csv RGB  (ex. 255,0,255) ; by percent/factor (ex. 1.0,0.0,1.0) ; by name (ex. "Magenta")
 // Please notice! CYMK, HLS, HSV, and names out of Qt basic colors enum list are not supported.
-
 class Color
 {
 public:
 					Color(string rawColor);
 
-	string			getHex();
-	ColorI			getInt() const;
-	ColorF&			getFloat() inline const { return const_cast<ColorF&>(m_ColorF); }
-	QColor			getQColor() const;
-	float			getBrightness() const;
-	bool			isBrighten() inline const { return m_IsBrighten; }
-	void			adjustBrightness(float minLevel);
+	string			getHex(); //!< Return hexadecimal color representation
+	ColorI			getInt() const; //!< Return instance of ColorI
+	ColorF&			getFloat() inline const { return const_cast<ColorF&>(m_ColorF); } //!< Return reference to ColorF member
+	QColor			getQColor() const; //!< Return instance of ColorQ
+	float			getBrightness() const; //!< Return human friendly brightness of the color
+	bool			isBrighten() inline const { return m_IsBrighten; } //!< Gives information if color has adjusted brightness
+	void			adjustBrightness(float minLevel); //!< Adjust color to reach minimum color brightness level
 
 private:
-	bool			isHex();
-	bool			isText(); // or IsColorName()
-	bool			isKonwn();
-	bool			isIntNo(); /// No. stands for Notation
-	bool			isFloatNo();
+	bool			isHex(); //!< Checks if raw color is written in hexadecimal representation
+	bool			isText(); //!< Checks if raw color is written in named text representation
+	bool			isKonwn(); //!< Checks if raw color is known
+	bool			isIntNo(); //!< Checks if raw color is written in integer RGBA form
+	bool			isFloatNo(); //!< Checks if raw color is written in float RGBA form
 
 	void			parse(); 
-	void			parseHex();
-	void			parseInt();
-	void			parseFloat();
-	void			parseText();
+	void			parseHex(); //!< Parse raw hexadecimal color to float RGBA form
+	void			parseInt(); //!< Parse raw integer color to float RGBA form
+	void			parseFloat(); //!< Parse raw float color to float RGBA form
+	void			parseText(); //!< Parse raw color from SVG color names to float RGBA form
 
 private:
-	string			m_RawColor;
-	ColorF			m_ColorF;
-	bool			m_IsBrighten;
+	string			m_RawColor; //!< Color in raw form reread from file
+	ColorF			m_ColorF; //!< Parsed color in float RGBA form
+	bool			m_IsBrighten; //!< Marks if color was brighten in result of adjustBrightness method
 };
 
 #endif //COLOR_H
