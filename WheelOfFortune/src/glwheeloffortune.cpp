@@ -73,12 +73,18 @@ void GlWheelOfFortune::drawPointer()
     glFlush();
 }
 
-void GlWheelOfFortune::drawPiePiece(const string& text, const Color& color, float rotationAngle)
+extern const Color g_HighlightRimColor;
+void GlWheelOfFortune::drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight)
 {
     const ColorF& pieColor = color.getFloat();
     glColor4f(pieColor.m_R, pieColor.m_G, pieColor.m_B, pieColor.m_A);
     drawPieShape(0.95f, m_PieAngle, rotationAngle);
-    drawLabel(0.9f, 0.05f, rotationAngle, text, 1.75f);
+    if (highlight)
+    {
+        glColor4f(g_HighlightRimColor.getFloat().m_R, g_HighlightRimColor.getFloat().m_G, g_HighlightRimColor.getFloat().m_B, g_HighlightRimColor.getFloat().m_A);
+        drawPieRim(0.936f, m_PieAngle, rotationAngle);
+    }
+    drawLabel(0.9f, rotationAngle, text, highlight ? 2.f : 1.75f, highlight);
 }
 
 void GlWheelOfFortune::drawCircleShape(float cx, float cy, float radius, bool fill, bool dashed, int lineStripFactor) 
@@ -144,10 +150,29 @@ void GlWheelOfFortune::drawPieShape(float radius, float angle, float rotation)
     glPopMatrix();
 }
 
-void GlWheelOfFortune::drawLabel(float x, float y, float angle, const string& name, float lineWidth)
+void GlWheelOfFortune::drawPieRim(float radius, float angle, float rotation) // TODO: Think about new name and combine with drawPieShape
 {
-    // TODO: text scaling
+    GLfloat pointAngle = .0f;
+    GLfloat wheelFactor = 360.0f / angle;
+    GLfloat pointX = -radius, pointY = radius;
+    glPushMatrix();
+    glRotatef(-rotation, 0.f, 0.f, 1.f);
+    glLineWidth(4);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(0.f, 0.f);
+    for (int i = std::floorf(-angle / 2.f); i <= std::ceilf(angle / 2.f); i++)
+    {
+        pointAngle = 2.f * g_PI * i / angle / wheelFactor;
+        glVertex2f(cos(pointAngle) * pointX, sin(pointAngle) * pointY);
+    } // NOTE: Needs more work. Pie pieces are a little bit in collision
+    glEnd();
+    glFlush();
+    glPopMatrix();
+}
 
+void GlWheelOfFortune::drawLabel(float radiusRatio, float rotationAngle, const string& name, float lineWidth, bool highlight)
+{
+    // TODO1: text scaling
     // TODO2: New way of text rendering
     // https://learnopengl.com/In-Practice/Text-Rendering
     // https://www.youtube.com/watch?v=QRw3nMffPDk&list=PLysLvOneEETPlOI_PI4mJnocqIpr2cSHS&index=34
@@ -158,16 +183,22 @@ void GlWheelOfFortune::drawLabel(float x, float y, float angle, const string& na
     GLfloat textWidth = glutStrokeLengthf(GLUT_STROKE_ROMAN, testText);
     GLfloat textHeight = glutStrokeHeight(GLUT_STROKE_ROMAN);
 
+    GLfloat scaleFactor;
+    if (!highlight)
+        scaleFactor = 0.15f;
+    else
+        scaleFactor = 0.2f;
 
     glPushMatrix();
     glPushAttrib(GL_LINE_BIT | GL_LINE_SMOOTH);
         glLoadIdentity();
         gluOrtho2D(0.0, m_Size.m_Width, 0.0, m_Size.m_Height);
-        glTranslatef((GLfloat)m_Size.m_Width / 2.f, (GLfloat)m_Size.m_Height / 2.f /* + textHeight * 0.15f / 2.f */, 0.f);
+        glTranslatef((GLfloat)m_Size.m_Width / 2.f, (GLfloat)m_Size.m_Height / 2.f, 0.f); /// set middle of canvas
         glColor3f(.0f, .0f, .0f);
-        glRotatef(-1.f * angle, 0.f, 0.f, 1.f);
-        glTranslatef(-1.f * r * x, -1.f * r * y, 0.f);
-        glScalef(0.15f, 0.15f, 1.f); // use textWidth i textHeight to calculate scale
+        glRotatef(-1.f * rotationAngle, 0.f, 0.f, 1.f); // set rotation angle
+        glTranslatef(0.f, -1.f * scaleFactor * textHeight / 2.f, 0.f); // adjust text anchor
+        glTranslatef(-1.f * r * radiusRatio, 0.f, 0.f); // shift to contour side
+        glScalef(scaleFactor, scaleFactor, 1.f); // use textWidth i textHeight to calculate scale
         //glDisable(GL_LINE_SMOOTH);
         glLineWidth(lineWidth);
         glutStrokeString(GLUT_STROKE_ROMAN, testText);

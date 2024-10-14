@@ -23,8 +23,8 @@ public:
     void			drawBoardCenter() override;
     void			drawPointer() override;
 
-    void			drawPiePiece(const QString& text, const QColor& color, float rotationAngle);
-    void			drawPiePiece(const string& text, const Color& color, float rotationAngle);
+    void			drawPiePiece(const QString& text, const QColor& color, float rotationAngle, bool highlight = false);
+    void		    drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight = false);
 
 private:
     QPainter&       m_Painter; //!< Connection between GL GUI part and window from Qt Framework

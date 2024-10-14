@@ -87,13 +87,22 @@ void QtWheelOfFortune::drawPointer()
 	m_Painter.drawPolygon(polygonPoints);
 }
 
-void QtWheelOfFortune::drawPiePiece(const QString& text, const QColor& color, float rotationAngle)
+extern const Color g_HighlightRimColor;
+void QtWheelOfFortune::drawPiePiece(const QString& text, const QColor& color, float rotationAngle, bool highlight)
 {
 	// draw pie piece
 	m_Painter.save();
 	m_Painter.rotate(rotationAngle);
 	QRectF rectangle(-0.45, -0.45, 0.9, 0.9);
-	m_Painter.setPen(Qt::NoPen);
+	if (highlight)
+	{
+		rectangle = QRectF(-0.44, -0.44, 0.88, 0.88);
+		QPen pen(g_HighlightRimColor.getQColor(), 0.004);
+		m_Painter.setPen(pen);
+	}
+	else
+		m_Painter.setPen(Qt::NoPen);
+
 	m_Painter.setBrush(color);
 	m_Painter.drawPie(rectangle, (180 - m_PieAngle / 2.0f) * 16, m_PieAngle * 16);
 	m_Painter.restore();
@@ -106,6 +115,8 @@ void QtWheelOfFortune::drawPiePiece(const QString& text, const QColor& color, fl
 	m_Painter.setPen(Qt::black);
 	QFont font = m_Painter.font();
 	font.setPixelSize(22);
+	if (highlight)
+		font.setBold(true);
 	m_Painter.setFont(font);
 	QRectF rectangle2(m_Size.m_Width / -2.0 + m_Size.m_Width / 8.0, -12, m_Size.m_Width, m_Size.m_Height);
 	QRectF boundingRect;
@@ -113,7 +124,7 @@ void QtWheelOfFortune::drawPiePiece(const QString& text, const QColor& color, fl
 	m_Painter.restore();
 }
 
-void QtWheelOfFortune::drawPiePiece(const string& text, const Color& color, float rotationAngle)
+void QtWheelOfFortune::drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight)
 {
-	drawPiePiece(QString(text.c_str()), color.getQColor(), rotationAngle);
+	drawPiePiece(QString(text.c_str()), color.getQColor(), rotationAngle, highlight);
 }

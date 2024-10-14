@@ -124,11 +124,16 @@ void Engine::waitForOrder()
 {
 	if (m_Settings.m_DataSelected  && !m_Settings.m_DataProcessed)
 	{
+		if (m_WheelOfFortune) // TODO: clear later
+			m_WheelOfFortune->resetHighLight();
+
 		m_Settings.m_DataReady = false;
 		changeState(Stage::DataLoading);
 	}
 	if (m_Settings.m_DataReady && m_Settings.m_DrawLots)
 	{
+		if (m_WheelOfFortune) // TODO: clear later
+			m_WheelOfFortune->resetHighLight();
 		m_Settings.m_DrawLots = false;
 		changeState(Stage::FortuneDraw);
 	}
@@ -195,6 +200,14 @@ void Engine::sumUp()
 	// TODO: TASK 9
 	// Add label(wordart) with result, slowly disappearing after time; confetti gif, sound effect (fanfare)
 	if (m_WheelOfFortune)
+	{
 		m_WheelOfFortune->highlightPie();
+		if (!m_OpenGlWidget.expired())
+			(*m_OpenGlWidget.lock()).update();
+	}
+
+	//if (isEnclapsed())
+	//if (m_WheelOfFortune)
+	//	m_WheelOfFortune->resetHighLight();
 	changeState(Stage::Iddle);
 }

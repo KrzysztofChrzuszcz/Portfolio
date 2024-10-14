@@ -18,7 +18,7 @@ public:
     void			drawBoardConture() override;
     void			drawBoardCenter() override;
     void			drawPointer() override;
-    void			drawPiePiece(const string& text, const Color& color, float rotationAngle);
+    void			drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight = false);
 
     // TODO 
     // hightlightPie()
@@ -26,7 +26,9 @@ public:
 
     void            drawCircleShape(float cx, float cy, float radius, bool fill = false, bool dashed = false, int lineStripFactor = 1);
     void			drawPieShape(float radius, float angle, float rotation);
-    void			drawLabel(float x, float y, float ange, const string& name, float lineWidth);
+    void            drawPieRim(float radius, float angle, float rotation);
+
+    void			drawLabel(float radiusRatio, float rotationAngle, const string& name, float lineWidth, bool highlight = false);
 };
 
 #endif //GLWHEELOFFORTUNE_H
