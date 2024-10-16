@@ -32,7 +32,7 @@ public:
                         ~Engine();
 
     void				run();
-    //uint				getScreenRefreshFrequency(); TODO
+    uint				getScreenRefreshFrequency();
 
 private:
     void				changeState(Stage newState);    //!< Changes engine state

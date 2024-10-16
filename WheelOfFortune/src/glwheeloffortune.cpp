@@ -82,7 +82,7 @@ void GlWheelOfFortune::drawPiePiece(const string& text, const Color& color, floa
     if (highlight)
     {
         glColor4f(g_HighlightRimColor.getFloat().m_R, g_HighlightRimColor.getFloat().m_G, g_HighlightRimColor.getFloat().m_B, g_HighlightRimColor.getFloat().m_A);
-        drawPieRim(0.936f, m_PieAngle, rotationAngle);
+        drawPieShape(0.936f, m_PieAngle, rotationAngle, true);
     }
     drawLabel(0.9f, rotationAngle, text, highlight ? 2.f : 1.75f, highlight);
 }
@@ -130,15 +130,21 @@ void GlWheelOfFortune::drawCircleShape(float cx, float cy, float radius, bool fi
     glPopMatrix();
 }
 
-void GlWheelOfFortune::drawPieShape(float radius, float angle, float rotation)
+void GlWheelOfFortune::drawPieShape(float radius, float angle, float rotation, bool drawJustRim)
 {
     GLfloat pointAngle = .0f;
     GLfloat wheelFactor = 360.0f / angle;
     GLfloat pointX = -radius, pointY = radius;
     glPushMatrix();
         glRotatef(-rotation, 0.f, 0.f, 1.f);
+    if (drawJustRim)
+    {
+        glLineWidth(4);
+        glBegin(GL_LINE_LOOP);
+    }
+    else
         glBegin(GL_TRIANGLE_FAN);
-            glVertex2f(0.f, 0.f);
+        glVertex2f(0.f, 0.f);
     // for (int i = std::floorf(-angle / 2.f); i < std::ceilf(angle / 2.f); i++) // TODO: Adjust that part to fit all input files without overlapping and cracks between pieces
         for (int i = std::floorf(-angle / 2.f); i <= std::ceilf(angle / 2.f); i++)
         {
@@ -147,26 +153,6 @@ void GlWheelOfFortune::drawPieShape(float radius, float angle, float rotation)
         } // NOTE: Needs more work. Pie pieces are a little bit in collision
         glEnd();
         glFlush();
-    glPopMatrix();
-}
-
-void GlWheelOfFortune::drawPieRim(float radius, float angle, float rotation) // TODO: Think about new name and combine with drawPieShape
-{
-    GLfloat pointAngle = .0f;
-    GLfloat wheelFactor = 360.0f / angle;
-    GLfloat pointX = -radius, pointY = radius;
-    glPushMatrix();
-    glRotatef(-rotation, 0.f, 0.f, 1.f);
-    glLineWidth(4);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(0.f, 0.f);
-    for (int i = std::floorf(-angle / 2.f); i <= std::ceilf(angle / 2.f); i++)
-    {
-        pointAngle = 2.f * g_PI * i / angle / wheelFactor;
-        glVertex2f(cos(pointAngle) * pointX, sin(pointAngle) * pointY);
-    } // NOTE: Needs more work. Pie pieces are a little bit in collision
-    glEnd();
-    glFlush();
     glPopMatrix();
 }
 

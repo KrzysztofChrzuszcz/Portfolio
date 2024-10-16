@@ -10,7 +10,8 @@ Fuel::Fuel(Engine& engine) :
     m_Engine(engine),
     m_Quit(false)
 {
-    m_Delay = 1000 / SCREEN_REFRESH_FREQUENCY; // TODO: Take from settings m_Settings.m_ScreenRefreshFrequency
+   // m_Delay = 1000 / SCREEN_REFRESH_FREQUENCY; // TODO: Take from settings m_Settings.m_ScreenRefreshFrequency
+    m_Delay = 1000 / m_Engine.getScreenRefreshFrequency();
 }
 
 Fuel::~Fuel()

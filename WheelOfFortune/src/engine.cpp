@@ -66,6 +66,11 @@ void Engine::run()
 	}
 }
 
+uint Engine::getScreenRefreshFrequency()
+{
+	return m_Settings.m_ScreenRefreshFrequency;
+}
+
 void Engine::changeState(Stage newState)
 {
 	m_Stage = newState;
@@ -205,6 +210,9 @@ void Engine::sumUp()
 		if (!m_OpenGlWidget.expired())
 			(*m_OpenGlWidget.lock()).update();
 	}
+	// IDEA
+	// Class Timestamp
+	// Timestamp ticket1 = now() + sumUpSomeAnimationTime; // play gif, show wordart, slowly hid wordart, timeout/finishTime/changeStateTime, maybe play sound effect time
 
 	//if (isEnclapsed())
 	//if (m_WheelOfFortune)

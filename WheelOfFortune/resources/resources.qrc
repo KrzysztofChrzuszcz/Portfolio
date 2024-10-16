@@ -1,9 +1,16 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
-		<file>data/Default.xml</file>
-		<file>data/CzasWolny.xml</file>
-		<file>data/Angielski.xml</file>
+        <file>data/Default.xml</file>
+        <file>data/CzasWolny.xml</file>
+        <file>data/Angielski.xml</file>
+        <file>data/Cwiczenia.xml</file>
+        <file>data/Default16.xml</file>
+        <file>data/Default24.xml</file>
+        <file>data/Default26.xml</file>
         <file>images/logo.png</file>
+        <file>images/confetti1.gif</file>
+        <file>images/confetti2.gif</file>
+        <file>images/confetti3.gif</file>
     </qresource>
 </RCC>

@@ -188,6 +188,9 @@ void Color::parseHex()
 	//if ((foundAmmount == 3)
 		// TODO: Add log about missing alpha and info We fix that
 
+	if (r > 255 || g > 255 || b > 255 || a > 255)
+		throw ChanelOutOfRangeException();
+
 	m_ColorF = { r / 255.f, g / 255.f, b / 255.f, a / 255.f };
 }
 
@@ -200,9 +203,11 @@ void Color::parseInt()
 	float b = atoi(chanels[2].c_str()) / 255.f;
 	float a = chanels.size() == 4 ? atoi(chanels[3].c_str()) / 255.f : 1.0f;
 
+	//if (chanels.size() == 3)
+	// TODO: Add log about missing alpha and info We fix that
+
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
 		throw ChanelOutOfRangeException();
-
 
 	m_ColorF = { r, g, b, a };
 }
@@ -216,9 +221,11 @@ void Color::parseFloat()
 	float b = atof(chanels[2].c_str());
 	float a = chanels.size() == 4 ? atof(chanels[3].c_str()) : 1.0f;
 
+	//if (chanels.size() == 3)
+	// TODO: Add log about missing alpha and info We fix that
+
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
 		throw ChanelOutOfRangeException();
-
 
 	m_ColorF = { r, g, b, a };
 }
@@ -226,8 +233,8 @@ void Color::parseFloat()
 void Color::parseText()
 {
 	/*
-			A name from the list of colors defined in the list of SVG color keyword names provided by the World Wide Web Consortium;
-			for example, "steelblue" or "gainsboro". These color names work on all platforms.
+	A name from the list of colors defined in the list of SVG color keyword names provided by the World Wide Web Consortium;
+	for example, "steelblue" or "gainsboro". These color names work on all platforms.
 	*/
 
 	// TODO: non-Qt version
@@ -239,6 +246,7 @@ void Color::parseText()
 
 	if (!qColor.isValid())
 		throw WrongInputException();
+	//+ log about unknown
 
 	qreal r, g, b, a;
 	qColor.getRgbF(&r, &g, &b, &a);
