@@ -188,8 +188,8 @@ void Color::parseHex()
 	//if ((foundAmmount == 3)
 		// TODO: Add log about missing alpha and info We fix that
 
-	if (r > 255 || g > 255 || b > 255 || a > 255)
-		throw ChanelOutOfRangeException();
+	/// Method parseHex doesn't need range check because max number that can reach is FF that is 255,
+	/// so its not possible to go out of range in this case.
 
 	m_ColorF = { r / 255.f, g / 255.f, b / 255.f, a / 255.f };
 }

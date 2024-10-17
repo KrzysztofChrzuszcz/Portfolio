@@ -1,5 +1,8 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+//#include "ui_mainwindow.h"
+//#include "ui_settings.h"
+
+#include <iostream>
 
 #include <QDebug>
 #include <QAction>
@@ -19,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(m_Ui->actionChooseFile, SIGNAL(triggered()), this, SLOT(openFileBrowser()));
     connect(m_Ui->actionDraw, SIGNAL(triggered()), this, SLOT(play()));
+    connect(m_Ui->displaySettings, SIGNAL(triggered()), this, SLOT(displaySettings()));
 }
 
 MainWindow::~MainWindow()
@@ -43,3 +47,15 @@ void MainWindow::play()
     m_Settings.m_DrawLots = true;
 }
 
+void MainWindow::displaySettings()
+{
+    QWidget* popup = new QWidget(); // TODO: Merge with Settings class
+    Ui::Settings* settingsUi = new Ui::Settings;
+    settingsUi->setupUi(popup);
+    connect(popup, &QObject::destroyed, []() { qDebug() << "Destroyed"; std::cout << "Destroyed\n"; });
+    popup->setWindowFlags(Qt::Popup);
+
+    popup->move(this->geometry().topLeft());
+    popup->show();
+    delete settingsUi;
+}

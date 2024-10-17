@@ -17,9 +17,16 @@ Settings::Settings()
 	m_MinAngle = 15;
 	m_MaxAngle = 30;
 	m_MaxPositionsAmount = 360.f / m_MinAngle;
+
+	m_MaxDurationTime = 12;
+
+	m_MinRandRange = 1500;
+	m_MaxRandRange = 3000;
+
+	m_RandomEntropy = RandMethod::standart;
 }
 
-void Settings::Update()
+void Settings::update()
 {
 	// TODO
 }

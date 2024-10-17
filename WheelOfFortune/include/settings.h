@@ -6,23 +6,24 @@ using std::string;
 
 typedef unsigned int uint;
 
-/*
-enum class Entropy // ?? maybe RandMethod / RandGenerator
+
+enum class RandMethod // ?Entropy // TODO2: maybe give seed to choose instead, or too
 {
-    stdRand = 0,
+    standart = 0,
     linear = 1,
-    minstd_rand0 = 2,
-    random_device = 3, // True random number generator
-https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine
+    minstd_rand = 2,
+    ranlux24 = 3,
+    mt19937 = 4
+//https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine
 };
-*/
+
 class	CustomOpenGlWidget;
 
 /**
  * \brief Settings class to store and configure all program settings.
  * Some of them are accessible by GUI menu (TODO part)
  */
-class Settings
+class Settings /* TODO : public QWidget*/
 {
     friend class	MainWindow; // Writer
     friend class	Engine; // Reader/Writer
@@ -31,7 +32,7 @@ class Settings
 public:
                     Settings();
 
-    void			Update();
+    void			update();
     float			getMinColorBrightness() inline const { return m_MinColorBrightness; }
 
 private:
@@ -47,9 +48,9 @@ private:
     int				m_MinAngle; // https://stackoverflow.com/questions/17361885/range-slider-in-qt-two-handles-in-a-qslider / https://github.com/ThisIsClark/Qt-RangeSlider
     int				m_MaxAngle; // super / range slider for both BUT In first version two sliders
     int				m_MaxPositionsAmount; 
-
-    //int				m_MinRandRange;
-    //int				m_MaxRandRange; // super / range slider for both
-    //Entropy/int         m_RandomEntropy; // combo box
+    int             m_MaxDurationTime;
+    int				m_MinRandRange;
+    int				m_MaxRandRange; // super / range slider for both
+    RandMethod      m_RandomEntropy; // combo box
 };
 #endif //SETTINGS_H

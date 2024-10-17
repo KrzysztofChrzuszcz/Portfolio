@@ -42,6 +42,7 @@
     </property>
     <addaction name="actionChooseFile"/>
     <addaction name="actionDraw"/>
+    <addaction name="displaySettings"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -54,6 +55,11 @@
   <action name="actionDraw">
    <property name="text">
     <string>Draw!</string>
+   </property>
+  </action>
+  <action name="displaySettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

@@ -93,8 +93,8 @@ void GlWheelOfFortune::drawCircleShape(float cx, float cy, float radius, bool fi
     float theta = g_PI * 2.0f / float(numSegments);
     float tangentialFactor = tanf(theta);
     float radialFactor = cosf(theta);
-    float x = radius;
-    float y = .0f;
+    GLfloat x = radius;
+    GLfloat y = .0f;
 
     glPushMatrix();
     glPushAttrib(GL_LINE_BIT | GL_LINE_SMOOTH);
@@ -115,8 +115,8 @@ void GlWheelOfFortune::drawCircleShape(float cx, float cy, float radius, bool fi
         {
             glVertex2f(x + cx, y + cy);
 
-            float tx = -y;
-            float ty = x;
+            GLfloat tx = -y;
+            GLfloat ty = x;
 
             x += tx * tangentialFactor;
             y += ty * tangentialFactor;

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
+#include "ui_settings.h"
 #include "settings.h"
 
 #include <memory>
@@ -26,7 +27,7 @@ public:
 public slots:
     void                                    openFileBrowser();  //!< Open a file browser, saves path to selected file and initiate loading the input file
     void                                    play();             //!< Start a fortune draw
-    //    void                              openSettings();     //!< Open GUI allowing to configure some settings
+    void                                    displaySettings();  //!< Displays settings control widget;
 
 private:
     Ui::MainWindow*                         m_Ui;
