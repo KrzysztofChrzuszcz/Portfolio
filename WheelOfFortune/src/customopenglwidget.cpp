@@ -49,7 +49,7 @@ void CustomOpenGlWidget::paintGL()
 
 void CustomOpenGlWidget::bindWithSettings(const Settings& settings)
 {
-    m_WhelOfFortune.get()->m_Ready = &settings.m_DataReady;
+    m_WhelOfFortune.get()->m_Ready = settings.getDataReady();
 }
 
 void CustomOpenGlWidget::initializeGL()

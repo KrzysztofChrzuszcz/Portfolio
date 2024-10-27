@@ -15,7 +15,7 @@ WheelOfFortune::WheelOfFortune()
 	m_Highlight = false;
 }
 
-void WheelOfFortune::setupPositions(const vector<Entry>& entries, int duplicationsAmount, float pieAngle)
+void WheelOfFortune::setPositions(const vector<Entry>& entries, int duplicationsAmount, float pieAngle)
 {
 	m_Positions.clear();
 	if(duplicationsAmount)

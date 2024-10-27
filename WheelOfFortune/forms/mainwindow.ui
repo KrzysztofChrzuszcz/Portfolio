@@ -40,13 +40,18 @@
     <property name="title">
      <string>Menu</string>
     </property>
+    <addaction name="displaySettings"/>
     <addaction name="actionChooseFile"/>
     <addaction name="actionDraw"/>
-    <addaction name="displaySettings"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="displaySettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
   <action name="actionChooseFile">
    <property name="text">
     <string>Choose file</string>
@@ -55,11 +60,6 @@
   <action name="actionDraw">
    <property name="text">
     <string>Draw!</string>
-   </property>
-  </action>
-  <action name="displaySettings">
-   <property name="text">
-    <string>Settings</string>
    </property>
   </action>
  </widget>

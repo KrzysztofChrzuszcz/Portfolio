@@ -2,7 +2,10 @@
 #define SETTINGS_H
 
 #include <string>
+#include <vector>
+
 using std::string;
+using std::vector;
 
 typedef unsigned int uint;
 
@@ -25,32 +28,34 @@ class	CustomOpenGlWidget;
  */
 class Settings /* TODO : public QWidget*/
 {
-    friend class	MainWindow; // Writer
+    friend class    SettingsWidget; // Writer
     friend class	Engine; // Reader/Writer
-    friend class	CustomOpenGlWidget; // Reader
 
 public:
                     Settings();
 
-    void			update();
     float			getMinColorBrightness() inline const { return m_MinColorBrightness; }
+    bool*           getDataReady() inline const { return &m_DataReady; }
+    void            setFilePath(string fileName);
+    void            drawLots();    // Initiate fortune draw
 
 private:
     bool			m_DataSelected;
     bool			m_DataProcessed;
-    mutable bool	m_DataReady; /// keyword mutable allows CustomOpenGlWidget::bindWithSettings to avoid using const_cast
+    mutable bool	m_DataReady;
     bool			m_DrawLots;
-    bool			m_AutoStart; // TODO: checkbox
-    bool			m_AutoAdjust; // TODO: checkbox
+    bool			m_AutoStart;
+    bool			m_AutoAdjust;
     string			m_FilePath;
-    float			m_MinColorBrightness; // TODO: slider
-    uint			m_ScreenRefreshFrequency; // TODO: combo box 50 55 60
+    float			m_MinColorBrightness;
+    int			    m_ScreenRefreshFrequencyIndex;
+    vector<uint>    m_ScreenRefreshFrequencies;
     int				m_MinAngle; // https://stackoverflow.com/questions/17361885/range-slider-in-qt-two-handles-in-a-qslider / https://github.com/ThisIsClark/Qt-RangeSlider
     int				m_MaxAngle; // super / range slider for both BUT In first version two sliders
     int				m_MaxPositionsAmount; 
     int             m_MaxDurationTime;
     int				m_MinRandRange;
     int				m_MaxRandRange; // super / range slider for both
-    RandMethod      m_RandomEntropy; // combo box
+    RandMethod      m_RandomMathod;
 };
 #endif //SETTINGS_H

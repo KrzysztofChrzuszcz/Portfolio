@@ -5,7 +5,7 @@
 
 #include <QtXml>
 
-/**
+/*!
  * \brief QtDataLoader Qt implementation data loader
  */
 class QtDataLoader : public DataLoader

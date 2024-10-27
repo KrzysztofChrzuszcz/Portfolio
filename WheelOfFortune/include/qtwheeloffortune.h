@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QPainter>
 
-/**
+/*!
  * \brief QtWheelOfFortune Qt implementation of main GUI part
  */
 class QtWheelOfFortune : public QObject, public WheelOfFortune

@@ -26,7 +26,7 @@ public:
                         WheelOfFortune();
     virtual				~WheelOfFortune() = default;
 
-    virtual void		setupPositions(const vector<Entry>& entries, int duplicationsAmount, float pieAngle) final; //!< Setup positions to display on the wheel within all necessary information
+    virtual void		setPositions(const vector<Entry>& entries, int duplicationsAmount, float pieAngle) final; //!< Set positions to display on the wheel within all necessary information
     virtual void		increaseRotation(uint step) final;
     virtual void		configureCanvas() = 0;  //!< Configure basic setup of canvas necessary for used OpenGL approach
 
@@ -43,15 +43,15 @@ public:
     void                resetHighLight();		//!< Cancel winning piece highlight
 
 public:
-    bool*				m_Ready;		//!< Link to extern information of finished preparations to start animation
+    bool*				m_Ready;		        //!< Link to extern information of finished preparations to start animation
 
 protected:
-    Size                m_Size;         //!< Size of canvas to present maximized wheel of fortune with decorations.
-    std::string*        m_Result;       //!< Result of the lottery.
-    std::vector<Entry>  m_Positions;    //!< Variants of wheel of fortune.
-    float               m_PieAngle;     //!< Angle of pie piece with a variant from possible positions.
-    uint                m_Rotation;     //!< Current rotation of wheel of fortune in compare to its start position.
-    bool                m_Highlight;    //!< Determines if highlight the result;
+    Size                m_Size;                 //!< Size of canvas to present maximized wheel of fortune with decorations.
+    std::string*        m_Result;               //!< Result of the lottery.
+    std::vector<Entry>  m_Positions;            //!< Variants of wheel of fortune.
+    float               m_PieAngle;             //!< Angle of pie piece with a variant from possible positions.
+    uint                m_Rotation;             //!< Current rotation of wheel of fortune in compare to its start position.
+    bool                m_Highlight;            //!< Determines if highlight the result;
 };
 
 #endif //WHEELOFFORTUNE_H

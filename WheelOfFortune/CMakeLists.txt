@@ -43,11 +43,11 @@ include_directories(${INCLUDE_DIR})
 file(GLOB_RECURSE SOURCES
     "${FORMS_DIR}/*.ui"
     "${RESOURCES_DIR}/*.qrc"
-	"${RESOURCES_DIR}/*.xml"
-	"${RESOURCES_DIR}/*.gif"
-	"${RESOURCES_DIR}/*.png"
+    "${RESOURCES_DIR}/*.xml"
+    "${RESOURCES_DIR}/*.gif"
+    "${RESOURCES_DIR}/*.png"
     "${INCLUDE_DIR}/*.h"
-	"${INCLUDE_DIR}/*.hpp"
+    "${INCLUDE_DIR}/*.hpp"
     "${SOURCE_DIR}/*.cpp"
 )
 
@@ -56,7 +56,7 @@ file(GLOB_RECURSE SOURCES
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_AUTOUIC_SEARCH_PATHS} ${FORMS_DIR})
 
 # suppress ZERO_CHECK project
-set(CMAKE_SUPPRESS_REGENERATION true)
+#set(CMAKE_SUPPRESS_REGENERATION true)
 
 # Add resources
 list (APPEND RESOURCES resources/resources.qrc)
@@ -82,7 +82,6 @@ target_include_directories(WheelOfFortune PRIVATE ${SOURCE_DIR})
 
 #===================== LINKING LIBRARIES =======================#
 target_link_libraries(WheelOfFortune Qt5::Widgets Qt5::OpenGL Qt5::Xml OpenGL::GL freeglut)
-#target_link_libraries(WheelOfFortune Qt5::Widgets Qt5::OpenGL Qt5::Xml OpenGL::GL GLUT::GLUT)
 
 #===================== SOURCE GROUPS (FOR VISUAL STUDIO) =======================#
 

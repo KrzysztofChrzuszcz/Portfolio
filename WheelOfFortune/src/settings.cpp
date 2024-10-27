@@ -2,8 +2,10 @@
 
 Settings::Settings()
 {
+	m_ScreenRefreshFrequencies = { 24, 30, 50, 55, 60 };
+	m_ScreenRefreshFrequencyIndex = 2;
+
 	m_MinColorBrightness = 0.23f;
-	m_ScreenRefreshFrequency = 50;
 
 	m_DataSelected = false;
 	m_DataProcessed = false;
@@ -23,10 +25,17 @@ Settings::Settings()
 	m_MinRandRange = 1500;
 	m_MaxRandRange = 3000;
 
-	m_RandomEntropy = RandMethod::standart;
+	m_RandomMathod = RandMethod::standart;
 }
 
-void Settings::update()
+void Settings::setFilePath(string fileName)
 {
-	// TODO
+	m_FilePath = fileName;
+	m_DataSelected = true;
+	m_DataProcessed = false;
+}
+
+void Settings::drawLots()
+{
+	m_DrawLots = true;
 }

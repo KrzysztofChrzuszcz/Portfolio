@@ -21,7 +21,7 @@ class Fuel
 {
 public:
                         Fuel(Engine& engine);
-    virtual             ~Fuel() = 0; /// Derived classes has to setup m_Quit to true;
+    virtual             ~Fuel() = 0; /// Derived classes has to set m_Quit to true;
 
     virtual void		startEngine() = 0;
 

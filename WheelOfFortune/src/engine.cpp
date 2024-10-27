@@ -6,7 +6,7 @@
 const double M_PHI = (1.0 + sqrt(5)) / 2.0;
 
 Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
-	m_Settings(mainWindow.GetSettings()),
+	m_Settings(mainWindow.getSettings()),
 	m_DataLoader(dataLoader),
 	m_WheelOfFortune(nullptr),
 	m_Stage(Stage::Iddle)
@@ -16,7 +16,7 @@ Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 	m_SlowingDownAngle = 0;
 	m_Step = 0;
 
-	m_OpenGlWidget = mainWindow.GetWidget();
+	m_OpenGlWidget = mainWindow.getWidget();
 	m_WheelOfFortune = (*m_OpenGlWidget.lock()).getGui();
 }
 
@@ -68,7 +68,7 @@ void Engine::run()
 
 uint Engine::getScreenRefreshFrequency()
 {
-	return m_Settings.m_ScreenRefreshFrequency;
+	return m_Settings.m_ScreenRefreshFrequencies[m_Settings.m_ScreenRefreshFrequencyIndex];
 }
 
 void Engine::changeState(Stage newState)
@@ -112,7 +112,7 @@ void Engine::processData()
 	}
 
 	if (m_WheelOfFortune)
-		m_WheelOfFortune->setupPositions(entries, duplicationsAmount, optimalPieAngle);
+		m_WheelOfFortune->setPositions(entries, duplicationsAmount, optimalPieAngle);
 	if (!m_OpenGlWidget.expired())
 		(*m_OpenGlWidget.lock()).update();
 
@@ -148,15 +148,15 @@ void Engine::fortuneDraw()
 {
 	std::srand(time(NULL));
 
-	double randomAngle = static_cast<double>(std::rand() % 1500 + 1500); // < 1500 : 3000 >
-	int durationInSeconds = 8 + std::rand() % 12; // < 8 ; 20 >
+	double randomAngle = static_cast<double>(std::rand() % (m_Settings.m_MaxRandRange - m_Settings.m_MinRandRange) + m_Settings.m_MinRandRange); // < 1500 : 3000 >
+	int durationInSeconds = 8 + std::rand() % m_Settings.m_MaxDurationTime; // < 8 ; 20 >
 	// TODO: Take above angle from configuration BUT lock max and min so it looks good in that range
 
 	double goldenRatio = 1.f / M_PHI;
 	m_FastAnimationAngle = randomAngle * goldenRatio;
 	m_SlowingDownAngle = randomAngle * ( 1.f - goldenRatio);
 
-	m_Step = randomAngle * m_Settings.m_ScreenRefreshFrequency / durationInSeconds / 1000.0; // step angle per millisecond
+	m_Step = randomAngle * getScreenRefreshFrequency() / durationInSeconds / 1000.0; // step angle per millisecond
 
 	m_CurrentAngle = m_SlowingDownAngle; /// reset sign for local static variable inside Engine::animationExtinguishing()
 	changeState(Stage::Animation);
