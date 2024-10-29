@@ -46,10 +46,10 @@ public:
 //provides maximum precision
 struct ColorF
 {
-    float	m_R;
-    float	m_G;
-    float	m_B;
-    float	m_A;
+    float   m_R;
+    float   m_G;
+    float   m_B;
+    float   m_A;
 
     ColorF operator+(float const& skalar)
     {
@@ -76,10 +76,10 @@ struct ColorF
 
 struct ColorI
 {
-    int		m_R;
-    int		m_G;
-    int		m_B;
-    int		m_A;
+    int     m_R;
+    int     m_G;
+    int     m_B;
+    int     m_A;
 };
 
 
@@ -96,31 +96,31 @@ class Color
 public:
                     Color(string rawColor);
 
-    string			getHex(); //!< Return hexadecimal color representation
-    ColorI			getInt() const; //!< Return instance of ColorI
-    ColorF&			getFloat() inline const { return const_cast<ColorF&>(m_ColorF); } //!< Return reference to ColorF member
-    QColor			getQColor() const; //!< Return instance of ColorQ
-    float			getBrightness() const; //!< Return human friendly brightness of the color
-    bool			isBrighten() inline const { return m_IsBrighten; } //!< Gives information if color has adjusted brightness
-    void			adjustBrightness(float minLevel); //!< Adjust color to reach minimum color brightness level
+    string          getHex(); //!< Return hexadecimal color representation
+    ColorI          getInt() const; //!< Return instance of ColorI
+    ColorF&         getFloat() inline const { return const_cast<ColorF&>(m_ColorF); } //!< Return reference to ColorF member
+    QColor          getQColor() const; //!< Return instance of ColorQ
+    float           getBrightness() const; //!< Return human friendly brightness of the color
+    bool            isBrighten() inline const { return m_IsBrighten; } //!< Gives information if color has adjusted brightness
+    void            adjustBrightness(float minLevel); //!< Adjust color to reach minimum color brightness level
 
 private:
-    bool			isHex();		//!< Checks if raw color is written in hexadecimal representation
-    bool			isText();		//!< Checks if raw color is written in named text representation
-    bool			isKonwn();		//!< Checks if raw color is known
-    bool			isIntForm();    //!< Checks if raw color is written in integer RGBA form
-    bool			isFloatForm();  //!< Checks if raw color is written in float RGBA form
+    bool            isHex();        //!< Checks if raw color is written in hexadecimal representation
+    bool            isText();       //!< Checks if raw color is written in named text representation
+    bool            isKonwn();      //!< Checks if raw color is known
+    bool            isIntForm();    //!< Checks if raw color is written in integer RGBA form
+    bool            isFloatForm();  //!< Checks if raw color is written in float RGBA form
 
-    void			parse(); 
-    void			parseHex();		//!< Parse raw hexadecimal color to float RGBA form
-    void			parseInt();		//!< Parse raw integer color to float RGBA form
-    void			parseFloat();   //!< Parse raw float color to float RGBA form
-    void			parseText();    //!< Parse raw color from SVG color names to float RGBA form
+    void            parse(); 
+    void            parseHex();     //!< Parse raw hexadecimal color to float RGBA form
+    void            parseInt();     //!< Parse raw integer color to float RGBA form
+    void            parseFloat();   //!< Parse raw float color to float RGBA form
+    void            parseText();    //!< Parse raw color from SVG color names to float RGBA form
 
 private:
-    string			m_RawColor;		//!< Color in raw form reread from file
-    ColorF			m_ColorF;		//!< Parsed color in float RGBA form
-    bool			m_IsBrighten;   //!< Marks if color was brighten in result of adjustBrightness method
+    string          m_RawColor;     //!< Color in raw form reread from file
+    ColorF          m_ColorF;       //!< Parsed color in float RGBA form
+    bool            m_IsBrighten;   //!< Marks if color was brighten in result of adjustBrightness method
 };
 
 #endif //COLOR_H

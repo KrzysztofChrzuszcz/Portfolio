@@ -16,6 +16,6 @@ using std::string;
 class TinyDataLoader : public DataLoader
 {
 public:
-    virtual bool                        loadXml(const char* path) override;
+    virtual bool                    loadXml(const char* path) override;
 };
 #endif //TINYDATALOADER_H

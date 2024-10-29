@@ -25,7 +25,7 @@ enum class RandMethod // ?Entropy // TODO2: maybe give seed to choose instead, o
 //https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine
 };
 
-class	CustomOpenGlWidget;
+class   CustomOpenGlWidget;
 
 /**
  * \brief Settings class to store and configure all program settings.
@@ -34,33 +34,33 @@ class	CustomOpenGlWidget;
 class Settings /* TODO : public QWidget*/
 {
     friend class    SettingsWidget; // Writer
-    friend class	Engine; // Reader/Writer
+    friend class    Engine; // Reader/Writer
 
 public:
                     Settings();
 
-    float			getMinColorBrightness() inline const { return m_MinColorBrightness; }
+    float           getMinColorBrightness() inline const { return m_MinColorBrightness; }
     bool*           getDataReady() inline const { return &m_DataReady; }
     void            setFilePath(string fileName);
     void            drawLots();    // Initiate fortune draw
 
 private:
-    bool			m_DataSelected;
-    bool			m_DataProcessed;
-    mutable bool	m_DataReady;
-    bool			m_DrawLots;
-    bool			m_AutoStart;
-    bool			m_AutoAdjust;
-    string			m_FilePath;
-    float			m_MinColorBrightness;
-    int			    m_ScreenRefreshFrequencyIndex;
+    bool            m_DataSelected;
+    bool            m_DataProcessed;
+    mutable bool    m_DataReady;
+    bool            m_DrawLots;
+    bool            m_AutoStart;
+    bool            m_AutoAdjust;
+    string          m_FilePath;
+    float           m_MinColorBrightness;
+    int             m_ScreenRefreshFrequencyIndex;
     vector<uint>    m_ScreenRefreshFrequencies;
-    int				m_MinAngle; // https://stackoverflow.com/questions/17361885/range-slider-in-qt-two-handles-in-a-qslider / https://github.com/ThisIsClark/Qt-RangeSlider
-    int				m_MaxAngle; // super / range slider for both BUT In first version two sliders
-    int				m_MaxPositionsAmount; 
+    int             m_MinAngle; // https://stackoverflow.com/questions/17361885/range-slider-in-qt-two-handles-in-a-qslider / https://github.com/ThisIsClark/Qt-RangeSlider
+    int             m_MaxAngle; // super / range slider for both BUT In first version two sliders
+    int             m_MaxPositionsAmount; 
     int             m_MaxDurationTime;
-    int				m_MinRandRange;
-    int				m_MaxRandRange; // super / range slider for both
+    int             m_MinRandRange;
+    int             m_MaxRandRange; // super / range slider for both
     RandMethod      m_RandomMathod;
 
     Lock            m_Lock;
