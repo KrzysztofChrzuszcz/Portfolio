@@ -68,6 +68,7 @@ void Engine::run()
 
 uint Engine::getScreenRefreshFrequency()
 {
+	ReadLock rLock(m_Settings.m_Lock);
 	return m_Settings.m_ScreenRefreshFrequencies[m_Settings.m_ScreenRefreshFrequencyIndex];
 }
 
@@ -78,6 +79,8 @@ void Engine::changeState(Stage newState)
 
 void Engine::loadData()
 {
+	WriteLock wLock(m_Settings.m_Lock);
+
 	m_DataLoader.setMaxPositions(m_Settings.m_MaxPositionsAmount);
 	if (m_DataLoader.loadXml(m_Settings.m_FilePath.c_str())) /// NOTE: TinyDataLoader has issue with special signs in path (like polish)... also in Entry m_Name
 	{
@@ -92,6 +95,8 @@ void Engine::loadData()
 
 void Engine::processData()
 {
+	WriteLock wLock(m_Settings.m_Lock);
+
 	const vector<Entry>& entries = m_DataLoader.getEntries();
 	int noOfVatiants = entries.size();
 	int duplicationsAmount = 0;
@@ -129,6 +134,7 @@ void Engine::waitForOrder()
 {
 	if (m_Settings.m_DataSelected  && !m_Settings.m_DataProcessed)
 	{
+		WriteLock wLock(m_Settings.m_Lock);
 		if (m_WheelOfFortune) // TODO: clear later
 			m_WheelOfFortune->resetHighLight();
 
@@ -137,6 +143,7 @@ void Engine::waitForOrder()
 	}
 	if (m_Settings.m_DataReady && m_Settings.m_DrawLots)
 	{
+		WriteLock wLock(m_Settings.m_Lock);
 		if (m_WheelOfFortune) // TODO: clear later
 			m_WheelOfFortune->resetHighLight();
 		m_Settings.m_DrawLots = false;
@@ -147,10 +154,15 @@ void Engine::waitForOrder()
 void Engine::fortuneDraw()
 {
 	std::srand(time(NULL));
+	ReadLock rLock(m_Settings.m_Lock);
 
-	double randomAngle = static_cast<double>(std::rand() % (m_Settings.m_MaxRandRange - m_Settings.m_MinRandRange) + m_Settings.m_MinRandRange); // < 1500 : 3000 >
-	int durationInSeconds = 8 + std::rand() % m_Settings.m_MaxDurationTime; // < 8 ; 20 >
-	// TODO: Take above angle from configuration BUT lock max and min so it looks good in that range
+	double randomAngle;
+	if (m_Settings.m_MaxRandRange != m_Settings.m_MinRandRange)
+		randomAngle = static_cast<double>(std::rand() % (m_Settings.m_MaxRandRange - m_Settings.m_MinRandRange) + m_Settings.m_MinRandRange);
+	else
+		randomAngle = m_Settings.m_MinRandRange;
+
+	int durationInSeconds = 8 + std::rand() % m_Settings.m_MaxDurationTime;
 
 	double goldenRatio = 1.f / M_PHI;
 	m_FastAnimationAngle = randomAngle * goldenRatio;

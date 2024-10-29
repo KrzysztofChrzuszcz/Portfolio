@@ -3,10 +3,15 @@
 
 #include <string>
 #include <vector>
+#include <shared_mutex>
 
 using std::string;
 using std::vector;
+using std::shared_mutex;
 
+typedef std::shared_mutex Lock;
+typedef std::unique_lock< Lock >  WriteLock;
+typedef std::shared_lock< Lock >  ReadLock;
 typedef unsigned int uint;
 
 
@@ -57,5 +62,7 @@ private:
     int				m_MinRandRange;
     int				m_MaxRandRange; // super / range slider for both
     RandMethod      m_RandomMathod;
+
+    Lock            m_Lock;
 };
 #endif //SETTINGS_H

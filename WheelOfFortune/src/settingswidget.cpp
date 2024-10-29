@@ -11,12 +11,10 @@ SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
     m_Initialized = false;
     setInitValues();
     displayValues();
-
-    //connect(this, &SettingsWidget::closeEvent, this, &SettingsWidget::testSlot);
 }
 
 SettingsWidget::~SettingsWidget()
-{ // TODO: przed uploadem
+{
     disconnectControllers();
     delete m_Ui;
     qDebug() << "Destroyed";
@@ -96,6 +94,8 @@ void SettingsWidget::setInitValues()
 
 void SettingsWidget::displayValues()
 {
+    ReadLock rLock(m_Settings.m_Lock);
+
     if (m_Ui->minBrightness_display)
         m_Ui->minBrightness_display->display(m_Settings.m_MinColorBrightness);
 
@@ -117,23 +117,27 @@ void SettingsWidget::displayValues()
 
 void SettingsWidget::setAutoStart(int state)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->autostart_checkBox)
         m_Settings.m_AutoStart = m_Ui->autostart_checkBox->isChecked();
 }
 
 void SettingsWidget::setAutoAdjust(int state)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->autoAdjust_checkBox)
         m_Settings.m_AutoAdjust = m_Ui->autoAdjust_checkBox->isChecked();
 }
 
 void SettingsWidget::setRandMethod(int index)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     m_Settings.m_RandomMathod = RandMethod(index);
 }
 
 void SettingsWidget::setRefreshFrequency(int index)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->refreshFrequency_comboBox)
         if (m_Initialized)
             m_Settings.m_ScreenRefreshFrequencyIndex = index; // m_Ui->refreshFrequency_comboBox->currentIndex();
@@ -141,6 +145,7 @@ void SettingsWidget::setRefreshFrequency(int index)
 
 void SettingsWidget::setMinBrightness(int value)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->minBrightness_slider)
     {
         m_Settings.m_MinColorBrightness = m_Ui->minBrightness_slider->value() / 100.f;
@@ -151,6 +156,7 @@ void SettingsWidget::setMinBrightness(int value)
 
 void SettingsWidget::setMaxTime(int value)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->maxTime_slider)
     {
         m_Settings.m_MaxDurationTime = m_Ui->maxTime_slider->value();
@@ -161,6 +167,7 @@ void SettingsWidget::setMaxTime(int value)
 
 void SettingsWidget::setMinPieAngle(int value)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->minPieAngle_slider)
     {
         m_Settings.m_MinAngle = m_Ui->minPieAngle_slider->value();
@@ -179,6 +186,7 @@ void SettingsWidget::setMinPieAngle(int value)
 
 void SettingsWidget::setMaxPieAngle(int value)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->maxPieAngle_slider)
     {
         m_Settings.m_MaxAngle = m_Ui->maxPieAngle_slider->value();
@@ -189,6 +197,7 @@ void SettingsWidget::setMaxPieAngle(int value)
 
 void SettingsWidget::setRandMin(int value)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->randMin_slider)
     {
         m_Settings.m_MinRandRange = m_Ui->randMin_slider->value();
@@ -199,6 +208,7 @@ void SettingsWidget::setRandMin(int value)
 
 void SettingsWidget::setRandMax(int value)
 {
+    WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->randMax_slider)
     {
         m_Settings.m_MaxRandRange = m_Ui->randMax_slider->value();

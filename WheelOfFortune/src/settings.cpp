@@ -30,6 +30,7 @@ Settings::Settings()
 
 void Settings::setFilePath(string fileName)
 {
+	WriteLock wLock(m_Lock);
 	m_FilePath = fileName;
 	m_DataSelected = true;
 	m_DataProcessed = false;
@@ -37,5 +38,6 @@ void Settings::setFilePath(string fileName)
 
 void Settings::drawLots()
 {
+	WriteLock wLock(m_Lock);
 	m_DrawLots = true;
 }
