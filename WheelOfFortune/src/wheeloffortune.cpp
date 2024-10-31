@@ -18,7 +18,7 @@ WheelOfFortune::WheelOfFortune()
 void WheelOfFortune::setPositions(const vector<Entry>& entries, int duplicationsAmount, float pieAngle)
 {
 	m_Positions.clear();
-	if(duplicationsAmount)
+	if (duplicationsAmount)
 		for (int i = 0; i < duplicationsAmount; i++)
 			for (auto entry : entries)
 				m_Positions.push_back(entry);

@@ -6,6 +6,7 @@
 const double M_PHI = (1.0 + sqrt(5)) / 2.0;
 
 Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
+	m_MainWindow(mainWindow),
 	m_Settings(mainWindow.getSettings()),
 	m_DataLoader(dataLoader),
 	m_WheelOfFortune(nullptr),
@@ -86,11 +87,18 @@ void Engine::loadData()
 	{
 		if (m_Settings.m_AutoAdjust)
 			m_DataLoader.adjust(m_Settings);
+
 		m_Settings.m_DataProcessed = false;
 		changeState(Stage::Processing);
 	}
 	else
+	{
+		if (m_DataLoader.isCorrupted())
+			m_MainWindow.alarmLoadingDataError(m_DataLoader.getErrorFlags());
+		m_Settings.m_DataSelected = false;
+		m_Settings.m_DataProcessed = false;
 		changeState(Stage::Iddle);
+	}
 }
 
 void Engine::processData()
@@ -132,10 +140,11 @@ void Engine::processData()
 
 void Engine::waitForOrder()
 {
+	WriteLock wLock(m_Settings.m_Lock);
+
 	if (m_Settings.m_DataSelected  && !m_Settings.m_DataProcessed)
 	{
-		WriteLock wLock(m_Settings.m_Lock);
-		if (m_WheelOfFortune) // TODO: clear later
+		if (m_WheelOfFortune) // TODO: clear later (after Task9)
 			m_WheelOfFortune->resetHighLight();
 
 		m_Settings.m_DataReady = false;
@@ -143,8 +152,7 @@ void Engine::waitForOrder()
 	}
 	if (m_Settings.m_DataReady && m_Settings.m_DrawLots)
 	{
-		WriteLock wLock(m_Settings.m_Lock);
-		if (m_WheelOfFortune) // TODO: clear later
+		if (m_WheelOfFortune) // TODO: clear later (after Task9)
 			m_WheelOfFortune->resetHighLight();
 		m_Settings.m_DrawLots = false;
 		changeState(Stage::FortuneDraw);

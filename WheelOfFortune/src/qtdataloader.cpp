@@ -53,8 +53,6 @@ bool QtDataLoader::loadXml(const char* path)
                                 m_DataCorrupted = true;
                                 qDebug("Nothing wrong has happen thanks to default color, but there is issue with given color: %s\n", color.toStdString().c_str());
 
-                                // TODO: warning window
-
                                 try
                                 {
                                     throw;
@@ -83,10 +81,10 @@ bool QtDataLoader::loadXml(const char* path)
             if (m_MaxPositionsAmount)
                 if (m_Entries.size() <= 1 || m_Entries.size() > m_MaxPositionsAmount)
                 {
+                    m_DataCorrupted = true;
                     m_ErrorFlags.set(3);
-                    fullSuccess = false; // ??
+                    fullSuccess = false;
                     qDebug("It is not possible to visualize %d position with given settings for range of pie piece angle!\n", m_Entries.size());
-                    // TODO: warning window
                 }
         }
         else

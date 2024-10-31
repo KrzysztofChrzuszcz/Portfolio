@@ -42,7 +42,6 @@ bool TinyDataLoader::loadXml(const char* path)
                 {
                     printf("Nothing wrong has happen thanks to default color, but there is issue with given color: %s\n", color);
                     m_DataCorrupted = true;
-                    // TODO: Warning Window
 
                     try
                     {
@@ -68,17 +67,12 @@ bool TinyDataLoader::loadXml(const char* path)
             if (m_MaxPositionsAmount)
                 if (m_Entries.size() <= 1 || m_Entries.size() > m_MaxPositionsAmount)
                 {   
+                    m_DataCorrupted = true;
                     m_ErrorFlags.set(3);
-                    fullSuccess = false; // ??
+                    fullSuccess = false;
                     printf("It is not possible to visualize %d position with given settings for range of pie piece angle!\n", m_Entries.size());
-                    // TODO: Zdecydowac czy ustawic fullSuccess na false czy pozwolic na udane wyjscie z funkcji za to np. wywolac warningwindow
-                    // TODO: Decide about setting up fullSucces to false value
                 }
         }
-
-    // TODO: use result to call AlarmLoadingDataProblem in Engine
-    // Add WarningWindow. Maybe within some additional info like
-    // [Data corrupted, for more info check log file]
 
     // TODO2: add logFile'a 
     return fullSuccess; 

@@ -5,6 +5,7 @@
 #include <QAction>
 #include <QFileDialog>
 #include <QString>
+#include <QMessageBox>
 
 MainWindow::MainWindow(Settings& settings, QWidget *parent) :
     QMainWindow(parent),
@@ -21,11 +22,32 @@ MainWindow::MainWindow(Settings& settings, QWidget *parent) :
     connect(m_Ui->actionChooseFile, SIGNAL(triggered()), this, SLOT(openFileBrowser()));
     connect(m_Ui->actionDraw, SIGNAL(triggered()), this, SLOT(drawLots()));
     connect(m_Ui->displaySettings, SIGNAL(triggered()), this, SLOT(displaySettings()));
+    connect(this, SIGNAL(errorSignal(const QString&)), this, SLOT(displayErrorWindow(const QString&)));
 }
 
 MainWindow::~MainWindow()
 {
     delete m_Ui;
+}
+
+void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
+{
+    /// Unrecognized input type | Channel value is out of range | Channels amount is incorrect | Amount of entries is not possible to visualize within given settings
+    if (flags[0])
+        emit errorSignal("Unrecognized input type");
+    if (flags[1])
+        emit errorSignal("Channel value is out of range");
+    if (flags[2])
+        emit errorSignal("Channels amount is incorrect");
+    if (flags[3])
+        emit errorSignal("Amount of entries is not possible to visualize within given settings");
+    if (!flags.any())
+        emit errorSignal("Unknown problem with selected file");
+}
+
+void MainWindow::displayErrorWindow(const QString& message)
+{
+    QMessageBox::critical(this, tr("Error Window"), tr(message.toStdString().c_str()));
 }
 
 void MainWindow::openFileBrowser()

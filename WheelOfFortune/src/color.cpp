@@ -177,7 +177,7 @@ void Color::parseHex()
 	int r, g, b, a;
 	r = g = b = a = 255;
 	int foundAmmount = sscanf_s(m_RawColor.c_str(), "#%02x%02x%02x%02x", &r, &g, &b, &a);
-	if(foundAmmount == 0)
+	if (foundAmmount == 0)
 		foundAmmount = sscanf_s(m_RawColor.c_str(), "0x%02x%02x%02x%02x", &r, &g, &b, &a);
 
 

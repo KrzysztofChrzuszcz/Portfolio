@@ -31,6 +31,7 @@ public:
     virtual const vector<Entry>&        getEntries() { return m_Entries; } //!< In this case i allow compiler to decide about adding inline to getter
     // TODO: void logToFile(); // zapis do pliku wraz z flagami o failu ALE TYLKO jesli dataCorrupted = true
     bool                                isCorrupted() inline const { return m_DataCorrupted; } //!< Inform about existing some problems with input data
+    const bitset<4>&                    getErrorFlags() inline const { return m_ErrorFlags; }  //!< Allow to read access to ErrorFlags
 
 protected:
     bool                                m_DataCorrupted;            //!< States is exists any problem with input data

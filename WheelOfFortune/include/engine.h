@@ -48,6 +48,7 @@ private:
 private:
     DataLoader&         m_DataLoader;
     Settings&           m_Settings;
+    MainWindow&         m_MainWindow;
     Stage               m_Stage;                        //!< Current stage
     std::weak_ptr<CustomOpenGlWidget> 
                         m_OpenGlWidget;                 //!< Widget with OpenGL (canvas)
