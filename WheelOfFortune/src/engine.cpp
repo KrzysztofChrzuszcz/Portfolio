@@ -115,7 +115,7 @@ void Engine::processData()
 	float optimalPieAngle = basicPieAngle;
 	int divisor = 0;
 
-	while (optimalPieAngle < m_Settings.m_MinAngle || optimalPieAngle >= m_Settings.m_MaxAngle)
+	while (optimalPieAngle < m_Settings.m_MinAngle || optimalPieAngle > m_Settings.m_MaxAngle)
 		optimalPieAngle = basicPieAngle / ++divisor;
 
 	if (divisor)
@@ -132,7 +132,7 @@ void Engine::processData()
 	m_Settings.m_DataProcessed = true;
 	m_Settings.m_DataReady = true;
 	
-	if (m_Settings.m_AutoStart)	// NOTE: AUTOSTART w konfiguracji powinien tylko zmieniac m_Settings.m_DrawLots na wyjsciowo true
+	if (m_Settings.m_AutoStart)	// NOTE: m_AutoStart in settings should only change m_Settings.m_DrawLots on true
 		changeState(Stage::FortuneDraw);
 	else
 		changeState(Stage::Iddle);
@@ -199,7 +199,6 @@ void Engine::animate()
 
 void Engine::animationExtinguishing()
 {
-	// TODO: Popracowac nad plynnoscia przejscia miedzy etapami. (Zbyt gwaltowanie hamuje jak na moje gusta)
 	/// Because there is only one instance of engine I could present here unusual usage of local static variable.
 	static int changeAngle; // angle on which step value decrease
 	if (m_SlowingDownAngle == m_CurrentAngle)

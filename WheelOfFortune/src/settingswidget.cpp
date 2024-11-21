@@ -7,9 +7,10 @@ SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
     m_Ui(new Ui::Settings)
 {
     m_Ui->setupUi(this);
-    connectControllers();
     m_Initialized = false;
+    initRangeSliders();
     setInitValues();
+    connectControllers();
     displayValues();
 }
 
@@ -18,6 +19,29 @@ SettingsWidget::~SettingsWidget()
     disconnectControllers();
     delete m_Ui;
     qDebug() << "Destroyed";
+}
+
+void SettingsWidget::initRangeSliders()
+{
+    if (m_Ui->PieAngleRange_slider)
+    {
+        m_Ui->PieAngleRange_slider->SetType(RangeSlider::Option::DoubleHandles);
+
+        m_Ui->PieAngleRange_slider->SetRange(15, 60);
+        // Issue with used class is fixed by calling SetMinimum explicitly
+        m_Ui->PieAngleRange_slider->SetMinimum(15);
+        m_Ui->PieAngleRange_slider->SetMaximum(60);
+    }
+
+    if (m_Ui->randRange_slider)
+    {
+        m_Ui->randRange_slider->SetType(RangeSlider::Option::DoubleHandles);
+
+        m_Ui->randRange_slider->SetRange(2000, 5000);
+        // Issue with used class is fixed by calling SetMinimum explicitly
+        m_Ui->randRange_slider->SetMinimum(2000);
+        m_Ui->randRange_slider->SetMaximum(5000);
+    }
 }
 
 void SettingsWidget::connectControllers()
@@ -34,14 +58,14 @@ void SettingsWidget::connectControllers()
         connect(m_Ui->minBrightness_slider, SIGNAL(valueChanged(int)), this, SLOT(setMinBrightness(int)));
     if (m_Ui->maxTime_slider)
         connect(m_Ui->maxTime_slider, SIGNAL(valueChanged(int)), this, SLOT(setMaxTime(int)));
-    if (m_Ui->minPieAngle_slider)
-        connect(m_Ui->minPieAngle_slider, SIGNAL(valueChanged(int)), this, SLOT(setMinPieAngle(int)));
-    if (m_Ui->maxPieAngle_slider)
-        connect(m_Ui->maxPieAngle_slider, SIGNAL(valueChanged(int)), this, SLOT(setMaxPieAngle(int)));
-    if (m_Ui->randMin_slider)
-        connect(m_Ui->randMin_slider, SIGNAL(valueChanged(int)), this, SLOT(setRandMin(int)));
-    if (m_Ui->randMax_slider)
-        connect(m_Ui->randMax_slider, SIGNAL(valueChanged(int)), this, SLOT(setRandMax(int)));
+    if (m_Ui->PieAngleRange_slider)
+        connect(m_Ui->PieAngleRange_slider, SIGNAL(lowerValueChanged(int)), this, SLOT(setMinPieAngle(int)));
+    if (m_Ui->PieAngleRange_slider)
+        connect(m_Ui->PieAngleRange_slider, SIGNAL(upperValueChanged(int)), this, SLOT(setMaxPieAngle(int)));
+    if (m_Ui->randRange_slider)
+        connect(m_Ui->randRange_slider, SIGNAL(lowerValueChanged(int)), this, SLOT(setRandMin(int)));
+    if (m_Ui->randRange_slider)
+        connect(m_Ui->randRange_slider, SIGNAL(upperValueChanged(int)), this, SLOT(setRandMax(int)));
     if (m_Ui->quitButton)
         connect(m_Ui->quitButton, &QPushButton::clicked, this, &QWidget::close);
 }
@@ -74,20 +98,20 @@ void SettingsWidget::setInitValues()
     if (m_Ui->minBrightness_slider)
         m_Ui->minBrightness_slider->setValue(m_Settings.m_MinColorBrightness * 100);
 
-    if (m_Ui->minPieAngle_slider)
-        m_Ui->minPieAngle_slider->setValue(m_Settings.m_MinAngle);
-
-    if (m_Ui->maxPieAngle_slider)
-        m_Ui->maxPieAngle_slider->setValue(m_Settings.m_MaxAngle);
+    if (m_Ui->PieAngleRange_slider)
+    {
+        m_Ui->PieAngleRange_slider->SetLowerValue(m_Settings.m_MinAngle);
+        m_Ui->PieAngleRange_slider->SetUpperValue(m_Settings.m_MaxAngle);
+    }
 
     if (m_Ui->maxTime_slider)
         m_Ui->maxTime_slider->setValue(m_Settings.m_MaxDurationTime);
 
-    if (m_Ui->randMin_slider)
-        m_Ui->randMin_slider->setValue(m_Settings.m_MinRandRange);
-
-    if (m_Ui->randMax_slider)
-        m_Ui->randMax_slider->setValue(m_Settings.m_MaxRandRange);
+    if (m_Ui->randRange_slider)
+    {
+        m_Ui->randRange_slider->SetLowerValue(m_Settings.m_MinRandRange);
+        m_Ui->randRange_slider->SetUpperValue(m_Settings.m_MaxRandRange);
+    }
 
     m_Initialized = true;
 }
@@ -168,28 +192,22 @@ void SettingsWidget::setMaxTime(int value)
 void SettingsWidget::setMinPieAngle(int value)
 {
     WriteLock wLock(m_Settings.m_Lock);
-    if (m_Ui->minPieAngle_slider)
+    if (m_Ui->PieAngleRange_slider)
     {
-        m_Settings.m_MinAngle = m_Ui->minPieAngle_slider->value();
+        m_Settings.m_MinAngle = m_Ui->PieAngleRange_slider->GetLowerValue();
         if (m_Ui->minPieAngle_display)
             m_Ui->minPieAngle_display->display(m_Settings.m_MinAngle);
-
-        if (m_Ui->maxPieAngle_slider)
-        {
-            m_Ui->maxPieAngle_slider->setMinimum(m_Settings.m_MinAngle);
-            m_Ui->maxPieAngle_minimumLabel->setText(QString::number(m_Settings.m_MinAngle));
-        }
-
-        m_Settings.m_MaxPositionsAmount = 360.f / m_Settings.m_MinAngle;
+        float max = 360.f / (float)m_Settings.m_MinAngle;
+        m_Settings.m_MaxPositionsAmount = 360.f / m_Settings.m_MinAngle; // !!! TODO: minimum 2 pozycje; Sprawdzic czy na styku nie nalezy poprawic < na <= np.
     }
 }
 
 void SettingsWidget::setMaxPieAngle(int value)
 {
     WriteLock wLock(m_Settings.m_Lock);
-    if (m_Ui->maxPieAngle_slider)
+    if (m_Ui->PieAngleRange_slider)
     {
-        m_Settings.m_MaxAngle = m_Ui->maxPieAngle_slider->value();
+        m_Settings.m_MaxAngle = m_Ui->PieAngleRange_slider->GetUpperValue();
         if (m_Ui->maxPieAngle_display)
             m_Ui->maxPieAngle_display->display(m_Settings.m_MaxAngle);
     }
@@ -198,9 +216,9 @@ void SettingsWidget::setMaxPieAngle(int value)
 void SettingsWidget::setRandMin(int value)
 {
     WriteLock wLock(m_Settings.m_Lock);
-    if (m_Ui->randMin_slider)
+    if (m_Ui->randRange_slider)
     {
-        m_Settings.m_MinRandRange = m_Ui->randMin_slider->value();
+        m_Settings.m_MinRandRange = m_Ui->randRange_slider->GetLowerValue();
         if (m_Ui->randMin_display)
             m_Ui->randMin_display->display(m_Settings.m_MinRandRange);
     }
@@ -209,9 +227,9 @@ void SettingsWidget::setRandMin(int value)
 void SettingsWidget::setRandMax(int value)
 {
     WriteLock wLock(m_Settings.m_Lock);
-    if (m_Ui->randMax_slider)
+    if (m_Ui->randRange_slider)
     {
-        m_Settings.m_MaxRandRange = m_Ui->randMax_slider->value();
+        m_Settings.m_MaxRandRange = m_Ui->randRange_slider->GetUpperValue();
         if (m_Ui->randMax_display)
             m_Ui->randMax_display->display(m_Settings.m_MaxRandRange);
     }

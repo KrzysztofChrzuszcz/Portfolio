@@ -18,6 +18,7 @@ public:
     explicit                                SettingsWidget(Settings& settings, QWidget *parent = nullptr);
                                             ~SettingsWidget();
 
+    void                                    initRangeSliders();                             //!< Initialize controllers
     inline Settings&                        getSettings() { return m_Settings; } //!< Getter defined in the header to inline it in order to reduce the overhead associated with function calls, such as saving and restoring registers, stack management
 
 private:

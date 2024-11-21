@@ -43,6 +43,8 @@ void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
         emit errorSignal("Amount of entries is not possible to visualize within given settings");
     if (!flags.any())
         emit errorSignal("Unknown problem with selected file");
+
+    // TODO: Problem z ustalonymi katami !! 
 }
 
 void MainWindow::displayErrorWindow(const QString& message)

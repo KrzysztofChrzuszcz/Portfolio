@@ -16,13 +16,13 @@ Settings::Settings()
 	//m_DrawLots = m_AutoStart; // other option on auto start after selecting file (with additional idle state between) REMEMBER in that case to always set it too after file choose
 	m_AutoAdjust = true;
 
-	m_MinAngle = 15;
+	m_MinAngle = 20;
 	m_MaxAngle = 30;
 	m_MaxPositionsAmount = 360.f / m_MinAngle;
 
 	m_MaxDurationTime = 12;
 
-	m_MinRandRange = 1500;
+	m_MinRandRange = 2500;
 	m_MaxRandRange = 3000;
 
 	m_RandomMathod = RandMethod::standart;
