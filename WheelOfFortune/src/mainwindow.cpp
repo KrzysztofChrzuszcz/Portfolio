@@ -30,6 +30,11 @@ MainWindow::~MainWindow()
     delete m_Ui;
 }
 
+std::weak_ptr<CustomOpenGlWidget> MainWindow::getWidget()
+{
+    return std::weak_ptr<CustomOpenGlWidget>(m_OpenGlWidget);
+}
+
 void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
 {
     /// Unrecognized input type | Channel value is out of range | Channels amount is incorrect | Amount of entries is not possible to visualize within given settings
@@ -49,15 +54,14 @@ void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
 
 void MainWindow::displayErrorWindow(const QString& message)
 {
-    QMessageBox::critical(this, tr("Error Window"), tr(message.toStdString().c_str()));
+    QMessageBox::critical(this, tr("Error Window"), message);
 }
 
 void MainWindow::openFileBrowser()
 {
     // TODO: Add predirectives for Debug/ Release for default path 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "RelWithDebInfo/resources/data", tr("XML Files (*.xml)"));
-    if (!fileName.isEmpty())
-        m_Settings.setFilePath(fileName.toStdString());
+    m_Settings.setFilePath(fileName.toStdString());
 }
 
 void MainWindow::drawLots()

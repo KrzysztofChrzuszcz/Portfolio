@@ -1,4 +1,4 @@
-﻿#ifndef WHEELOFFORTUNE_H
+#ifndef WHEELOFFORTUNE_H
 #define WHEELOFFORTUNE_H
 
 #include "dataloader.h"
@@ -33,14 +33,14 @@ public:
     virtual void        paintGL(const Size& size) final; //!< Main and final function to visualize wheel of fortune
 
     virtual void        drawIcon() = 0;         //!< Draw start screen. That is wheel of fortune image used also as program icon.
-    virtual void        drawBoardConture() = 0; //!< Draw outer decorations
+    virtual void        drawBoardContour() = 0; //!< Draw outer decorations
     virtual void        drawBoardCenter() = 0;  //!< Draw inner decorations
     virtual void        drawPointer() = 0;
     virtual void        drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight = false) = 0; //!< Draw a position as pie piece on the wheel
     virtual void        drawWheel();            //!< Draw all pie pieces as whole wheel
 
     void                highlightPie();         //!< Highlight winning position
-    void                resetHighLight();       //!< Cancel winning piece highlight
+    void                resetHighlight();       //!< Cancel winning piece highlight
 
 public:
     bool*               m_Ready;                //!< Link to extern information of finished preparations to start animation

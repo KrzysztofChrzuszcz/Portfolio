@@ -4,6 +4,7 @@
 // ATENTION!
 // This class is external resource taken from
 // https://github.com/ThisIsClark/Qt-RangeSlider (author: ThisIsClark)
+// Licensed under MIT License - Copyright (c) 2019 ThisIsClark
 // It serves to demonstrate the use of available resources that suit the goal, rather than reinventing the wheel from scratch.
 
 
@@ -30,10 +31,10 @@ public:
 
     QSize minimumSizeHint() const override;
 
-    int GetMinimun() const;
+    int GetMinimum() const;
     void SetMinimum(int aMinimum);
 
-    int GetMaximun() const;
+    int GetMaximum() const;
     void SetMaximum(int aMaximum);
 
     int GetLowerValue() const;
@@ -81,9 +82,9 @@ private:
     bool mSecondHandlePressed;
     int mInterval;
     int mDelta;
-    QColor mBackgroudColorEnabled;
-    QColor mBackgroudColorDisabled;
-    QColor mBackgroudColor;
+    QColor mBackgroundColorEnabled;
+    QColor mBackgroundColorDisabled;
+    QColor mBackgroundColor;
     Qt::Orientation orientation;
     Options type;
 };

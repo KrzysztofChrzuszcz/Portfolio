@@ -4,14 +4,9 @@
 #include <GL/gl.h>
 #include <GL/GLU.h>
 #include <GL/freeglut.h>
-// Below solution with _USE_MATH_DEFINES is outdated
-//#define _USE_MATH_DEFINES
-#include <cmath> // https://stackoverflow.com/questions/6563810/m-pi-works-with-math-h-but-not-with-cmath-in-visual-studio
-// So to fix it in Windows 10 & 11
-//#include <corecrt_math_defines.h> // https://stackoverflow.com/questions/26065359/m-pi-flagged-as-undeclared-identifier
-// But it provides poor precision, so...
-//const long double g_PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062L; // https://www.programiz.com/cpp-programming/float-double
-// Unfortunately the number of digits has no effect on how precise a long double is, so again
+
+#include <cmath>
+// Provides maximal possible precision
 const long double g_PI = acos(-1.0L);
 
 GlWheelOfFortune::GlWheelOfFortune()
@@ -35,7 +30,7 @@ void GlWheelOfFortune::drawIcon()
     // https://learnopengl.com/Getting-started/Textures
 }
 
-void GlWheelOfFortune::drawBoardConture()
+void GlWheelOfFortune::drawBoardContour()
 {
     glLineWidth(10); // TODO: scaling with text
     glColor3f(0.f, 0.f, 0.f);
@@ -73,7 +68,7 @@ void GlWheelOfFortune::drawPointer()
     glFlush();
 }
 
-extern const Color g_HighlightRimColor;
+extern const Color g_HighlightRimColor; // Example usage of extern keyword, for demonstration purposes
 void GlWheelOfFortune::drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight)
 {
     const ColorF& pieColor = color.getFloat();

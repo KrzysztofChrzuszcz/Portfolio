@@ -23,9 +23,9 @@ RangeSlider::RangeSlider(QWidget* aParent)
       mFirstHandlePressed(false),
       mSecondHandlePressed(false),
       mInterval(mMaximum - mMinimum),
-      mBackgroudColorEnabled(QColor(0x1E, 0x90, 0xFF)),
-      mBackgroudColorDisabled(Qt::darkGray),
-      mBackgroudColor(mBackgroudColorEnabled),
+      mBackgroundColorEnabled(QColor(0x1E, 0x90, 0xFF)),
+      mBackgroundColorDisabled(Qt::darkGray),
+      mBackgroundColor(mBackgroundColorEnabled),
       orientation(Qt::Horizontal) /// Lack of default type member setting.
 {
     setMouseTracking(true);
@@ -40,9 +40,9 @@ RangeSlider::RangeSlider(Qt::Orientation ori, Options t, QWidget* aParent)
       mFirstHandlePressed(false),
       mSecondHandlePressed(false),
       mInterval(mMaximum - mMinimum),
-      mBackgroudColorEnabled(QColor(0x1E, 0x90, 0xFF)),
-      mBackgroudColorDisabled(Qt::darkGray),
-      mBackgroudColor(mBackgroudColorEnabled),
+      mBackgroundColorEnabled(QColor(0x1E, 0x90, 0xFF)),
+      mBackgroundColorDisabled(Qt::darkGray),
+      mBackgroundColor(mBackgroundColorEnabled),
       orientation(ori),
       type(t)
 {
@@ -94,7 +94,7 @@ void RangeSlider::paintEvent(QPaintEvent* aEvent)
         selectedRect.setTop((type.testFlag(LeftHandle) ? leftHandleRect.bottom() : leftHandleRect.top()) + 0.5);
         selectedRect.setBottom((type.testFlag(RightHandle) ? rightHandleRect.top() : rightHandleRect.bottom()) - 0.5);
     }
-    QBrush selectedBrush(mBackgroudColor);
+    QBrush selectedBrush(mBackgroundColor);
     painter.setBrush(selectedBrush);
     painter.drawRect(selectedRect);
 }
@@ -215,11 +215,11 @@ void RangeSlider::changeEvent(QEvent* aEvent)
     {
         if(isEnabled())
         {
-            mBackgroudColor = mBackgroudColorEnabled;
+            mBackgroundColor = mBackgroundColorEnabled;
         }
         else
         {
-            mBackgroudColor = mBackgroudColorDisabled;
+            mBackgroundColor = mBackgroundColorDisabled;
         }
         update();
     }
@@ -230,7 +230,7 @@ QSize RangeSlider::minimumSizeHint() const
     return QSize(scHandleSideLength * 2 + scLeftRightMargin * 2, scHandleSideLength);
 }
 
-int RangeSlider::GetMinimun() const
+int RangeSlider::GetMinimum() const
 {
     return mMinimum;
 }
@@ -240,7 +240,7 @@ void RangeSlider::SetMinimum(int aMinimum)
     setMinimum(aMinimum);
 }
 
-int RangeSlider::GetMaximun() const
+int RangeSlider::GetMaximum() const
 {
     return mMaximum;
 }
@@ -354,10 +354,10 @@ int RangeSlider::validLength() const
     return len - scLeftRightMargin * 2 - scHandleSideLength * (type.testFlag(DoubleHandles) ? 2 : 1);
 }
 
-void RangeSlider::SetRange(int aMinimum, int mMaximum)
+void RangeSlider::SetRange(int aMinimum, int aMaximum)
 {
     setMinimum(aMinimum);
-    setMaximum(mMaximum);
+    setMaximum(aMaximum);
 }
 
 void RangeSlider::SetType(Options type)

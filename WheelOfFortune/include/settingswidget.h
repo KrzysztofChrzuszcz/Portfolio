@@ -18,7 +18,7 @@ public:
     explicit                                SettingsWidget(Settings& settings, QWidget *parent = nullptr);
                                             ~SettingsWidget();
 
-    void                                    initRangeSliders();                             //!< Initialize controllers
+    void                                    initRangeSliders();                 //!< Initialize controllers
     inline Settings&                        getSettings() { return m_Settings; } //!< Getter defined in the header to inline it in order to reduce the overhead associated with function calls, such as saving and restoring registers, stack management
 
 private:
@@ -27,7 +27,7 @@ private:
     void                                    setInitValues();                    //!< Set initial values for GUI controllers on base of current settings 
     void                                    displayValues();                    //!< Displays current values of controllers on LCD widgets
 
-   /*!
+   /**
     * Set of setter slots to configure settings in real time
     */
 private slots:

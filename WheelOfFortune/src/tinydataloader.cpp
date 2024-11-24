@@ -17,6 +17,8 @@ bool TinyDataLoader::loadXml(const char* path)
     bool fullSuccess = false;
 
     XMLDocument doc;
+    // std::wstring widePath = StringToWString(path);
+    // XMLError err = doc.LoadFileW(widePath.c_str());
     XMLError err = doc.LoadFile(path); // NOTE: Issue with polish special signs in the path
 
     if (XMLElement* rootElem = doc.FirstChildElement("root"))
@@ -28,6 +30,8 @@ bool TinyDataLoader::loadXml(const char* path)
             XMLElement* optionElem = optionsElem->FirstChildElement("option");
             do
             {
+                // const char* encodedText = optionElem->GetText();
+                // std::string title = ConvertToUTF8(encodedText);
                 const char* title = optionElem->GetText(); // NOTE: Issue with polish special signs TODO: Consider some solution
                 printf("%s: ", title);
 
@@ -51,7 +55,7 @@ bool TinyDataLoader::loadXml(const char* path)
                     {
                         m_ErrorFlags.set(0);
                     }
-                    catch (ChanelOutOfRangeException& coore)
+                    catch (ChannelOutOfRangeException& coore)
                     {
                         m_ErrorFlags |= bitset<4>(1 << 1);
                     }

@@ -61,7 +61,7 @@ bool QtDataLoader::loadXml(const char* path)
                                 {
                                     m_ErrorFlags.set(0);
                                 }
-                                catch (ChanelOutOfRangeException& coore)
+                                catch (ChannelOutOfRangeException& coore)
                                 {
                                     m_ErrorFlags |= bitset<4>(1 << 1);
                                 }

@@ -2,7 +2,6 @@
 #define GLWHEELOFFORTUNE_H
 
 #include "wheeloffortune.h"
-#include "dataloader.h"
 
 /**
  * \brief GlWheelOfFortune pure OpenGl implementation of main GUI part
@@ -11,11 +10,12 @@ class GlWheelOfFortune : public WheelOfFortune
 {
 public:
                     GlWheelOfFortune();
+    virtual         ~GlWheelOfFortune() = default;
 
     void            configureCanvas() override;
 
     void            drawIcon() override;
-    void            drawBoardConture() override;
+    void            drawBoardContour() override;
     void            drawBoardCenter() override;
     void            drawPointer() override;
     void            drawPiePiece(const string& text, const Color& color, float rotationAngle, bool highlight = false);

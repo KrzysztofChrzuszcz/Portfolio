@@ -18,7 +18,7 @@ class Engine
 {
     enum class Stage
     {
-        Iddle = 0,
+        Idle = 0,
         DataLoading = 1,
         Processing = 2,
         FortuneDraw = 3,

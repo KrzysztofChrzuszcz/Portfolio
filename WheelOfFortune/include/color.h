@@ -15,16 +15,16 @@ using std::string;
 class WrongInputException : public std::exception
 {
 public:
-    char* what() 
+    const char* what() const noexcept override
     {
         return "Color input not recognized";
     }
 };
 
-class ChanelOutOfRangeException : public std::runtime_error
+class ChannelOutOfRangeException : public std::runtime_error
 {
 public:
-    ChanelOutOfRangeException() : runtime_error("") {}
+    ChannelOutOfRangeException() : runtime_error("") {}
 
     const char* what() const override
     {
@@ -43,7 +43,7 @@ public:
     }
 };
 
-//provides maximum precision
+// Provides maximum precision
 struct ColorF
 {
     float   m_R;
@@ -54,9 +54,9 @@ struct ColorF
     ColorF operator+(float const& skalar)
     {
         ColorF result;
-        result.m_R = m_R + skalar > 1.f ? 1.f : m_R + skalar;
-        result.m_G = m_G + skalar > 1.f ? 1.f : m_G + skalar;
-        result.m_B = m_B + skalar > 1.f ? 1.f : m_B + skalar;
+        result.m_R = (m_R + skalar) > 1.f ? 1.f : (m_R + skalar);
+        result.m_G = (m_G + skalar) > 1.f ? 1.f : (m_G + skalar);
+        result.m_B = (m_B + skalar) > 1.f ? 1.f : (m_B + skalar);
         result.m_A = m_A;
 
         return result;
@@ -64,13 +64,11 @@ struct ColorF
 
     ColorF operator*=(float const& skalar)
     {
-        ColorF result;
-        result.m_R = m_R * skalar > 1.f ? 1.f : m_R * skalar;
-        result.m_G = m_G * skalar > 1.f ? 1.f : m_G * skalar;
-        result.m_B = m_B * skalar > 1.f ? 1.f : m_B * skalar;
-        result.m_A = m_A;
+        m_R = (m_R * skalar) > 1.f ? 1.f : (m_R * skalar);
+        m_G = (m_G * skalar) > 1.f ? 1.f : (m_G * skalar);
+        m_B = (m_B * skalar) > 1.f ? 1.f : (m_B * skalar);
 
-        return result;
+        return *this;
     }
 };
 
@@ -96,18 +94,18 @@ class Color
 public:
                     Color(string rawColor);
 
-    string          getHex(); //!< Return hexadecimal color representation
+    string          getHex();       //!< Return hexadecimal color representation
     ColorI          getInt() const; //!< Return instance of ColorI
-    ColorF&         getFloat() inline const { return const_cast<ColorF&>(m_ColorF); } //!< Return reference to ColorF member
+    const ColorF&   getFloat() const { return m_ColorF; } //!< Return reference to ColorF member
     QColor          getQColor() const; //!< Return instance of ColorQ
     float           getBrightness() const; //!< Return human friendly brightness of the color
-    bool            isBrighten() inline const { return m_IsBrighten; } //!< Gives information if color has adjusted brightness
+    inline bool     isBrighten() const { return m_IsBrighten; } //!< Gives information if color has adjusted brightness
     void            adjustBrightness(float minLevel); //!< Adjust color to reach minimum color brightness level
 
 private:
     bool            isHex();        //!< Checks if raw color is written in hexadecimal representation
     bool            isText();       //!< Checks if raw color is written in named text representation
-    bool            isKonwn();      //!< Checks if raw color is known
+    bool            isKnown();      //!< Checks if raw color is known
     bool            isIntForm();    //!< Checks if raw color is written in integer RGBA form
     bool            isFloatForm();  //!< Checks if raw color is written in float RGBA form
 

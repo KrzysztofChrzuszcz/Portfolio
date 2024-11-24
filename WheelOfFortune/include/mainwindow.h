@@ -3,6 +3,7 @@
 
 #include "ui_mainwindow.h"
 #include "settings.h"
+#include "customopenglwidget.h"
 
 #include <memory>
 
@@ -21,7 +22,7 @@ public:
                                             ~MainWindow();
 
     inline Settings&                        getSettings() { return m_Settings; }            //!< Getter defined in the header to inline it in order to reduce the overhead associated with function calls, such as saving and restoring registers, stack management
-    std::weak_ptr<CustomOpenGlWidget>       getWidget() { return std::weak_ptr<CustomOpenGlWidget>(m_OpenGlWidget); } //!< OpenGl widget getter
+    std::weak_ptr<CustomOpenGlWidget>       getWidget();                                    //!< OpenGl widget getter
     void                                    alarmLoadingDataError(const bitset<4>& flags);  //!< Emits error signal for data loading known issues
 
 signals:

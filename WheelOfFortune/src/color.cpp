@@ -112,7 +112,7 @@ bool Color::isText()
 	return true;
 }
 
-bool Color::isKonwn()
+bool Color::isKnown()
 {
 	// Qt version
 	if (QColor::colorNames().contains(QString(m_RawColor.c_str()), Qt::CaseInsensitive))
@@ -126,6 +126,7 @@ bool Color::isKonwn()
 bool Color::isIntForm()
 {
 	std::regex pattern("([0-9]{1,3}[,]?){3,4}");
+	//std::regex pattern("^(([0-9]{1,3}),){2,3}[0-9]{1,3}$"); // ?
 	std::smatch match;
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;
@@ -136,6 +137,7 @@ bool Color::isIntForm()
 bool Color::isFloatForm()
 {
 	std::regex pattern("([0-1].[0-9]{1,5}[,]?){3,4}");
+	//std::regex pattern("^((0\\.\\d+|1\\.0+),){2,3}(0\\.\\d+|1\\.0+)$");
 	std::smatch match;
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;
@@ -163,7 +165,7 @@ void Color::parse()
 		return;
 	}
 
-	if (isText() && isKonwn())
+	if (isText() && isKnown())
 	{
 		parseText(); // TODO: non-Qt version
 		return;
@@ -207,7 +209,7 @@ void Color::parseInt()
 	// TODO: Add log about missing alpha and info We fix that
 
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
-		throw ChanelOutOfRangeException();
+		throw ChannelOutOfRangeException();
 
 	m_ColorF = { r, g, b, a };
 }
@@ -225,7 +227,7 @@ void Color::parseFloat()
 	// TODO: Add log about missing alpha and info We fix that
 
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
-		throw ChanelOutOfRangeException();
+		throw ChannelOutOfRangeException();
 
 	m_ColorF = { r, g, b, a };
 }

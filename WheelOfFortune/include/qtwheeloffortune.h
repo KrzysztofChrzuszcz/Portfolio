@@ -2,24 +2,24 @@
 #define QTWHEELOFFORTUNE_H
 
 #include "wheeloffortune.h"
-#include "dataloader.h"
 
 #include <QObject>
 #include <QPainter>
 
-/*!
+/**
  * \brief QtWheelOfFortune Qt implementation of main GUI part
  */
 class QtWheelOfFortune : public QObject, public WheelOfFortune
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
                     QtWheelOfFortune(QPainter& painter);
+    virtual         ~QtWheelOfFortune() = default;
 
     void            configureCanvas() override;
 
     void            drawIcon() override;
-    void            drawBoardConture() override;
+    void            drawBoardContour() override;
     void            drawBoardCenter() override;
     void            drawPointer() override;
 

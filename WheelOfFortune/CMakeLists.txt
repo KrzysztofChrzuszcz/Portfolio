@@ -8,7 +8,7 @@ elseif(UNIX)
     project(WheelOfFortune)
 endif()
 
-# TODO: ustawic zmienna
+# TODO: ustawic zmienna srodowiskowa i dodac do readme instrukcje
 set(CMAKE_TOOLCHAIN_FILE "M:/Repo/VCPKG/scripts/buildsystems/vcpkg.cmake")
 
 set(CMAKE_CONFIGURATION_TYPES "Release;RelWithDebInfo;Debug" CACHE STRING "" FORCE)
@@ -23,8 +23,8 @@ set(CMAKE_PREFIX_PATH $ENV{QTDIR})
 find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL REQUIRED)
 
 find_package(OpenGL REQUIRED)
-#find_package(freeglut REQUIRED)
 
+#GLEW is required just for FREEGLUT
 find_package(GLEW REQUIRED)
 find_package(FREEGLUT REQUIRED)
 

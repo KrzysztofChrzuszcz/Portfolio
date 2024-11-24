@@ -17,7 +17,7 @@ typedef unsigned int uint;
 
 enum class RandMethod // ?Entropy // TODO2: maybe give seed to choose instead, or too
 {
-    standart = 0,
+    standard = 0,
     linear = 1,
     minstd_rand = 2,
     ranlux24 = 3,
@@ -39,8 +39,8 @@ class Settings /* TODO : public QWidget*/
 public:
                     Settings();
 
-    float           getMinColorBrightness() inline const { return m_MinColorBrightness; }
-    bool*           getDataReady() inline const { return &m_DataReady; }
+    inline float    getMinColorBrightness() const { return m_MinColorBrightness; }
+    inline bool*    getDataReady() const { return &m_DataReady; }
     void            setFilePath(string fileName);
     void            drawLots();    // Initiate fortune draw
 
@@ -61,7 +61,7 @@ private:
     int             m_MaxDurationTime;
     int             m_MinRandRange;
     int             m_MaxRandRange; // super / range slider for both
-    RandMethod      m_RandomMathod;
+    RandMethod      m_RandomMethod;
 
     Lock            m_Lock;
 };

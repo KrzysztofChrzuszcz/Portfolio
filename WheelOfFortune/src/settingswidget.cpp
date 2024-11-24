@@ -84,7 +84,7 @@ void SettingsWidget::setInitValues()
         m_Ui->autoAdjust_checkBox->setChecked(m_Settings.m_AutoAdjust);
 
     if (m_Ui->randMethod_comboBox)
-        m_Ui->randMethod_comboBox->setCurrentIndex((int)m_Settings.m_RandomMathod); // TODO: Get back to it when Rand Methods will be ready. Use dynamic initialization.
+        m_Ui->randMethod_comboBox->setCurrentIndex((int)m_Settings.m_RandomMethod); // TODO: Get back to it when Rand Methods will be ready. Use dynamic initialization.
 
     if (m_Ui->refreshFrequency_comboBox)
     {       
@@ -156,7 +156,7 @@ void SettingsWidget::setAutoAdjust(int state)
 void SettingsWidget::setRandMethod(int index)
 {
     WriteLock wLock(m_Settings.m_Lock);
-    m_Settings.m_RandomMathod = RandMethod(index);
+    m_Settings.m_RandomMethod = RandMethod(index);
 }
 
 void SettingsWidget::setRefreshFrequency(int index)

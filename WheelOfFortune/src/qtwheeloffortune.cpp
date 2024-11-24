@@ -1,4 +1,5 @@
 ﻿#include "qtwheeloffortune.h"
+
 #include <QPen>
 #include <QRect>
 #include <QPolygonF>
@@ -31,7 +32,7 @@ void QtWheelOfFortune::drawIcon()
 	icon->paint(&m_Painter, rectangle);
 }
 
-void QtWheelOfFortune::drawBoardConture()
+void QtWheelOfFortune::drawBoardContour()
 {
 	/// Qt instead floats prefers qreal format, which is based on double
 	/// So in case of that class there is no need to use .f suffix

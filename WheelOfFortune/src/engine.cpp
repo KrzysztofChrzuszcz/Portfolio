@@ -10,7 +10,7 @@ Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 	m_Settings(mainWindow.getSettings()),
 	m_DataLoader(dataLoader),
 	m_WheelOfFortune(nullptr),
-	m_Stage(Stage::Iddle)
+	m_Stage(Stage::Idle)
 {
 	m_CurrentAngle = 0;
 	m_FastAnimationAngle = 0;
@@ -18,7 +18,8 @@ Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 	m_Step = 0;
 
 	m_OpenGlWidget = mainWindow.getWidget();
-	m_WheelOfFortune = (*m_OpenGlWidget.lock()).getGui();
+	if (!m_OpenGlWidget.expired())
+		m_WheelOfFortune = (*m_OpenGlWidget.lock()).getGui();
 }
 
 Engine::~Engine()
@@ -29,7 +30,7 @@ void Engine::run()
 {
 	switch (m_Stage)
 	{
-		case Stage::Iddle:
+		case Stage::Idle:
 		{
 			waitForOrder();
 			break;
@@ -97,7 +98,7 @@ void Engine::loadData()
 			m_MainWindow.alarmLoadingDataError(m_DataLoader.getErrorFlags());
 		m_Settings.m_DataSelected = false;
 		m_Settings.m_DataProcessed = false;
-		changeState(Stage::Iddle);
+		changeState(Stage::Idle);
 	}
 }
 
@@ -115,8 +116,13 @@ void Engine::processData()
 	float optimalPieAngle = basicPieAngle;
 	int divisor = 0;
 
+	int outCounter = 0;
 	while (optimalPieAngle < m_Settings.m_MinAngle || optimalPieAngle > m_Settings.m_MaxAngle)
+	{
 		optimalPieAngle = basicPieAngle / ++divisor;
+		if (++outCounter > 99)
+			throw std::runtime_error("Engine::processData ERROR");
+	}
 
 	if (divisor)
 	{
@@ -135,7 +141,7 @@ void Engine::processData()
 	if (m_Settings.m_AutoStart)	// NOTE: m_AutoStart in settings should only change m_Settings.m_DrawLots on true
 		changeState(Stage::FortuneDraw);
 	else
-		changeState(Stage::Iddle);
+		changeState(Stage::Idle);
 }
 
 void Engine::waitForOrder()
@@ -145,7 +151,7 @@ void Engine::waitForOrder()
 	if (m_Settings.m_DataSelected  && !m_Settings.m_DataProcessed)
 	{
 		if (m_WheelOfFortune) // TODO: clear later (after Task9)
-			m_WheelOfFortune->resetHighLight();
+			m_WheelOfFortune->resetHighlight();
 
 		m_Settings.m_DataReady = false;
 		changeState(Stage::DataLoading);
@@ -153,7 +159,7 @@ void Engine::waitForOrder()
 	if (m_Settings.m_DataReady && m_Settings.m_DrawLots)
 	{
 		if (m_WheelOfFortune) // TODO: clear later (after Task9)
-			m_WheelOfFortune->resetHighLight();
+			m_WheelOfFortune->resetHighlight();
 		m_Settings.m_DrawLots = false;
 		changeState(Stage::FortuneDraw);
 	}
@@ -236,5 +242,5 @@ void Engine::sumUp()
 	//if (isEnclapsed())
 	//if (m_WheelOfFortune)
 	//	m_WheelOfFortune->resetHighLight();
-	changeState(Stage::Iddle);
+	changeState(Stage::Idle);
 }

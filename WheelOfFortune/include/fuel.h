@@ -1,4 +1,4 @@
-﻿#ifndef FUEL_H
+#ifndef FUEL_H
 #define FUEL_H
 
 #include "engine.h"
@@ -6,9 +6,9 @@
 #include <future>
 #include <chrono>
 
-#include <QThread.h>
-#include <QMutex.h>
-#include <QWaitCondition.h>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 
 // In case of this particular group of classes, due to name convention incoherence, I have decided to keep them together in one place.
 
@@ -21,14 +21,12 @@ class Fuel
 {
 public:
                         Fuel(Engine& engine);
-    virtual             ~Fuel() = 0; /// Derived classes has to set m_Quit to true;
+    virtual             ~Fuel(); /// Derived classes has to set m_Quit to true;
 
     virtual void		startEngine() = 0;
 
-public:
-    std::atomic<bool>   m_Quit;
-
 protected:
+    std::atomic<bool>   m_Quit;
     Engine&				m_Engine;
     int					m_Delay;
 };

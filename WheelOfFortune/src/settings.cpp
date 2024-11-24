@@ -25,11 +25,14 @@ Settings::Settings()
 	m_MinRandRange = 2500;
 	m_MaxRandRange = 3000;
 
-	m_RandomMathod = RandMethod::standart;
+	m_RandomMethod = RandMethod::standard;
 }
 
 void Settings::setFilePath(string fileName)
 {
+	if (fileName.empty())
+		return;
+
 	WriteLock wLock(m_Lock);
 	m_FilePath = fileName;
 	m_DataSelected = true;
