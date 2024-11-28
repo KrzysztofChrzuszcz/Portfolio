@@ -36,6 +36,8 @@ public:
 
 private:
     void                changeState(Stage newState);    //!< Changes engine state
+    bool                validate();                     //!< Validates loaded data
+
     void                waitForOrder();                 //!< Idle state method. Depends on settings and menu buttons
     void                loadData();                     //!< Load and adjust data from selected input file if the one is correct
     void                processData();                  //!< Calculate entries and pass them to main GUI part

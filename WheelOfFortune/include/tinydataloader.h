@@ -18,5 +18,8 @@ class TinyDataLoader : public DataLoader
 public:
     virtual                         ~TinyDataLoader() = default;
     virtual bool                    loadXml(const char* path) override;
+
+private:
+    string                          depolonise(const std::wstring& text);   //!< Changes all polish characters in given text to its Latin form.
 };
 #endif //TINYDATALOADER_H

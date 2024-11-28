@@ -25,13 +25,21 @@ enum class RandMethod // ?Entropy // TODO2: maybe give seed to choose instead, o
 //https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine
 };
 
+enum class DataState
+{
+    NotSelected,
+    Selected,
+    Loaded,
+    Ready
+};
+
 class   CustomOpenGlWidget;
 
 /**
  * \brief Settings class to store and configure all program settings.
  * Some of them are accessible by GUI menu (TODO part)
  */
-class Settings /* TODO : public QWidget*/
+class Settings
 {
     friend class    SettingsWidget; // Writer
     friend class    Engine; // Reader/Writer
@@ -39,30 +47,28 @@ class Settings /* TODO : public QWidget*/
 public:
                     Settings();
 
-    inline float    getMinColorBrightness() const { return m_MinColorBrightness; }
-    inline bool*    getDataReady() const { return &m_DataReady; }
-    void            setFilePath(string fileName);
-    void            drawLots();    // Initiate fortune draw
+    inline float    getMinColorBrightness() const { return m_MinColorBrightness; } //!< Inform about currently set minimum color brightness level used to auto adjust colors
+    bool            isDataReady() const noexcept;   //!< Returns true only when loaded data are ready to use
+    void            setFilePath(string fileName);   //!< Set selected file path to load attempt
+    void            drawLots();                     //!< Initiate fortune draw
 
 private:
-    bool            m_DataSelected;
-    bool            m_DataProcessed;
-    mutable bool    m_DataReady;
+    DataState       m_DataState;
     bool            m_DrawLots;
+    Lock            m_Lock;
+
     bool            m_AutoStart;
     bool            m_AutoAdjust;
     string          m_FilePath;
     float           m_MinColorBrightness;
     int             m_ScreenRefreshFrequencyIndex;
     vector<uint>    m_ScreenRefreshFrequencies;
-    int             m_MinAngle; // https://stackoverflow.com/questions/17361885/range-slider-in-qt-two-handles-in-a-qslider / https://github.com/ThisIsClark/Qt-RangeSlider
-    int             m_MaxAngle; // super / range slider for both BUT In first version two sliders
-    int             m_MaxPositionsAmount; 
+    int             m_MinAngle;
+    int             m_MaxAngle; 
     int             m_MaxDurationTime;
     int             m_MinRandRange;
-    int             m_MaxRandRange; // super / range slider for both
+    int             m_MaxRandRange;
     RandMethod      m_RandomMethod;
 
-    Lock            m_Lock;
 };
 #endif //SETTINGS_H

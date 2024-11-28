@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+	<options>
+		<option color="green">Książka</option>
+		<option color="gray">Trening</option>
+		<option color="White">Kodowanie</option>
+		<option color="red">Naprawa</option>
+		<option color="magenta">Nauka</option>
+		<option color="yellow">Angielski</option>
+	</options>
+</root>
