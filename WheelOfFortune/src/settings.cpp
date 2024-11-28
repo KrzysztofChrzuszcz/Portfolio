@@ -7,9 +7,6 @@ Settings::Settings()
 
 	m_MinColorBrightness = 0.23f;
 
-	m_DataSelected = false;
-	m_DataProcessed = false;
-	m_DataReady = false;
 	
 	m_AutoStart = false;
 	m_DrawLots = false;
@@ -18,7 +15,6 @@ Settings::Settings()
 
 	m_MinAngle = 20;
 	m_MaxAngle = 30;
-	m_MaxPositionsAmount = 360.f / m_MinAngle;
 
 	m_MaxDurationTime = 12;
 
@@ -26,6 +22,12 @@ Settings::Settings()
 	m_MaxRandRange = 3000;
 
 	m_RandomMethod = RandMethod::standard;
+	m_DataState = DataState::NotSelected;
+}
+
+bool Settings::isDataReady() const
+{
+	return m_DataState == DataState::Ready;
 }
 
 void Settings::setFilePath(string fileName)
@@ -33,10 +35,13 @@ void Settings::setFilePath(string fileName)
 	if (fileName.empty())
 		return;
 
-	WriteLock wLock(m_Lock);
-	m_FilePath = fileName;
-	m_DataSelected = true;
-	m_DataProcessed = false;
+	/// It is forbidden to modify state and name in consequence during data validation and processing
+	if (m_DataState == DataState::NotSelected || m_DataState == DataState::Ready)
+	{
+		WriteLock wLock(m_Lock);
+		m_FilePath = fileName;
+		m_DataState = DataState::Selected;
+	}
 }
 
 void Settings::drawLots()

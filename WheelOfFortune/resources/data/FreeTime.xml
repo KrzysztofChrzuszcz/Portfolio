@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+	<options>
+		<option color="0.0,1.0,0.0,1.0">Coding</option>
+		<option color="0.5,0.5,0.5,1.0">IT book</option>
+		<option color="1.0,1.0,1.0,1.0">Soft skills</option>
+		<option color="0.0,1.0,1.0,1.0">Fix things</option>
+		<option color="1.0,0.0,1.0,1.0">Trening</option>
+		<option color="1.0,0.0,0.0,1.0">YT Tutorial</option>
+		<option color="1.0,1.0,0.0,1.0">English</option>
+	</options>
+</root>

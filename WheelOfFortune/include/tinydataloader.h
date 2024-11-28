@@ -18,5 +18,8 @@ class TinyDataLoader : public DataLoader
 public:
     virtual                         ~TinyDataLoader() = default;
     virtual bool                    loadXml(const char* path) override;
+
+private:
+    string                          depolonise(const std::wstring& text);
 };
 #endif //TINYDATALOADER_H

@@ -9,6 +9,8 @@
 #include "qtwheeloffortune.h"
 #endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
 
+#include <functional>
+
 #include <QCoreApplication>
 #include <QOpenGLFunctions>
 
@@ -49,7 +51,7 @@ void CustomOpenGlWidget::paintGL()
 
 void CustomOpenGlWidget::bindWithSettings(const Settings& settings)
 {
-    m_WhelOfFortune.get()->m_Ready = settings.getDataReady();
+    m_WhelOfFortune.get()->isDataReady = std::bind(&Settings::isDataReady, &settings);
 }
 
 void CustomOpenGlWidget::initializeGL()

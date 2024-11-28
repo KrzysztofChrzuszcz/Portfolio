@@ -77,15 +77,6 @@ bool QtDataLoader::loadXml(const char* path)
                     m_DataCorrupted = true;
                     reader.skipCurrentElement();
                 }
-
-            if (m_MaxPositionsAmount)
-                if (m_Entries.size() <= 1 || m_Entries.size() > m_MaxPositionsAmount)
-                {
-                    m_DataCorrupted = true;
-                    m_ErrorFlags.set(3);
-                    fullSuccess = false;
-                    qDebug("It is not possible to visualize %d position with given settings for range of pie piece angle!\n", m_Entries.size());
-                }
         }
         else
         {

@@ -198,7 +198,6 @@ void SettingsWidget::setMinPieAngle(int value)
         if (m_Ui->minPieAngle_display)
             m_Ui->minPieAngle_display->display(m_Settings.m_MinAngle);
         float max = 360.f / (float)m_Settings.m_MinAngle;
-        m_Settings.m_MaxPositionsAmount = 360.f / m_Settings.m_MinAngle; // !!! TODO: minimum 2 pozycje; Sprawdzic czy na styku nie nalezy poprawic < na <= np.
     }
 }
 

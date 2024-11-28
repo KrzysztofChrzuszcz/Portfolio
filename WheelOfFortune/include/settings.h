@@ -25,6 +25,14 @@ enum class RandMethod // ?Entropy // TODO2: maybe give seed to choose instead, o
 //https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine
 };
 
+enum class DataState
+{
+    NotSelected,
+    Selected,
+    Loaded,
+    Ready
+};
+
 class   CustomOpenGlWidget;
 
 /**
@@ -40,29 +48,27 @@ public:
                     Settings();
 
     inline float    getMinColorBrightness() const { return m_MinColorBrightness; }
-    inline bool*    getDataReady() const { return &m_DataReady; }
+    bool            isDataReady() const;
     void            setFilePath(string fileName);
     void            drawLots();    // Initiate fortune draw
 
 private:
-    bool            m_DataSelected;
-    bool            m_DataProcessed;
-    mutable bool    m_DataReady;
+    DataState       m_DataState;
     bool            m_DrawLots;
+    Lock            m_Lock;
+
     bool            m_AutoStart;
     bool            m_AutoAdjust;
     string          m_FilePath;
     float           m_MinColorBrightness;
     int             m_ScreenRefreshFrequencyIndex;
     vector<uint>    m_ScreenRefreshFrequencies;
-    int             m_MinAngle; // https://stackoverflow.com/questions/17361885/range-slider-in-qt-two-handles-in-a-qslider / https://github.com/ThisIsClark/Qt-RangeSlider
-    int             m_MaxAngle; // super / range slider for both BUT In first version two sliders
-    int             m_MaxPositionsAmount; 
+    int             m_MinAngle;
+    int             m_MaxAngle; 
     int             m_MaxDurationTime;
     int             m_MinRandRange;
-    int             m_MaxRandRange; // super / range slider for both
+    int             m_MaxRandRange;
     RandMethod      m_RandomMethod;
 
-    Lock            m_Lock;
 };
 #endif //SETTINGS_H
