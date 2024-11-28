@@ -39,7 +39,7 @@ class   CustomOpenGlWidget;
  * \brief Settings class to store and configure all program settings.
  * Some of them are accessible by GUI menu (TODO part)
  */
-class Settings /* TODO : public QWidget*/
+class Settings
 {
     friend class    SettingsWidget; // Writer
     friend class    Engine; // Reader/Writer
@@ -47,10 +47,10 @@ class Settings /* TODO : public QWidget*/
 public:
                     Settings();
 
-    inline float    getMinColorBrightness() const { return m_MinColorBrightness; }
-    bool            isDataReady() const;
-    void            setFilePath(string fileName);
-    void            drawLots();    // Initiate fortune draw
+    inline float    getMinColorBrightness() const { return m_MinColorBrightness; } //!< Inform about currently set minimum color brightness level used to auto adjust colors
+    bool            isDataReady() const noexcept;   //!< Returns true only when loaded data are ready to use
+    void            setFilePath(string fileName);   //!< Set selected file path to load attempt
+    void            drawLots();                     //!< Initiate fortune draw
 
 private:
     DataState       m_DataState;

@@ -82,26 +82,26 @@ void Engine::changeState(Stage newState)
 
 bool Engine::validate()
 {
-	int etriesAmount = m_DataLoader.getEntriesCount();
+	int entriesAmount = m_DataLoader.getEntriesCount();
 	int maxPositionsAmount = 360.f / m_Settings.m_MinAngle;
 
 	// Check entries amount 
 	/// There is only point to visualise at least 2 positions and it is not possible to visualize more then max amount with given min pie angle range setting
-	if (etriesAmount <= 1 || etriesAmount > maxPositionsAmount)
+	if (entriesAmount <= 1 || entriesAmount > maxPositionsAmount)
 		m_DataLoader.setErrorFlag(3);
 
 	// Check pie angle range
-	float pieAngle = 360.f / etriesAmount;
-	bool anglePosibleToVisualise = false;
+	float pieAngle = 360.f / entriesAmount;
+	bool anglePossibleToVisualise = false;
 	for (int duplications = 1; duplications < g_MaxDuplications; duplications++)
 	{
 		if (pieAngle / duplications >= m_Settings.m_MinAngle && pieAngle / duplications <= m_Settings.m_MaxAngle)
 		{
-			anglePosibleToVisualise = true;
+			anglePossibleToVisualise = true;
 			break;
 		}
 	}
-	if (!anglePosibleToVisualise)
+	if (!anglePossibleToVisualise)
 		m_DataLoader.setErrorFlag(3);
 
 	return !m_DataLoader.isCorrupted();
