@@ -6,7 +6,7 @@
 
 const double M_PHI = (1.0 + sqrt(5)) / 2.0;
 const int g_MinimumDurationTime = 8;
-const int g_MaxDuplications = 24; // 360 / 15 (minimal pie angle range in settings)
+const int g_MaxDuplications = 24; // = 360 / 15 (minimal pie angle range in settings)
 
 Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 	m_MainWindow(mainWindow),
@@ -237,7 +237,6 @@ void Engine::waitForOrder()
 
 void Engine::fortuneDraw()
 {
-
 	setRandomMethod(static_cast<int>(m_Settings.m_RandomGenerator));
 
 	double randomAngle;

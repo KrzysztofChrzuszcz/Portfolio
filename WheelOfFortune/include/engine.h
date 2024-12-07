@@ -40,8 +40,8 @@ private:
     void                changeState(Stage newState);    //!< Changes engine state
     bool                validate();                     //!< Validates loaded data
 
-    // Example usage of functionPointer instead preferred std::function (suits demonstration purpose)
-    void                (Engine::* generateRandData)(double&, int&); //!< Function pointer to use selected generate method
+    // Example usage of function pointer instead preferred std::function (suits demonstration purpose)
+    void                (Engine::*generateRandData)(double&, int&); //!< Function pointer to use selected generate method
     void                generateRandDataWithStandardRand(double& randomAngle, int& durationInSeconds); //!< Use Standard rand STL method to generate data
     template <typename T>
     void                generateRandDataTemplate(double& randomAngle, int& durationInSeconds) //!< Use given STL generator method to generate data  {Knuth B, Minstd, ranlux24, mt19937, Subtract With Carry Engine}
