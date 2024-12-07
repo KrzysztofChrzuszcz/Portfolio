@@ -2,15 +2,18 @@
 #include "customopenglwidget.h"
 
 #include <cmath>
+#include <stdexcept>
 
 const double M_PHI = (1.0 + sqrt(5)) / 2.0;
+const int g_MinimumDurationTime = 8;
 
 Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 	m_MainWindow(mainWindow),
 	m_Settings(mainWindow.getSettings()),
 	m_DataLoader(dataLoader),
 	m_WheelOfFortune(nullptr),
-	m_Stage(Stage::Idle)
+	m_Stage(Stage::Idle),
+	generateRandData(nullptr)
 {
 	m_CurrentAngle = 0;
 	m_FastAnimationAngle = 0;
@@ -68,6 +71,33 @@ void Engine::run()
 	}
 }
 
+void Engine::setRandomGenerator(int index)
+{
+	switch (index)
+	{
+		case 0:
+			generateRandData = &Engine::generateRandDataWithStandardRand;
+			break;
+		case 1:
+			generateRandData = &Engine::generateRandDataTemplate<std::knuth_b>;
+			break;
+		case 2:
+			generateRandData = &Engine::generateRandDataTemplate<std::minstd_rand>;
+			break;
+		case 3:
+			generateRandData = &Engine::generateRandDataTemplate<std::ranlux24>;
+			break;
+		case 4:
+			generateRandData = &Engine::generateRandDataTemplate<std::mt19937>;
+			break;
+		case 5:
+			generateRandData = &Engine::generateRandDataTemplate<std::subtract_with_carry_engine<unsigned, 24, 10, 24>>;
+			break;
+		default:
+			throw std::out_of_range("Invalid RandGenerator value");
+	}
+}
+
 uint Engine::getScreenRefreshFrequency()
 {
 	ReadLock rLock(m_Settings.m_Lock);
@@ -77,6 +107,20 @@ uint Engine::getScreenRefreshFrequency()
 void Engine::changeState(Stage newState)
 {
 	m_Stage = newState;
+}
+
+void Engine::generateRandDataWithStandardRand(double& randomAngle, int& durationInSeconds)
+{
+	ReadLock rLock(m_Settings.m_Lock);
+
+	std::srand(time(NULL));
+
+	if (m_Settings.m_MaxRandRange != m_Settings.m_MinRandRange)
+		randomAngle = static_cast<double>(std::rand() % (m_Settings.m_MaxRandRange - m_Settings.m_MinRandRange) + m_Settings.m_MinRandRange);
+	else
+		randomAngle = m_Settings.m_MinRandRange;
+
+	durationInSeconds = g_MinimumDurationTime + std::rand() % m_Settings.m_MaxDurationTime;
 }
 
 void Engine::loadData()
@@ -167,16 +211,21 @@ void Engine::waitForOrder()
 
 void Engine::fortuneDraw()
 {
-	std::srand(time(NULL));
-	ReadLock rLock(m_Settings.m_Lock);
+
+	setRandomGenerator(static_cast<int>(m_Settings.m_RandomGenerator));
 
 	double randomAngle;
-	if (m_Settings.m_MaxRandRange != m_Settings.m_MinRandRange)
-		randomAngle = static_cast<double>(std::rand() % (m_Settings.m_MaxRandRange - m_Settings.m_MinRandRange) + m_Settings.m_MinRandRange);
-	else
-		randomAngle = m_Settings.m_MinRandRange;
+	int durationInSeconds;
 
-	int durationInSeconds = 8 + std::rand() % m_Settings.m_MaxDurationTime;
+	if (generateRandData == nullptr)
+	{
+		changeState(Stage::Idle);
+		throw std::out_of_range("Invalid RandGenerator value");
+		// TODO: Log
+		return;
+	}
+
+	(this->*generateRandData)(randomAngle, durationInSeconds);
 
 	double goldenRatio = 1.f / M_PHI;
 	m_FastAnimationAngle = randomAngle * goldenRatio;

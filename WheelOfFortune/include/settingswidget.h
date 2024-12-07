@@ -33,7 +33,7 @@ private:
 private slots:
     void                                    setAutoStart(int state);
     void                                    setAutoAdjust(int state);
-    void                                    setRandMethod(int index);
+    void                                    setRandGenerator(int index);
     void                                    setRefreshFrequency(int index);
     void                                    setMinBrightness(int value);
     void                                    setMaxTime(int value);

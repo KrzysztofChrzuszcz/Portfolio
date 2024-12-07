@@ -15,14 +15,14 @@ typedef std::shared_lock< Lock >  ReadLock;
 typedef unsigned int uint;
 
 
-enum class RandMethod // ?Entropy // TODO2: maybe give seed to choose instead, or too
+enum class RandGenerator : int
 {
-    standard = 0,
-    linear = 1,
-    minstd_rand = 2,
-    ranlux24 = 3,
-    mt19937 = 4
-//https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine
+    standard = 0,                   // Standard LCG (Linear Congruential Generator)
+    knuth_b = 1,                    // Knuth B generator, based on the shift register method
+    minstd_rand = 2,                // minstd_rand generator (LCG - Linear Congruential Generator)
+    ranlux24 = 3,                   // Ranlux24 generator (high quality, 24-bit precision)
+    mt19937 = 4,                    // Mersenne Twister generator (good general-purpose generator)
+    subtract_with_carry_engine = 5  // Subtract with Carry generator (numerical method)
 };
 
 class   CustomOpenGlWidget;
@@ -61,7 +61,7 @@ private:
     int             m_MaxDurationTime;
     int             m_MinRandRange;
     int             m_MaxRandRange; // super / range slider for both
-    RandMethod      m_RandomMethod;
+    RandGenerator   m_RandomGenerator;
 
     Lock            m_Lock;
 };

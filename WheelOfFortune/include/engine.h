@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 
 #include <memory>
+#include <random> 
 
 /**
  * \brief Engine is core class of Wheel Of Fortune project.
@@ -32,10 +33,31 @@ public:
                         ~Engine();
 
     void                run();
+    void                setRandomGenerator(int index);
     uint                getScreenRefreshFrequency();
 
 private:
     void                changeState(Stage newState);    //!< Changes engine state
+    void                (Engine::* generateRandData)(double&, int&); //!< Function pointer to use selected generate method
+    void                generateRandDataWithStandardRand(double& randomAngle, int& durationInSeconds); //!< Use Standard rand STL method to generate data
+    template <typename T>
+    void                generateRandDataTemplate(double& randomAngle, int& durationInSeconds) //!< Use given STL generator method to generate data  {Knuth B, Minstd, ranlux24, mt19937, Subtract With Carry Engine}
+    {
+        ReadLock rLock(m_Settings.m_Lock);
+
+        std::random_device rd;
+        T genEngine(rd());
+        std::uniform_real_distribution<double> angleDist(m_Settings.m_MinRandRange, m_Settings.m_MaxRandRange);
+
+        if (m_Settings.m_MaxRandRange != m_Settings.m_MinRandRange)
+            randomAngle = angleDist(genEngine);
+        else
+            randomAngle = m_Settings.m_MinRandRange;
+
+        std::uniform_int_distribution<int> durationDist(g_MinimumDurationTime, g_MinimumDurationTime + m_Settings.m_MaxDurationTime);
+
+        durationInSeconds = durationDist(genEngine);
+    }
     void                waitForOrder();                 //!< Idle state method. Depends on settings and menu buttons
     void                loadData();                     //!< Load and adjust data from selected input file if the one is correct
     void                processData();                  //!< Calculate entries and pass them to main GUI part

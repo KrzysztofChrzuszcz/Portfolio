@@ -25,7 +25,7 @@ Settings::Settings()
 	m_MinRandRange = 2500;
 	m_MaxRandRange = 3000;
 
-	m_RandomMethod = RandMethod::standard;
+	m_RandomGenerator = RandGenerator::standard;
 }
 
 void Settings::setFilePath(string fileName)
