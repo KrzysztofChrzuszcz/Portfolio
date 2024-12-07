@@ -21,11 +21,11 @@ Settings::Settings()
 	m_MinRandRange = 2500;
 	m_MaxRandRange = 3000;
 
-	m_RandomMethod = RandMethod::standard;
+	m_RandomGenerator = RandGenerator::standard;
 	m_DataState = DataState::NotSelected;
 }
 
-bool Settings::isDataReady() const
+bool Settings::isDataReady() const noexcept
 {
 	return m_DataState == DataState::Ready;
 }

@@ -50,8 +50,8 @@ void SettingsWidget::connectControllers()
         connect(m_Ui->autostart_checkBox, SIGNAL(stateChanged(int)), this, SLOT(setAutoStart(int)));
     if (m_Ui->autoAdjust_checkBox)
         connect(m_Ui->autoAdjust_checkBox, SIGNAL(stateChanged(int)), this, SLOT(setAutoAdjust(int)));
-    if (m_Ui->randMethod_comboBox)
-        connect(m_Ui->randMethod_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setRandMethod(int)));
+    if (m_Ui->randGenerator_comboBox)
+        connect(m_Ui->randGenerator_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setRandGenerator(int)));
     if (m_Ui->refreshFrequency_comboBox)
         connect(m_Ui->refreshFrequency_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setRefreshFrequency(int)));
     if (m_Ui->minBrightness_slider)
@@ -83,8 +83,8 @@ void SettingsWidget::setInitValues()
     if (m_Ui->autoAdjust_checkBox)
         m_Ui->autoAdjust_checkBox->setChecked(m_Settings.m_AutoAdjust);
 
-    if (m_Ui->randMethod_comboBox)
-        m_Ui->randMethod_comboBox->setCurrentIndex((int)m_Settings.m_RandomMethod); // TODO: Get back to it when Rand Methods will be ready. Use dynamic initialization.
+    if (m_Ui->randGenerator_comboBox)
+        m_Ui->randGenerator_comboBox->setCurrentIndex(static_cast<int>(m_Settings.m_RandomGenerator));
 
     if (m_Ui->refreshFrequency_comboBox)
     {       
@@ -153,10 +153,10 @@ void SettingsWidget::setAutoAdjust(int state)
         m_Settings.m_AutoAdjust = m_Ui->autoAdjust_checkBox->isChecked();
 }
 
-void SettingsWidget::setRandMethod(int index)
+void SettingsWidget::setRandGenerator(int index)
 {
     WriteLock wLock(m_Settings.m_Lock);
-    m_Settings.m_RandomMethod = RandMethod(index);
+    m_Settings.m_RandomGenerator = RandGenerator(index);
 }
 
 void SettingsWidget::setRefreshFrequency(int index)

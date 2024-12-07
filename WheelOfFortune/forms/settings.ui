@@ -82,20 +82,20 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Rand method</string>
+         <string>Random generator</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="randMethod_comboBox">
+       <widget class="QComboBox" name="randGenerator_comboBox">
         <item>
          <property name="text">
-          <string>standart</string>
+          <string>standard LCG</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>linear</string>
+          <string>Knuth B</string>
          </property>
         </item>
         <item>
@@ -110,7 +110,12 @@
         </item>
         <item>
          <property name="text">
-          <string>mt19937</string>
+          <string>Mersenne Twister</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>subtract with Carry</string>
          </property>
         </item>
        </widget>
