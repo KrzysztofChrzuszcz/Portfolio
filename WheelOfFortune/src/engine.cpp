@@ -6,6 +6,7 @@
 
 const double M_PHI = (1.0 + sqrt(5)) / 2.0;
 const int g_MinimumDurationTime = 8;
+const int g_MaxDuplications = 24; // 360 / 15 (minimal pie angle range in settings)
 
 Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 	m_MainWindow(mainWindow),
@@ -109,6 +110,34 @@ void Engine::changeState(Stage newState)
 	m_Stage = newState;
 }
 
+bool Engine::validate()
+{
+	int entriesAmount = m_DataLoader.getEntriesCount();
+	int maxPositionsAmount = 360.f / m_Settings.m_MinAngle;
+
+	// Check entries amount 
+	/// There is only point to visualise at least 2 positions and it is not possible to visualize more then max amount with given min pie angle range setting
+	if (entriesAmount <= 1 || entriesAmount > maxPositionsAmount)
+		m_DataLoader.setErrorFlag(3);
+
+	// Check pie angle range
+	float pieAngle = 360.f / entriesAmount;
+	bool anglePossibleToVisualise = false;
+	for (int duplications = 1; duplications < g_MaxDuplications; duplications++)
+	{
+		if (pieAngle / duplications >= m_Settings.m_MinAngle && pieAngle / duplications <= m_Settings.m_MaxAngle)
+		{
+			anglePossibleToVisualise = true;
+			break;
+		}
+	}
+
+	if (!anglePossibleToVisualise)
+		m_DataLoader.setErrorFlag(3);
+
+	return !m_DataLoader.isCorrupted();
+}
+
 void Engine::generateRandDataWithStandardRand(double& randomAngle, int& durationInSeconds)
 {
 	ReadLock rLock(m_Settings.m_Lock);
@@ -127,21 +156,20 @@ void Engine::loadData()
 {
 	WriteLock wLock(m_Settings.m_Lock);
 
-	m_DataLoader.setMaxPositions(m_Settings.m_MaxPositionsAmount);
-	if (m_DataLoader.loadXml(m_Settings.m_FilePath.c_str())) /// NOTE: TinyDataLoader has issue with special signs in path (like polish)... also in Entry m_Name
+	if (m_DataLoader.loadXml(m_Settings.m_FilePath.c_str()) && validate())
 	{
+		m_Settings.m_DataState = DataState::Loaded;
 		if (m_Settings.m_AutoAdjust)
 			m_DataLoader.adjust(m_Settings);
 
-		m_Settings.m_DataProcessed = false;
 		changeState(Stage::Processing);
 	}
 	else
 	{
 		if (m_DataLoader.isCorrupted())
 			m_MainWindow.alarmLoadingDataError(m_DataLoader.getErrorFlags());
-		m_Settings.m_DataSelected = false;
-		m_Settings.m_DataProcessed = false;
+
+		m_Settings.m_DataState = DataState::NotSelected;
 		changeState(Stage::Idle);
 	}
 }
@@ -152,26 +180,26 @@ void Engine::processData()
 
 	const vector<Entry>& entries = m_DataLoader.getEntries();
 	int noOfVatiants = entries.size();
-	int duplicationsAmount = 0;
 	float basicPieAngle = -1;
 	if (noOfVatiants > 0)
 		basicPieAngle = 360.f / noOfVatiants;
 
 	float optimalPieAngle = basicPieAngle;
-	int divisor = 0;
 
-	int outCounter = 0;
-	while (optimalPieAngle < m_Settings.m_MinAngle || optimalPieAngle > m_Settings.m_MaxAngle)
+	/// Find smallest possible angle in given range
+	int duplicationsAmount = 0;
+	for (int divisor = 2; divisor <= g_MaxDuplications; ++divisor)
 	{
-		optimalPieAngle = basicPieAngle / ++divisor;
-		if (++outCounter > 99)
-			throw std::runtime_error("Engine::processData ERROR");
-	}
+		if (duplicationsAmount > 0)
+			if (!(basicPieAngle / divisor >= m_Settings.m_MinAngle && basicPieAngle / divisor <= m_Settings.m_MaxAngle))
+				break;
 
-	if (divisor)
-	{
-		duplicationsAmount = divisor;
-		optimalPieAngle = 360.0f / (noOfVatiants * duplicationsAmount);
+		if (basicPieAngle / divisor >= m_Settings.m_MinAngle && basicPieAngle / divisor <= m_Settings.m_MaxAngle)
+		{
+			optimalPieAngle = basicPieAngle / divisor;
+			duplicationsAmount = divisor;
+			// In range is wide maybe there is smaller possible pie angle
+		}
 	}
 
 	if (m_WheelOfFortune)
@@ -179,8 +207,7 @@ void Engine::processData()
 	if (!m_OpenGlWidget.expired())
 		(*m_OpenGlWidget.lock()).update();
 
-	m_Settings.m_DataProcessed = true;
-	m_Settings.m_DataReady = true;
+	m_Settings.m_DataState = DataState::Ready;
 	
 	if (m_Settings.m_AutoStart)	// NOTE: m_AutoStart in settings should only change m_Settings.m_DrawLots on true
 		changeState(Stage::FortuneDraw);
@@ -192,15 +219,14 @@ void Engine::waitForOrder()
 {
 	WriteLock wLock(m_Settings.m_Lock);
 
-	if (m_Settings.m_DataSelected  && !m_Settings.m_DataProcessed)
+	if(m_Settings.m_DataState == DataState::Selected)
 	{
 		if (m_WheelOfFortune) // TODO: clear later (after Task9)
 			m_WheelOfFortune->resetHighlight();
 
-		m_Settings.m_DataReady = false;
 		changeState(Stage::DataLoading);
 	}
-	if (m_Settings.m_DataReady && m_Settings.m_DrawLots)
+	if (m_Settings.m_DataState == DataState::Ready && m_Settings.m_DrawLots)
 	{
 		if (m_WheelOfFortune) // TODO: clear later (after Task9)
 			m_WheelOfFortune->resetHighlight();

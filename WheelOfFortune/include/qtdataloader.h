@@ -11,7 +11,7 @@
 class QtDataLoader : public DataLoader
 {
 public:
-    virtual                     ~QtDataLoader() = default;
+    virtual                     ~QtDataLoader() noexcept = default;
     virtual bool                loadXml(const char* path) override;
 
 };

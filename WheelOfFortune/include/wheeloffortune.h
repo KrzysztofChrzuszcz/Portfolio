@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 typedef unsigned int uint;
 
@@ -43,7 +44,7 @@ public:
     void                resetHighlight();       //!< Cancel winning piece highlight
 
 public:
-    bool*               m_Ready;                //!< Link to extern information of finished preparations to start animation
+    std::function<bool()> isDataReady;          //!< Binded function to extern information of finished preparations to start animation
 
 protected:
     Size                m_Size;                 //!< Size of canvas to present maximized wheel of fortune with decorations.

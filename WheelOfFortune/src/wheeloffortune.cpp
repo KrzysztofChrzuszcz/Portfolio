@@ -11,7 +11,6 @@ WheelOfFortune::WheelOfFortune()
 {
 	m_Size = { g_DefaultSize, g_DefaultSize };
 	m_Result = nullptr;
-	m_Ready = nullptr;
 	m_Rotation = 0;
 	m_PieAngle = 0;
 	m_Highlight = false;
@@ -43,7 +42,7 @@ void WheelOfFortune::paintGL(const Size& size)
 {
 	m_Size = size;
 
-	if (m_Ready && !*m_Ready) // if (m_Ready != nullptr && *m_Ready == false)
+	if (isDataReady && !isDataReady())
 	{
 		// Start view
 		drawIcon();

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<root>
+	<options>
+		<option color="5,55,255">A</option>
+		<option color="0,055,005,250">B</option>
+		<option color="0x00FFFF5A">C</option>
+	</options>
+</root>
