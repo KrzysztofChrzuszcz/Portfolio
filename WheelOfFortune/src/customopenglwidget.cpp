@@ -14,6 +14,7 @@
 #include <QCoreApplication>
 #include <QOpenGLFunctions>
 
+
 CustomOpenGlWidget::CustomOpenGlWidget(QWidget* parent):
     QOpenGLWidget(parent),
     m_Painter(this)
@@ -29,7 +30,6 @@ CustomOpenGlWidget::CustomOpenGlWidget(QWidget* parent):
     qsp.setHeightForWidth(true);
     setSizePolicy(qsp);
 }
-
 
 CustomOpenGlWidget::~CustomOpenGlWidget()
 {
@@ -56,17 +56,17 @@ void CustomOpenGlWidget::bindWithSettings(const Settings& settings)
 
 void CustomOpenGlWidget::initializeGL()
 {
- #ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
-        QOpenGLContext* context = QOpenGLWidget::context();
-        QOpenGLFunctions* functions = context->functions();
-        functions->glClearColor(0.94f, 0.94f, 0.94f, 1.0f);
+#ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
+    QOpenGLContext* context = QOpenGLWidget::context();
+    QOpenGLFunctions* functions = context->functions();
+    functions->glClearColor(0.94f, 0.94f, 0.94f, 1.0f);
 #endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
-        int argc = 1;
-        char* argv[1] = { (char*)"blind stopper" }; // C style cast as simple example
-        glutInit(&argc, argv);
-        glClearColor(0.94f, 0.94f, 0.94f, 1.0f);
+    int argc = 1;
+    char* argv[1] = { (char*)"blind stopper" }; // C style cast as simple example
+    glutInit(&argc, argv);
+    glClearColor(0.94f, 0.94f, 0.94f, 1.0f);
 #endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
 }
 

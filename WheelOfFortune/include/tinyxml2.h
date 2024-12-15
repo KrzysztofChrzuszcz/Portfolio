@@ -1,3 +1,11 @@
+#ifndef TINYXML2_INCLUDED
+#define TINYXML2_INCLUDED
+
+// ATENTION!
+// This class is external resource taken from https://github.com/leethomason/tinyxml2
+// Author: Lee Thomason 
+// License: zlib license
+
 /*
 Original code by Lee Thomason (www.grinninglizard.com)
 
@@ -20,9 +28,6 @@ must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source
 distribution.
 */
-
-#ifndef TINYXML2_INCLUDED
-#define TINYXML2_INCLUDED
 
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
 #   include <ctype.h>
