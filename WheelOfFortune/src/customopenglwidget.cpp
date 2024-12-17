@@ -72,7 +72,7 @@ void CustomOpenGlWidget::initializeGL()
 
 void CustomOpenGlWidget::resizeGL(int w, int h)
 {
-    int side = std::min(w, h);
+    int side = qMin(w, h);
     glViewport(0, 0, (GLint)side, (GLint)side);
 
     resize(side, side);
