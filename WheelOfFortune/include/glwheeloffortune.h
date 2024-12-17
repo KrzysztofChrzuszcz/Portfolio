@@ -3,6 +3,7 @@
 
 #include "wheeloffortune.h"
 
+typedef unsigned int GLuint;
 /**
  * \brief GlWheelOfFortune pure OpenGl implementation of main GUI part
  */
@@ -23,6 +24,9 @@ public:
     void            drawCircleShape(float cx, float cy, float radius, bool fill = false, bool dashed = false, int lineStripFactor = 1);
     void            drawPieShape(float radius, float angle, float rotation, bool drawJustRim = false);
     void            drawLabel(float radiusRatio, float rotationAngle, const string& name, float lineWidth, bool highlight = false);
+
+private:
+    GLuint          m_Texture; //!< Texture to display logo on welcome screen
 };
 
 #endif //GLWHEELOFFORTUNE_H

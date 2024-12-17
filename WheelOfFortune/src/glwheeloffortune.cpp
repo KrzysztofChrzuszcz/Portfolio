@@ -1,11 +1,11 @@
+﻿#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h" /// Image-loading library that supports several popular formats.
 #include "glwheeloffortune.h"
 
 #include <windows.h> // TODO: add commentary why it's important in here and readme file
-#include <GL/gl.h>
-#include <GL/GLU.h>
-#include <GL/freeglut.h>
-
+#include <GL/freeglut.h> /// Used for glutStrokeString
 #include <cmath>
+
 // Provides maximal possible precision
 const long double g_PI = acos(-1.0L);
 
@@ -18,16 +18,62 @@ void GlWheelOfFortune::configureCanvas()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
 }
 
+/**
+ * \brief GlWheelOfFortune::drawIcon() displays application logo before selecting any data to visualize.
+ * \remark Used method is very basic because I've mentioned to keep it 2D and as simple and clear as possible.
+ */
 void GlWheelOfFortune::drawIcon()
 {
-    // TODO:
-    // glBindTexture( GL_TEXTURE_2D, texture );
-    // https://community.khronos.org/t/loading-a-bitmap-image-to-use-it-as-a-texture-background-on-canvas-for-drawing/72323/8
-    
-    // glTexImage2D();
-    // https://learnopengl.com/Getting-started/Textures
+    // Below trick works only because there is only one instance of this class in application by design.
+    // Suits demonstration purpose of internal static variable inside a function.
+    // (It's rather curiosity then recommended practice).
+    static bool initialized = false; 
+    static int width;
+    static int height;
+    if (!initialized) 
+    {
+        //unsigned int texture;
+        glGenTextures(1, &m_Texture);
+        glBindTexture(GL_TEXTURE_2D, m_Texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        int nrChannels;
+        // unsigned char* data = stbi_load("M:/Repo/Portfolio/WheelOfFortune/resources/images/logo.bmp", &width, &height, &nrChannels, 0);
+        // unsigned char* data = stbi_load("M:/Repo/Portfolio/WheelOfFortune/resources/images/logo.jpg", &width, &height, &nrChannels, 0);
+        unsigned char* data = stbi_load("M:/Repo/Portfolio/WheelOfFortune/resources/images/logo.png", &width, &height, &nrChannels, 0); // Reminder: above lines left for test cases of library loading (could by used in gTest example)
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // TODO: GL_RGBA
+        }
+        else
+        {
+            // std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_Texture);
+    glColor3f(1.f, 1.f, 1.f);
+    glBegin(GL_QUADS);
+        glTexCoord2d(1.0, 1.0); glVertex2d(-0.9, -0.9);
+        glTexCoord2d(0.0, 1.0); glVertex2d(0.9, -0.9);
+        glTexCoord2d(0.0, 0.0); glVertex2d(0.9, 0.9);
+        glTexCoord2d(1.0, 0.0); glVertex2d(-0.9, 0.9);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 void GlWheelOfFortune::drawBoardContour()
@@ -85,9 +131,9 @@ void GlWheelOfFortune::drawPiePiece(const string& text, const Color& color, floa
 void GlWheelOfFortune::drawCircleShape(float cx, float cy, float radius, bool fill, bool dashed, int lineStripFactor) 
 {
     int numSegments = 360;
-    float theta = g_PI * 2.0f / float(numSegments);
-    float tangentialFactor = tanf(theta);
-    float radialFactor = cosf(theta);
+    float theta = g_PI * 2.0f / static_cast<float>(numSegments);
+    GLfloat tangentialFactor = tanf(theta);
+    GLfloat radialFactor = cosf(theta);
     GLfloat x = radius;
     GLfloat y = .0f;
 
@@ -127,27 +173,35 @@ void GlWheelOfFortune::drawCircleShape(float cx, float cy, float radius, bool fi
 
 void GlWheelOfFortune::drawPieShape(float radius, float angle, float rotation, bool drawJustRim)
 {
-    GLfloat pointAngle = .0f;
-    GLfloat wheelFactor = 360.0f / angle;
     GLfloat pointX = -radius, pointY = radius;
+    GLfloat startAngle = -angle / 2.0f;
+    GLfloat endAngle = angle / 2.0f;
+    GLfloat step = angle / (360.0f * radius);
+
     glPushMatrix();
-        glRotatef(-rotation, 0.f, 0.f, 1.f);
+    glRotatef(-rotation, 0.f, 0.f, 1.f);
+
     if (drawJustRim)
     {
         glLineWidth(4);
         glBegin(GL_LINE_LOOP);
     }
     else
+    {
         glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(0.f, 0.f);
-    // for (int i = std::floorf(-angle / 2.f); i < std::ceilf(angle / 2.f); i++) // TODO: Adjust that part to fit all input files without overlapping and cracks between pieces
-        for (int i = std::floorf(-angle / 2.f); i <= std::ceilf(angle / 2.f); i++)
-        {
-            pointAngle = 2.f * g_PI * i / angle / wheelFactor;
-            glVertex2f(cos(pointAngle) * pointX, sin(pointAngle) *  pointY);
-        } // NOTE: Needs more work. Pie pieces are a little bit in collision
+            glVertex2f(0.f, 0.f);
+    }
+
+    for (GLfloat currentAngle = startAngle; currentAngle <= endAngle; currentAngle += step)
+    {
+        GLfloat radianAngle = g_PI * currentAngle / 180.0f;
+        GLfloat x = cos(radianAngle) * pointX;
+        GLfloat y = sin(radianAngle) * pointY;
+            glVertex2f(x, y);
+    }
+
         glEnd();
-        glFlush();
+    glFlush();
     glPopMatrix();
 }
 

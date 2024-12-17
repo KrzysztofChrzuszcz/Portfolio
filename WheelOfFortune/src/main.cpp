@@ -23,7 +23,6 @@
 
 int main(int argc, char* argv[]) {
 	QApplication app(argc, argv);
-	//QDesktopWidget* desktop = QApplication::desktop();
 	Settings settings;
 	MainWindow window(settings);
 
