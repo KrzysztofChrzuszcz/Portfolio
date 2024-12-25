@@ -125,7 +125,9 @@ bool Engine::validate()
 	bool anglePossibleToVisualise = false;
 	for (int duplications = 1; duplications < g_MaxDuplications; duplications++)
 	{
-		if (pieAngle / duplications >= m_Settings.m_MinAngle && pieAngle / duplications <= m_Settings.m_MaxAngle)
+		float consideredPieAngle = pieAngle / duplications;
+
+		if (consideredPieAngle >= m_Settings.m_MinAngle && consideredPieAngle <= m_Settings.m_MaxAngle)
 		{
 			anglePossibleToVisualise = true;
 			break;
@@ -190,13 +192,15 @@ void Engine::processData()
 	int duplicationsAmount = 0;
 	for (int divisor = 2; divisor <= g_MaxDuplications; ++divisor)
 	{
+		float consideredPieAngle = basicPieAngle / divisor;
+
 		if (duplicationsAmount > 0)
-			if (!(basicPieAngle / divisor >= m_Settings.m_MinAngle && basicPieAngle / divisor <= m_Settings.m_MaxAngle))
+			if (!(consideredPieAngle >= m_Settings.m_MinAngle && consideredPieAngle <= m_Settings.m_MaxAngle))
 				break;
 
-		if (basicPieAngle / divisor >= m_Settings.m_MinAngle && basicPieAngle / divisor <= m_Settings.m_MaxAngle)
+		if (consideredPieAngle >= m_Settings.m_MinAngle && consideredPieAngle <= m_Settings.m_MaxAngle)
 		{
-			optimalPieAngle = basicPieAngle / divisor;
+			optimalPieAngle = consideredPieAngle;
 			duplicationsAmount = divisor;
 			// In range is wide maybe there is smaller possible pie angle
 		}

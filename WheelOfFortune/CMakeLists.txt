@@ -9,6 +9,7 @@ elseif(UNIX)
 endif()
 
 # TODO: ustawic zmienna srodowiskowa i dodac do readme instrukcje
+# TODO2: batch/bash dla ustawienia zmiennych srodowiskowych dolaczony do repozytorium
 set(CMAKE_TOOLCHAIN_FILE "M:/Repo/VCPKG/scripts/buildsystems/vcpkg.cmake")
 
 set(CMAKE_CONFIGURATION_TYPES "Release;RelWithDebInfo;Debug" CACHE STRING "" FORCE)
@@ -82,6 +83,10 @@ target_include_directories(WheelOfFortune PRIVATE ${SOURCE_DIR})
 
 #===================== LINKING LIBRARIES =======================#
 target_link_libraries(WheelOfFortune Qt5::Widgets Qt5::OpenGL Qt5::Xml OpenGL::GL freeglut)
+
+#===================== ENV VARIABLES for DEBUG & RelWithDEBUGInfo =======================#
+target_compile_definitions(WheelOfFortune PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")
+target_compile_definitions(WheelOfFortune PUBLIC "$<$<CONFIG:RELWITHDEBINFO>:DEBUG>")
 
 #===================== SOURCE GROUPS (FOR VISUAL STUDIO) =======================#
 

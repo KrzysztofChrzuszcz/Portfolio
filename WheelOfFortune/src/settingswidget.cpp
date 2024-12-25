@@ -18,7 +18,9 @@ SettingsWidget::~SettingsWidget()
 {
     disconnectControllers();
     delete m_Ui;
+#ifdef DEBUG
     qDebug() << "Destroyed";
+#endif // DEBUG
 }
 
 void SettingsWidget::initRangeSliders()

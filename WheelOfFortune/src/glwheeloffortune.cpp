@@ -45,9 +45,10 @@ void GlWheelOfFortune::drawIcon()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         int nrChannels;
-        // unsigned char* data = stbi_load("M:/Repo/Portfolio/WheelOfFortune/resources/images/logo.bmp", &width, &height, &nrChannels, 0);
-        // unsigned char* data = stbi_load("M:/Repo/Portfolio/WheelOfFortune/resources/images/logo.jpg", &width, &height, &nrChannels, 0);
-        unsigned char* data = stbi_load("M:/Repo/Portfolio/WheelOfFortune/resources/images/logo.png", &width, &height, &nrChannels, 0); // Reminder: above lines left for test cases of library loading (could by used in gTest example)
+        // unsigned char* data = stbi_load("resources/images/logo.bmp", &width, &height, &nrChannels, 0);
+        // unsigned char* data = stbi_load("resources/images/logo.jpg", &width, &height, &nrChannels, 0);
+        // Reminder: above lines left for test cases of library loading (could by used in gTest example)
+        unsigned char* data = stbi_load("resources/images/logo.png", &width, &height, &nrChannels, 0); // Works only while manual executable file run (not with VisualStudio debbug)
         if (data)
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // TODO: GL_RGBA
@@ -210,8 +211,9 @@ void GlWheelOfFortune::drawLabel(float radiusRatio, float rotationAngle, const s
     // TODO2: New way of text rendering
     // https://learnopengl.com/In-Practice/Text-Rendering
     // https://www.youtube.com/watch?v=QRw3nMffPDk&list=PLysLvOneEETPlOI_PI4mJnocqIpr2cSHS&index=34
-    
-    GLfloat r = min( (GLfloat)m_Size.m_Width / 2.f, (GLfloat)m_Size.m_Height / 2.f ) * 0.9f; /// I'd like to shift text anchor a little from contour
+    GLfloat halfWidth = (GLfloat)m_Size.m_Width / 2.f;
+    GLfloat halfHeight = (GLfloat)m_Size.m_Height / 2.f;
+    GLfloat r = min(halfWidth, halfHeight) * 0.9f; /// I'd like to shift text anchor a little from contour
 
     const unsigned char* testText = reinterpret_cast<const unsigned char*>(name.c_str());
     GLfloat textWidth = glutStrokeLengthf(GLUT_STROKE_ROMAN, testText);
@@ -227,7 +229,7 @@ void GlWheelOfFortune::drawLabel(float radiusRatio, float rotationAngle, const s
     glPushAttrib(GL_LINE_BIT | GL_LINE_SMOOTH);
         glLoadIdentity();
         gluOrtho2D(0.0, m_Size.m_Width, 0.0, m_Size.m_Height);
-        glTranslatef((GLfloat)m_Size.m_Width / 2.f, (GLfloat)m_Size.m_Height / 2.f, 0.f); /// set middle of canvas
+        glTranslatef(halfWidth, halfHeight, 0.f); /// set middle of canvas
         glColor3f(.0f, .0f, .0f);
         glRotatef(-1.f * rotationAngle, 0.f, 0.f, 1.f); // set rotation angle
         glTranslatef(0.f, -1.f * scaleFactor * textHeight / 2.f, 0.f); // adjust text anchor

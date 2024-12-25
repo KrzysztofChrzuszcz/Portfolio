@@ -33,23 +33,28 @@ bool TinyDataLoader::loadXml(const char* path)
             do
             {
                 const char* encodedText = optionElem->GetText(); 
+#ifdef DEBUG
                 printf("%s: ", encodedText);
-
+#endif // DEBUG
                 std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
                 std::wstring wtitle = converter.from_bytes(encodedText ? encodedText : "");
 
                 std::string title = depolonise(wtitle); /// Used later freeglut2 library is not applicable for polish signs. So there is a need to change all special signs to English equivalent. 
 
                 const char* color = optionElem->Attribute("color");
+#ifdef DEBUG
                 printf("%s\n", color);
-
+#endif // DEBUG
                 try
                 {
                     m_Entries.push_back({ title, Color(string(color)) });
                 }
                 catch (...)
                 {
+#ifdef DEBUG
                     printf("Nothing wrong has happen thanks to default color, but there is issue with given color: %s\n", color);
+#endif // DEBUG
+                    // TODO: log ("issue with given color: %s\n", color);
                     m_DataCorrupted = true;
 
                     try

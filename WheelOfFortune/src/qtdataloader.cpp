@@ -20,7 +20,9 @@ bool QtDataLoader::loadXml(const char* path)
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
         fullSuccess = false;
+#ifdef DEBUG
         qDebug() << "Cannot read file" << file.errorString();
+#endif // DEBUG
     }
     QXmlStreamReader reader(&file);
 
@@ -40,9 +42,10 @@ bool QtDataLoader::loadXml(const char* path)
                                 color = attributes.value("color").toString();
 
                             QString title = reader.readElementText();
+#ifdef DEBUG
                             qDebug(qPrintable(title));
                             qDebug(qPrintable(color));
-
+#endif // DEBUG
                             try
                             {
                                 m_Entries.push_back({ title.toStdString(), Color(color.toStdString()) });
@@ -51,8 +54,9 @@ bool QtDataLoader::loadXml(const char* path)
                             {
                                 m_Entries.push_back({ title.toStdString(), g_DafaultColor });
                                 m_DataCorrupted = true;
+#ifdef DEBUG
                                 qDebug("Nothing wrong has happen thanks to default color, but there is issue with given color: %s\n", color.toStdString().c_str());
-
+#endif // DEBUG
                                 try
                                 {
                                     throw;
@@ -85,7 +89,12 @@ bool QtDataLoader::loadXml(const char* path)
         }
     }
     else if (reader.hasError())
+    {
+#ifdef DEBUG      
         qDebug() << reader.errorString();
+#endif // DEBUG
+        // TODO: log error
+    }
 
     return fullSuccess;
 }

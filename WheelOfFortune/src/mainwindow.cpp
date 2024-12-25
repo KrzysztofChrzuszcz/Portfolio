@@ -15,7 +15,12 @@ MainWindow::MainWindow(Settings& settings, QWidget *parent) :
     m_Ui->setupUi(this);
     m_OpenGlWidget = std::shared_ptr<CustomOpenGlWidget>(findChild<CustomOpenGlWidget*>("customOpenGlWidget"));
     if (m_OpenGlWidget == nullptr)
+    {
+#ifdef DEBUG
         qDebug() << "ERROR: Issue with GUI form. CustmOpenGLWidget is missing!";
+#endif // DEBUG
+        // TODO: log
+    }
     else
         m_OpenGlWidget.get()->bindWithSettings(settings);
 
@@ -48,8 +53,6 @@ void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
         emit errorSignal("Amount of entries is not possible to visualize within given settings");
     if (!flags.any())
         emit errorSignal("Unknown problem with selected file");
-
-    // TODO: Problem z ustalonymi katami !! 
 }
 
 void MainWindow::displayErrorWindow(const QString& message)
