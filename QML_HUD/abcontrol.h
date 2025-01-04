@@ -10,7 +10,7 @@ class AbstractControl : public QQuickPaintedItem
     Q_OBJECT
 
     Q_PROPERTY(qreal size MEMBER m_Size WRITE setSize NOTIFY sizeChanged)
-    Q_PROPERTY(qreal value MEMBER m_Value WRITE setValue NOTIFY sizeChanged)
+    Q_PROPERTY(qreal value MEMBER m_Value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(QColor activecolor MEMBER m_ActiveColor WRITE setActiveColor NOTIFY ActiveColorChanged)
     Q_PROPERTY(QColor nonactivecolor MEMBER m_NonActiveColor WRITE setNonActiveColor NOTIFY NonActiveColorChanged)
 

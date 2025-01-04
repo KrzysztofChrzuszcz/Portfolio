@@ -1,5 +1,5 @@
-#ifndef RADIALBAR_H
-#define RADIALBAR_H
+#ifndef GAUGE_H
+#define GAUGE_H
 
 #include "abcontrol.h"
 #include <QPainter>
@@ -11,4 +11,4 @@ public:
     void paint(QPainter* painter);
 };
 
-#endif // RADIALBAR_H
+#endif // GAUGE_H

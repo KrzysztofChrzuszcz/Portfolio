@@ -138,7 +138,7 @@ Window {
 						Text {
 							id: gauge1label
 							anchors.horizontalCenter: parent.horizontalCenter 
-							text: "Speed Guage"
+							text: "Speed Gauge"
 							font.pixelSize: 18
 							color: textColor
 							transform: [
