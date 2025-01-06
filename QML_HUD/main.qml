@@ -2,21 +2,40 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
-import CustomControls 1.0 // Private own controls
+import CustomControls 1.0
+import Themes 1.0
 
 
 Window {
-	property real val: 0.0;
-	property color textColor: "black";
-	property color progressColor: "darkCyan";
+	width: 926
+    height: 428
+    visible: true
+    title: "QML_HUD"
+
+    ThemeProvider {
+        id: lightTheme
+        Component.onCompleted: {
+            if (!loadFromJson("M:/Repo/Portfolio/QML_HUD/lightTheme.json")) {
+                console.error("Failed to load light theme");
+            }
+        }
+    }
+
+    ThemeProvider {
+        id: darkTheme
+        Component.onCompleted: {
+            if (!loadFromJson("M:/Repo/Portfolio/QML_HUD/darkTheme.json")) {
+                console.error("Failed to load dark theme");
+            }
+        }
+    }
+
+    property var activeTheme: lightTheme.themeMap
+
+	property real progressValue: 0.0;
 	property bool mirror: false;
 	
 
-    width: 926
-    height: 428
-    visible: true
-    title: "Hello World"
-	
 	Rectangle {
 		anchors.fill: parent
 		
@@ -24,16 +43,15 @@ Window {
 				LayoutMirroring.enabled: mirror
 				LayoutMirroring.childrenInherit: mirror
 				anchors.fill: parent
-				color: movingRectangleId.x >= themeId.width / 2 ? "gray" : "white"
+				color: activeTheme.backgroundColor || "white"
 
 				Rectangle {
-					id: themeId // nightModeId
+					id: themeSwitchId // nightModeId
 					anchors.right: parent.right
 					anchors.top: parent.top
 					height: 50
 					width: height * 2
 					color: movingRectangleId.x >= width / 2 ? "gray" : "white"
-					// TODO: to CSS
 					border.color: "black"
 					border.width: 2
 					
@@ -53,8 +71,7 @@ Window {
 							drag.maximumX: parent.width - movingRectangleId.width
 							
 							onPositionChanged: {
-								textColor = movingRectangleId.x >= themeId.width / 2 ? "white" : "black"
-								progressColor = movingRectangleId.x >= themeId.width / 2 ? "cyan" : "darkCyan"
+								activeTheme = movingRectangleId.x >= themeSwitchId.width / 2 ? darkTheme.themeMap : lightTheme.themeMap;
 							}
 					}
 				}
@@ -71,8 +88,9 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter
 							width: 200
 							height: 200
-							activecolor: progressColor
-							value: val
+							activecolor: activeTheme.progressColor || "darkCyan"
+							dialcolor: activeTheme.textColor || "black"
+							value: progressValue
 						}
 						
 						Text {
@@ -80,7 +98,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Turbo Bar"
 							font.pixelSize: 18
-							color: textColor
+							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
 									xScale: mirror ? -1 : 1
@@ -101,7 +119,7 @@ Window {
 							width: 200
 							onValueChanged: {
 								console.log(value)
-								val = value;
+								progressValue = value;
 								}
 						}
 						
@@ -110,7 +128,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Test Input"
 							font.pixelSize: 18
-							color: textColor
+							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
 									xScale: mirror ? -1 : 1
@@ -131,8 +149,9 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter
 							width: 200
 							height: 200
-							activecolor: progressColor
-							value: val
+							activecolor: activeTheme.progressColor || "darkCyan"
+							dialcolor: activeTheme.textColor || "black"
+							value: progressValue
 						}
 						
 						Text {
@@ -140,7 +159,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Speed Gauge"
 							font.pixelSize: 18
-							color: textColor
+							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
 									xScale: mirror ? -1 : 1

@@ -8,17 +8,19 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Qml Quick)
 
+# TODO: src/ & include/
 set(SOURCES
     main.cpp
     abcontrol.cpp
     gauge.cpp
     vbar.cpp
-)
+	)
 
 set(INCLUDES
     abcontrol.h
     gauge.h
     vbar.h
+	utilities.h
 )
 
 set(RESOURCES
