@@ -19,7 +19,7 @@ void AbstractControl::paint(QPainter* painter)
 {
     paintBackground(painter);
     paintTrack(painter);
-    paintIncicator(painter);
+    paintIndicator(painter);
     paintDial(painter);
 }
 
@@ -29,6 +29,7 @@ void AbstractControl::setSize(qreal size)
         return;
     m_Size = size;
     emit sizeChanged();
+    update();
 }
 
 void AbstractControl::setMirrorView(bool mirrorview)

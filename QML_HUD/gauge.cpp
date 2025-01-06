@@ -90,7 +90,7 @@ void Gauge::paintTrack(QPainter* painter)
     painter->restore();
 }
 
-void Gauge::paintIncicator(QPainter* painter)
+void Gauge::paintIndicator(QPainter* painter)
 {
     qreal valueAngle = (((m_SpanAngle * m_Value) - m_MinValue) / (m_MaxValue - m_MinValue)) * m_SpanAngle;
     QRectF trackRect = boundingRect().adjusted(m_BoundingToTrackSpacing, m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing);

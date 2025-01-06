@@ -54,7 +54,7 @@ void VerticalBar::paintBackground(QPainter* painter)
     gradient.setColorAt(0.8, QColor(0, 0, 0, 0));
     gradient.setColorAt(1, TransparentBackgoundColor);
     painter->setBrush(gradient);
-    painter->setPen(Qt::lightGray);
+    painter->setPen(Qt::NoPen);
     painter->drawConvexPolygon(backgroundPoints, 4);
     painter->restore();
 }
@@ -74,7 +74,7 @@ void VerticalBar::paintTrack(QPainter* painter)
     painter->restore();
 }
 
-void VerticalBar::paintIncicator(QPainter* painter)
+void VerticalBar::paintIndicator(QPainter* painter)
 {
     qreal wingOffset = m_Size * 0.2 * m_Value;
     const QPointF progressBarPoints[4] = {

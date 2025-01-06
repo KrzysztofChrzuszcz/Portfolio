@@ -22,10 +22,10 @@ public:
     void    setProgressWidth(int progresswidth);
 
 protected:
-    void    paintBackground(QPainter* painter);
-    void    paintTrack(QPainter* painter);
-    void    paintIncicator(QPainter* painter);
-    void    paintDial(QPainter* painter);
+    void    paintBackground(QPainter* painter) override;
+    void    paintTrack(QPainter* painter) override;
+    void    paintIndicator(QPainter* painter) override;
+    void    paintDial(QPainter* painter) override;
 
 private:
     void    paintMeasureMark(QPainter* painter, QRectF& outerRect, qreal angle, int i);

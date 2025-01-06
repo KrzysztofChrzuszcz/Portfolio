@@ -42,7 +42,7 @@ public:
 protected:
     virtual void    paintBackground(QPainter* painter) = 0;
     virtual void    paintTrack(QPainter* painter) = 0;
-    virtual void    paintIncicator(QPainter* painter) = 0;
+    virtual void    paintIndicator(QPainter* painter) = 0;
     virtual void    paintDial(QPainter* painter) = 0;
 
 signals:
