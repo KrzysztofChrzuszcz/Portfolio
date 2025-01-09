@@ -1,6 +1,9 @@
 # Wheel Of Fortune
 WORK IN PROGRESS
 
+![Example](resources/images/example.jpg)
+
+
 ## Add your files
 You can Add Your options to draw in folder /resources/data in XML format.
 The maximum amount of options is stricty connected with minimum pie angle in settings.
