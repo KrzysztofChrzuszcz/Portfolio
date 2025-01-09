@@ -22,6 +22,7 @@ public:
     void    setUpsideDown(bool isUpsideDown);
 
 protected:
+    void    paintBacklight(QPainter* painter) override;
     void    paintBackground(QPainter* painter) override;
     void    paintTrack(QPainter* painter) override;
     void    paintIndicator(QPainter* painter) override;
@@ -36,6 +37,7 @@ private:
     qreal   m_Angle;            //!< Angle between vertical axle and side of parallelogram
     int     m_DialLineWidth;    //!< Width of dial basic line (some lines will be slightly wider)
     bool    m_UpsideDown;       //!< Rotate control upside down
+    //      m_TrackPoints // TODO: create (track, background wings, blacklight) points calculated with m_Angle change
 
 };
 

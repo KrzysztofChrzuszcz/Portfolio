@@ -1,6 +1,7 @@
 ﻿#include "utilities.h"
 #include "gauge.h"
 #include "vbar.h"
+#include "hboard.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -8,13 +9,20 @@
 #include <QObject>
 #include <QDebug>
 
+// TODO: Umiescic w QMLach wyswietlacz wartosci i jednostki
+// TODO: Mirror
+// TODO: Poprawic rysowanie niektorych kontrolerow
+// TODO: Uwspolnic zmienne jak odleglosc od krawedzi
+// TODO: Zrefaktoryzowac wzory na rysowanie: kat w vBar, gauge ..., hBoard ...
+// TODO: uzyc shiftow i scale z QMLa
+
 int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
     qmlRegisterType<ThemeProvider>("Themes", 1, 0, "ThemeProvider");
-
+    qmlRegisterType<HorizontalBoard>("CustomControls", 1, 0, "HorizontalBoard");
     qmlRegisterType<VerticalBar>("CustomControls", 1, 0, "VerticalBar");
     qmlRegisterType<Gauge>("CustomControls", 1, 0, "Gauge");
 

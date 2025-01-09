@@ -1,26 +1,32 @@
 #include "abcontrol.h"
+#include <QPainter>
 
 AbstractControl::AbstractControl(QQuickItem* parent)
     : QQuickPaintedItem(parent),
     m_Size(200),
-    m_Value(0),
+    m_Scale(0.9),
+    m_HorizontalShift(0),
+    m_VerticalShift(0),
+    m_MirrorView(false),
     m_ActiveColor(Qt::darkCyan), // TODO: Add m_BackgroundColor based on m_ActiveColor if there is non provided
     m_NonActiveColor(Qt::lightGray),
     m_DialColor(Qt::black),
-    m_MirrorView(false),
+    m_DialFontSize(8),
     m_TrackToDialSpacing(5),
     m_MinValue(0),
     m_MaxValue(100),
-    m_DialFontSize(8)
+    m_Value(0)
 {
 }
 
 void AbstractControl::paint(QPainter* painter)
 {
+    setupView(painter);
+    paintBacklight(painter); /// We want paint backlight before background because transparency of both
     paintBackground(painter);
     paintTrack(painter);
     paintIndicator(painter);
-    paintDial(painter);
+    paintDial(painter); /// Some controls may need overlapping dial over indicator
 }
 
 void AbstractControl::setSize(qreal size)
@@ -29,6 +35,33 @@ void AbstractControl::setSize(qreal size)
         return;
     m_Size = size;
     emit sizeChanged();
+    update();
+}
+
+void AbstractControl::setScale(qreal scale)
+{
+    if (m_Scale == scale)
+        return;
+    m_Scale = scale;
+    emit scaleChanged();
+    update();
+}
+
+void AbstractControl::setHorizontalShift(int value)
+{
+    if (m_HorizontalShift == value)
+        return;
+    m_HorizontalShift = value;
+    emit horizontalShiftChanged();
+    update();
+}
+
+void AbstractControl::setVerticalShift(int value)
+{
+    if (m_VerticalShift == value)
+        return;
+    m_VerticalShift = value;
+    emit verticalShiftChanged();
     update();
 }
 
@@ -57,6 +90,24 @@ void AbstractControl::setNonActiveColor(QColor color)
         return;
     m_NonActiveColor = color;
     emit nonActiveColorChanged();
+    update();
+}
+
+void AbstractControl::setBackgroundColor(QColor color)
+{
+    if (m_BackgroundColor == color)
+        return;
+    m_BackgroundColor = color;
+    emit backgroundColorChanged();
+    update();
+}
+
+void AbstractControl::setBacklightColor(QColor color)
+{
+    if (m_BacklightColor == color)
+        return;
+    m_BacklightColor = color;
+    emit backlightColorChanged();
     update();
 }
 
@@ -112,4 +163,21 @@ void AbstractControl::setValue(qreal value)
     m_Value = value;
     emit valueChanged();
     update();
+}
+
+void AbstractControl::setupView(QPainter* painter)
+{
+    /// Scale to the center
+    painter->translate(QPoint(this->boundingRect().width() * (1.0 - m_Scale) / 2.0, this->boundingRect().height() * (1.0 - m_Scale) / 2.0));
+    painter->scale(m_Scale, m_Scale);
+
+    /// Shift display
+    painter->translate(m_HorizontalShift, m_VerticalShift);
+
+    /// Mirror view
+    if (m_MirrorView)
+    {
+        painter->translate(this->boundingRect().topRight());
+        painter->scale(-1, 1);
+    }
 }
