@@ -9,7 +9,7 @@ Gauge::Gauge(QQuickItem* parent)
     // Defaults
     m_MinValue = 0;
     m_MaxValue = 280;
-    m_SpanAngle = 280; // TODO2: zastanowic sie czy rozwazyc ujemny i obrot progressu w druga strone // TODO1: dodac walidacje dla angle ze nie moze byc wieksze niz 360, ze span dodatnie i wieksze= od jakiegos minimum np 90
+    m_SpanAngle = 280; // TODO2: zastanowic sie czy rozwazyc ujemny i obrot progressu w druga strone // TODO1: JESLI NIE == > dodac walidacje dla angle ze nie moze byc wieksze niz 360, ze span dodatnie i wieksze= od jakiegos minimum np 90
     m_StartAngle = -50;
     m_ProgressWidth = 10;
     m_BoundingToTrackSpacing = 35;
@@ -53,15 +53,46 @@ void Gauge::setProgressWidth(int progresswidth)
     update();
 }
 
+void Gauge::setupView(QPainter* painter)
+{
+    AbstractControl::setupView(painter);
+    /// Lazy approach to fix problem
+    // TODO: fix angle and directions in member paint methods
+    painter->translate(this->boundingRect().topRight());
+    painter->scale(-1, 1);
+}
+
+void Gauge::paintBacklight(QPainter* painter)
+{
+    // !! TODO: Adjust to indicator level
+    qreal valueAngle = (((m_SpanAngle * m_Value) - m_MinValue) / (m_MaxValue - m_MinValue)) * m_SpanAngle;
+    QRectF trackRect = boundingRect().adjusted(m_BoundingToTrackSpacing, m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing);
+    QPen pen = painter->pen();
+    painter->save();
+    QRadialGradient gradient(boundingRect().center(), boundingRect().width() / 2);
+    gradient.setColorAt(0.75, QColor(0, 0, 0, 0)); // TODO: Use m_BoundingToTrackSpacing to calculate value to replace 0.8
+    QColor TransparentBackgoundColor = m_BacklightColor;
+    TransparentBackgoundColor.setAlphaF(0.6);
+    gradient.setColorAt(1.0, TransparentBackgoundColor);
+    pen.setCapStyle(Qt::FlatCap);
+    int backlightWidth = 20;
+    pen.setWidth(m_ProgressWidth);
+    painter->setPen(QPen(gradient, backlightWidth, Qt::SolidLine, Qt::RoundCap));
+    QRectF valueRect = boundingRect();
+    valueRect.adjust(backlightWidth / 2, backlightWidth / 2, -backlightWidth / 2, -backlightWidth / 2);
+    painter->drawArc(valueRect, m_StartAngle * 16, valueAngle * 16);
+    painter->restore();
+}
+
 void Gauge::paintBackground(QPainter* painter)
 {
     painter->save();
     painter->setPen(Qt::NoPen);
     QRadialGradient gradient(boundingRect().center(), boundingRect().width()/2);
-    gradient.setColorAt(0.8, QColor(0, 0, 0, 0)); // TODO: Use m_BoundingToTrackSpacing to calculate value to replace 0.8
-    QColor TransparentBackgoundColor = m_ActiveColor;
-    TransparentBackgoundColor.setAlphaF(0.8);
-    gradient.setColorAt(1.0, TransparentBackgoundColor);
+    gradient.setColorAt(0.75, QColor(0, 0, 0, 0)); // TODO: Use m_BoundingToTrackSpacing to calculate value to replace 0.8
+    QColor transparentBackgoundColor = m_BackgroundColor;
+    transparentBackgoundColor.setAlphaF(0.8);
+    gradient.setColorAt(1.0, transparentBackgoundColor);
     QRectF borderRect = boundingRect(); // NOTE!: Too small!
     painter->setRenderHints(QPainter::Antialiasing, true);
     painter->setBrush(gradient);
@@ -77,8 +108,6 @@ void Gauge::paintTrack(QPainter* painter)
     QRectF trackRect = boundingRect().adjusted(m_BoundingToTrackSpacing, m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing);
     QPen pen = painter->pen();
     painter->save();
-    painter->translate(this->boundingRect().topRight());
-    painter->scale(-1, 1);
     painter->setBrush(Qt::NoBrush);
     pen.setCapStyle(Qt::FlatCap);
     pen.setWidth(m_ProgressWidth);
@@ -96,8 +125,6 @@ void Gauge::paintIndicator(QPainter* painter)
     QRectF trackRect = boundingRect().adjusted(m_BoundingToTrackSpacing, m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing);
     QPen pen = painter->pen();
     painter->save();
-    painter->translate(this->boundingRect().topRight());
-    painter->scale(-1, 1);
     painter->setBrush(Qt::NoBrush);
     pen.setCapStyle(Qt::FlatCap);
     pen.setWidth(m_ProgressWidth);
@@ -112,8 +139,8 @@ void Gauge::paintIndicator(QPainter* painter)
 void Gauge::paintDial(QPainter* painter)
 {
     painter->save();
-    painter->translate(this->boundingRect().bottomLeft());
-    painter->scale(1, -1); // TODO: Use m_MirrorView
+    painter->translate(this->boundingRect().bottomRight());
+    painter->scale(-1, -1);
     painter->setPen(Qt::NoPen);
     painter->setBrush(m_DialColor);
 
@@ -121,7 +148,7 @@ void Gauge::paintDial(QPainter* painter)
     rect.adjust(m_ProgressWidth, m_ProgressWidth, -m_ProgressWidth, -m_ProgressWidth);
     QRectF outerRect = this->boundingRect();
 
-    for (int i = 0; i <= m_MaxValue; i++)
+    for (int i = 0; i <= m_MaxValue; i++) // TODO: use m_MinValue
     {
         qreal angle = (m_StartAngle + (i * (m_SpanAngle / m_MaxValue)));
 
@@ -139,8 +166,6 @@ void Gauge::paintDial(QPainter* painter)
 inline void Gauge::paintMeasureMark(QPainter* painter, QRectF& outerRect, qreal angle, int i) // TODO: Change outerRect on trackRect for proper use of m_TrackToDialSpacing (+adjust value)
 {
     painter->save();
-    painter->translate(this->boundingRect().topRight());
-    painter->scale(-1, 1);
     painter->setPen(QPen(m_DialColor));
     // TODO: 
     qreal distanceBetterName = m_BoundingToTrackSpacing - m_TrackToDialSpacing;

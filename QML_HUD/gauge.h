@@ -4,6 +4,7 @@
 #include "abcontrol.h"
 #include <QPainter>
 
+/// Positive values for the angles mean clockwise while negative values mean the counter-clockwise direction. Zero degrees is at the 9 o'clock position.
 class Gauge : public AbstractControl
 {
     Q_OBJECT
@@ -22,6 +23,8 @@ public:
     void    setProgressWidth(int progresswidth);
 
 protected:
+    void    setupView(QPainter* painter) override;
+    void    paintBacklight(QPainter* painter) override;
     void    paintBackground(QPainter* painter) override;
     void    paintTrack(QPainter* painter) override;
     void    paintIndicator(QPainter* painter) override;

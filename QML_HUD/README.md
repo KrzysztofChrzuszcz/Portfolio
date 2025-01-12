@@ -12,6 +12,51 @@ theme.json
 
 ## Integrate with your tools
 
+# QML HUD Components
+
+## AbstractControl
+Base component providing common properties for all controls.
+
+### Properties
+- `size` (real): Size of the control rectangle (both sides are equal)
+- `scale` (real): Scale factor for the control view, centered. Default: 1.0
+- `horizontalshift` (real): Horizontal offset of the control view in pixels
+- `verticalshift` (real): Vertical offset of the control view in pixels
+- `mirrorview` (bool): Enables mirroring of the control view
+- `activecolor` (color): Color for the value indicator. Default: "darkCyan"
+- `nonactivecolor` (color): Color for the track
+- `backgroundcolor` (color): Color for the control background. Default: "darkCyan"
+- `backlightcolor` (color): Color for the backlight effect. Default: "cyan"
+- `dialcolor` (color): Color for the dial markings and text. Default: "black"
+- `dialfontsize` (int): Font size for dial labels
+- `tracktodialspacing` (int): Space between track and dial in pixels
+- `minvalue` (real): Minimum possible value. Default: 0
+- `maxvalue` (real): Maximum possible value
+- `value` (real): Current value to display
+
+## VerticalBar
+Vertical progress indicator inheriting from AbstractControl.
+
+### Additional Properties
+- `angle` (real): Rotation angle of the bar
+- `diallinewidth` (int): Width of dial lines
+- `upsidedown` (bool): Flips the bar orientation
+
+## Gauge
+Circular gauge inheriting from AbstractControl.
+
+### Additional Properties
+- `boundingtotrackspacing` (int): Space between bounding box and track
+- `spanangle` (real): Total angle span of the gauge
+- `startangle` (real): Starting angle of the gauge
+- `progresswidth` (int): Width of the progress track
+
+## HorizontalBoard
+Horizontal indicator inheriting from AbstractControl.
+
+### Additional Properties
+- `diverted` (bool): Enables diverted mode
+- `dialtype` (string): Type of dial display ("full", "upper", "bottom")
 # Editing this README
 
 When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.

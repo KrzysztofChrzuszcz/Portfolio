@@ -90,6 +90,9 @@ Window {
 							height: 200
 							activecolor: activeTheme.progressColor || "darkCyan"
 							dialcolor: activeTheme.textColor || "black"
+							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
+							backlightcolor: activeTheme.controlBacklightColor || "cyan"
+							mirrorview: mirror
 							value: progressValue
 						}
 						
@@ -114,6 +117,39 @@ Window {
 					Column {
 						anchors.bottom: parent.bottom
 						spacing: 10
+						
+						HorizontalBoard {
+							id: board1
+							anchors.horizontalCenter: parent.horizontalCenter
+							width: 200
+							height: 200
+							activecolor: activeTheme.progressColor || "darkCyan"
+							dialcolor: activeTheme.textColor || "black"
+							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
+							backlightcolor: activeTheme.controlBacklightColor || "cyan"
+							minvalue: 0
+							maxvalue: 20
+							verticalshift: 75
+							mirrorview: mirror
+							value: progressValue
+						}
+						
+						Text {
+							id: boardlabel
+							anchors.horizontalCenter: parent.horizontalCenter 
+							text: "Fuel Consumption"
+							font.pixelSize: 18
+							color: activeTheme.textColor || "black"
+							transform: [
+								Scale {
+									xScale: mirror ? -1 : 1
+									yScale: 1
+								},
+								Translate {
+									x: mirror ? boardlabel.width : 0
+								}
+							]
+						}
 						
 						Slider {
 							width: 200
@@ -151,6 +187,10 @@ Window {
 							height: 200
 							activecolor: activeTheme.progressColor || "darkCyan"
 							dialcolor: activeTheme.textColor || "black"
+							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
+							backlightcolor: activeTheme.controlBacklightColor || "cyan"
+							verticalshift: 35
+							mirrorview: mirror
 							value: progressValue
 						}
 						

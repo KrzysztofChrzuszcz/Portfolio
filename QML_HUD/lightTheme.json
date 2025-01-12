@@ -1,5 +1,7 @@
 {
 	"backgroundColor": "white",
 	"textColor": "black",
-	"progressColor": "darkCyan"
+	"progressColor": "darkCyan",
+	"controlBackgroundColor": "darkCyan",
+	"controlBacklightColor": "cyan"
 }
