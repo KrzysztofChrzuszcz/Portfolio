@@ -9,13 +9,17 @@ class HorizontalBoard : public AbstractControl
     Q_OBJECT
 
     Q_PROPERTY(bool diverted MEMBER m_Diverted  WRITE setDiverted NOTIFY divertedChanged)
-    Q_PROPERTY(QString dialtype MEMBER m_DialType  WRITE setDialType NOTIFY dialTypeChanged) // TODO: full (default) upper, bottom // TODO2: property string + enum member // TODO3: Ask AI about what it's thinking about duplications in this case
+    Q_PROPERTY(DialType dialtype MEMBER m_DialType  WRITE setDialType NOTIFY dialTypeChanged)
 
 public:
+    enum DialType { Bottom, Upper, Full };
+    Q_ENUM(DialType)
+
+
             HorizontalBoard(QQuickItem* parent = 0);
 
     void    setDiverted(bool isDiverted);
-    void    setDialType(const QString& dialType);
+    void    setDialType(DialType dialType);
 
 protected:
     void    paintBacklight(QPainter* painter) override;
@@ -29,8 +33,8 @@ signals:
     void    dialTypeChanged();
 
 private:
-    bool    m_Diverted;         //!< Diverted board indicator
-    QString m_DialType;         //!< Desired dial representation. Possible values: full, upper, bottom
+    bool        m_Diverted;        //!< Diverted board indicator
+    DialType    m_DialType;        //!< Desired dial representation
 
 };
 

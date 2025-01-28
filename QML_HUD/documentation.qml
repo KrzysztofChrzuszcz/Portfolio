@@ -1,4 +1,3 @@
-// Documentation.qml
 import QtQuick 2.15
 
 /*!
@@ -129,7 +128,7 @@ QtObject {
         Additional Properties:
         \list
             \li diverted (bool): Enables diverted mode
-            \li dialtype (string): Type of dial display ("full", "upper", "bottom")
+            \li dialtype (Enum::DialType): Type of dial display ("Full", "Upper", "Bottom")
         \endlist
         
         Example:
@@ -138,7 +137,7 @@ QtObject {
             size: 400
             scale: 1.0
             diverted: true
-            dialtype: "full"
+            dialtype: HorizontalBoard.Full
             activecolor: "darkCyan"
             nonactivecolor: "gray"
             value: 80

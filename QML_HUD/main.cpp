@@ -10,11 +10,9 @@
 #include <QDebug>
 
 // TODO: Umiescic w QMLach wyswietlacz wartosci i jednostki
-// TODO: Mirror
 // TODO: Poprawic rysowanie niektorych kontrolerow
 // TODO: Uwspolnic zmienne jak odleglosc od krawedzi
 // TODO: Zrefaktoryzowac wzory na rysowanie: kat w vBar, gauge ..., hBoard ...
-// TODO: uzyc shiftow i scale z QMLa
 
 int main(int argc, char* argv[])
 {
@@ -22,9 +20,12 @@ int main(int argc, char* argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterType<ThemeProvider>("Themes", 1, 0, "ThemeProvider");
-    qmlRegisterType<HorizontalBoard>("CustomControls", 1, 0, "HorizontalBoard");
-    qmlRegisterType<VerticalBar>("CustomControls", 1, 0, "VerticalBar");
     qmlRegisterType<Gauge>("CustomControls", 1, 0, "Gauge");
+    qmlRegisterType<HorizontalBoard>("CustomControls", 1, 0, "HorizontalBoard");
+    qRegisterMetaType<HorizontalBoard::DialType>("HorizontalBoard::DialType");
+    qmlRegisterType<VerticalBar>("CustomControls", 1, 0, "VerticalBar");
+
+    qRegisterMetaType<HorizontalBoard::DialType>("DialType");
 
     Backend backend;
     engine.rootContext()->setContextProperty("backend", &backend);

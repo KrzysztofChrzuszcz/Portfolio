@@ -64,7 +64,6 @@ void Gauge::setupView(QPainter* painter)
 
 void Gauge::paintBacklight(QPainter* painter)
 {
-    // !! TODO: Adjust to indicator level
     qreal valueAngle = (((m_SpanAngle * m_Value) - m_MinValue) / (m_MaxValue - m_MinValue)) * m_SpanAngle;
     QRectF trackRect = boundingRect().adjusted(m_BoundingToTrackSpacing, m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing, -m_BoundingToTrackSpacing);
     QPen pen = painter->pen();
