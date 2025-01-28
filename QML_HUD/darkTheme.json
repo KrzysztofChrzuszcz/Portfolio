@@ -3,5 +3,7 @@
 	"textColor": "white",
 	"progressColor": "cyan",
 	"controlBackgroundColor": "cyan",
-	"controlBacklightColor": "white"
+	"controlBacklightColor": "white",
+	"valueDisplayFontFamily": "Arial Black",
+	"labelFontFamily": "Helvetica"
 }

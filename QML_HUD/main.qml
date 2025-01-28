@@ -93,6 +93,7 @@ Window {
 							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
 							backlightcolor: activeTheme.controlBacklightColor || "cyan"
 							mirrorview: mirror
+							sideangle: 10
 							value: progressValue
 							
 							Text {
@@ -101,6 +102,7 @@ Window {
 								anchors.verticalCenter: parent.verticalCenter
 								font.pixelSize: 20
 								font.bold: true
+								font.family: activeTheme.valueDisplayFontFamily
 								color: activeTheme.textColor || "black"
 								text: Math.round(progressValue * 100) + "%"
 								transform: [
@@ -120,6 +122,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Turbo Bar"
 							font.pixelSize: 18
+							font.family: activeTheme.labelFontFamily
 							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
@@ -142,7 +145,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter
 							width: 200
 							height: 200
-							dialtype: HorizontalBoard.Upper
+							dialtype: HorizontalBoard.Bottom
 							activecolor: activeTheme.progressColor || "darkCyan"
 							dialcolor: activeTheme.textColor || "black"
 							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
@@ -159,6 +162,7 @@ Window {
 								anchors.verticalCenter: parent.verticalCenter
 								anchors.verticalCenterOffset: 40
 								font.pixelSize: 20
+								font.family: activeTheme.valueDisplayFontFamily
 								color: activeTheme.textColor || "black"
 								text: Math.round(progressValue * 200)/10 + "l/100km"
 								transform: [
@@ -178,6 +182,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Fuel Consumption"
 							font.pixelSize: 18
+							font.family: activeTheme.labelFontFamily
 							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
@@ -203,6 +208,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Test Input"
 							font.pixelSize: 18
+							font.family: activeTheme.labelFontFamily
 							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
@@ -238,6 +244,7 @@ Window {
 								anchors.verticalCenter: parent.verticalCenter
 								anchors.verticalCenterOffset: 30
 								font.pixelSize: 20
+								font.family: activeTheme.valueDisplayFontFamily
 								color: activeTheme.textColor || "black"
 								text: Math.round(progressValue * 280) + "km/h"
 								transform: [
@@ -256,6 +263,7 @@ Window {
 							id: gauge1label
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Speed Gauge"
+							font.family: activeTheme.labelFontFamily
 							font.pixelSize: 18
 							color: activeTheme.textColor || "black"
 							transform: [

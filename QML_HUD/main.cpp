@@ -25,8 +25,6 @@ int main(int argc, char* argv[])
     qRegisterMetaType<HorizontalBoard::DialType>("HorizontalBoard::DialType");
     qmlRegisterType<VerticalBar>("CustomControls", 1, 0, "VerticalBar");
 
-    qRegisterMetaType<HorizontalBoard::DialType>("DialType");
-
     Backend backend;
     engine.rootContext()->setContextProperty("backend", &backend);
 

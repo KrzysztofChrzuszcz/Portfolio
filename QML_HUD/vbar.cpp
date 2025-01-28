@@ -1,24 +1,84 @@
 #include "vbar.h"
 #include <tuple>
+#include <QtMath> 
+
+
+VerticalBar::PolygonPoints::PolygonPoints()
+{
+    m_TopLeftCorner = QPoint(-0.5, 0.5);
+    m_TopRightCorner = QPoint(0.5, 0.5);
+    m_BottomRightCorner = QPoint(0.5, -0.5);
+    m_BottomLeftCorner = QPoint(-0.5, -0.5);
+}
+
+VerticalBar::PolygonPoints::PolygonPoints(QPointF&& tl, QPointF&& tr, QPointF&& br, QPointF&& bl)
+{
+    m_TopLeftCorner = std::move(tl);
+    m_TopRightCorner = std::move(tr);
+    m_BottomRightCorner = std::move(br);
+    m_BottomLeftCorner = std::move(bl);
+}
+
+VerticalBar::PolygonPoints::PolygonPoints(PolygonPoints&& pp)
+{
+    m_TopLeftCorner = std::move(pp.m_TopLeftCorner);
+    m_TopRightCorner = std::move(pp.m_TopRightCorner);
+    m_BottomRightCorner = std::move(pp.m_BottomRightCorner);
+    m_BottomLeftCorner = std::move(pp.m_BottomLeftCorner);
+}
+
+VerticalBar::PolygonPoints& VerticalBar::PolygonPoints::operator=(const VerticalBar::PolygonPoints& other)
+{
+    if (this != &other)
+    {
+        m_TopLeftCorner = other.m_TopLeftCorner;
+        m_TopRightCorner = other.m_TopRightCorner;
+        m_BottomRightCorner = other.m_BottomRightCorner;
+        m_BottomLeftCorner = other.m_BottomLeftCorner;
+    }
+    return *this;
+}
+
+VerticalBar::PolygonPoints& VerticalBar::PolygonPoints::operator=(VerticalBar::PolygonPoints&& other) noexcept
+{
+    if (this != &other)
+    {
+        m_TopLeftCorner = std::move(other.m_TopLeftCorner);
+        m_TopRightCorner = std::move(other.m_TopRightCorner);
+        m_BottomRightCorner = std::move(other.m_BottomRightCorner);
+        m_BottomLeftCorner = std::move(other.m_BottomLeftCorner);
+    }
+    return *this;
+}
+
+std::array<QPointF, 4> VerticalBar::PolygonPoints::toPointsArray() const
+{
+    return { m_TopLeftCorner, m_TopRightCorner, m_BottomRightCorner, m_BottomLeftCorner };
+}
 
 VerticalBar::VerticalBar(QQuickItem* parent)
     : AbstractControl(parent)
 {
     // Defaults
     m_TrackToDialSpacing = 5;
-    m_Angle = 15; // TODO1: use it  // TODO2: sideAngle <0:30>
+    // TODO1: use it  // TODO2: m_SideAngle i dodac zakres <0:18> // Wyjasnienie chcemy aby oba skrzydelka miescily sie w bounding rectangle wiec szerokosc skrzydelka nie moze przekraczac 1/3 wysokosci co daje maksymalny kat 18.44 // TODO3: Na angielski
+    m_SideAngle = 10;
     m_DialLineWidth = 1;
     m_DialFontSize = 7;
     m_UpsideDown = false;
+
+    calculateVerticies();
+
+    connect(this, SIGNAL(sideAngleChanged()), this, SLOT(calculateVerticies())); // TODO: test in runtime
 }
 
-void VerticalBar::setAngle(qreal angle)
+void VerticalBar::setSideAngle(qreal angle)
 {
-    if (m_Angle == angle)
+    if (m_SideAngle == angle)
         return;
-    m_Angle = angle;
-    emit angleChanged();
-    // TODO: racalculate  trackPoints etc.
+
+    m_SideAngle = angle;
+    emit sideAngleChanged();
     update();
 }
 
@@ -26,6 +86,7 @@ void VerticalBar::setDialLineWidth(int width)
 {
     if (m_DialLineWidth == width)
         return;
+
     m_DialLineWidth = width;
     emit dialLineWidthChanged();
     update();
@@ -35,6 +96,7 @@ void VerticalBar::setUpsideDown(bool isUpsideDown)
 {
     if (m_UpsideDown == isUpsideDown)
         return;
+
     m_UpsideDown = isUpsideDown;
     emit upsideDownChanged();
     update();
@@ -78,7 +140,7 @@ std::tuple<QPointF, QPointF> makePerpendicularVector(const QPointF& A, const QPo
     return std::make_tuple(midpoint, perpendicularPoint);
 }
 
-void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha, const QPointF (&backgroundPoints)[4], const std::tuple<QPointF, QPointF>& normalVector)
+void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha, const std::array<QPointF, 4>(&backgroundPoints), const std::tuple<QPointF, QPointF>& normalVector)
 {
     QColor TransparentBackgoundColor = color;
     TransparentBackgoundColor.setAlphaF(initialAlpha);
@@ -86,29 +148,24 @@ void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha
     gradient.setColorAt(0.0, QColor(0, 0, 0, 0));
     gradient.setColorAt(0.25, TransparentBackgoundColor); // !! TEMPORARY FIX (0.25)
     painter->setBrush(gradient);
-    painter->drawConvexPolygon(backgroundPoints, 4);
+    painter->drawConvexPolygon(backgroundPoints.data(), 4);
 }
 
 void VerticalBar::paintBacklight(QPainter* painter)
 { // TODO: adjust to indicator y
-    const QPointF leftBackgroundPoints[4] = {
-       QPointF(2.0 * m_Size / 6.0 - m_Size * (0.2 + 0.2 * m_Value), m_Size - m_Size * m_Value),
+    const std::array<QPointF,4> leftBackgroundPoints = {
+       QPointF(2.0 * m_Size / 6.0 - m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * m_Value), m_Size - m_Size * m_Value),
        QPointF(3.0 * m_Size / 6.0, m_Size - m_Size * m_Value),
        QPointF(3.0 * m_Size / 6.0, m_Size),
        QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, m_Size)
     };
-    const QPointF rightBackgroundPoints[4] = {
+    const std::array<QPointF, 4> rightBackgroundPoints = {
         QPointF(3.0 * m_Size / 6.0, m_Size - m_Size * m_Value),
-        QPointF(4.0 * m_Size / 6.0 + m_Size * (0.2 + 0.2 * m_Value), m_Size - m_Size * m_Value),
+        QPointF(4.0 * m_Size / 6.0 + m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * m_Value), m_Size - m_Size * m_Value),
         QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, m_Size),
         QPointF(3.0 * m_Size / 6.0, m_Size)
     };
-    static const QPointF trackPoints[4] = {
-        QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, 0),
-        QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, 0),
-        QPointF(4.0 * m_Size / 6.0, m_Size),
-        QPointF(2.0 * m_Size / 6.0, m_Size)
-    };
+
     painter->save();
     // TODO:
     {
@@ -119,32 +176,13 @@ void VerticalBar::paintBacklight(QPainter* painter)
     QColor backlightColor = m_BacklightColor;
     backlightColor.setAlpha(120);
 
-    paintWing(painter, backlightColor, 0.8, leftBackgroundPoints, makePerpendicularVector(trackPoints[0], trackPoints[3])); // For left
-    paintWing(painter, backlightColor, 0.8, rightBackgroundPoints, makePerpendicularVector(trackPoints[2], trackPoints[1])); // For right
+    paintWing(painter, backlightColor, 0.8, leftBackgroundPoints, makePerpendicularVector(m_MainPolygonPoints.m_TopLeftCorner, m_MainPolygonPoints.m_BottomLeftCorner)); // For left
+    paintWing(painter, backlightColor, 0.8, rightBackgroundPoints, makePerpendicularVector(m_MainPolygonPoints.m_BottomRightCorner, m_MainPolygonPoints.m_TopRightCorner)); // For right
     painter->restore();
 }
 
 void VerticalBar::paintBackground(QPainter* painter)
 {
-   static const QPointF leftBackgroundPoints[4] = {
-      QPointF(2.0 * m_Size / 6.0 - m_Size * 0.4, 0),
-      QPointF(3.0 * m_Size / 6.0, 0),
-      QPointF(3.0 * m_Size / 6.0, m_Size),
-      QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, m_Size)
-   };
-   static const QPointF rightBackgroundPoints[4] = {
-       QPointF(3.0 * m_Size / 6.0, 0),
-       QPointF(4.0 * m_Size / 6.0 + m_Size * 0.4, 0),
-       QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, m_Size),
-       QPointF(3.0 * m_Size / 6.0, m_Size)
-   };
-    static const QPointF trackPoints[4] = {
-        QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, 0),
-        QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, 0),
-        QPointF(4.0 * m_Size / 6.0, m_Size),
-        QPointF(2.0 * m_Size / 6.0, m_Size)
-    };
-
     painter->save();
     // TODO: 
     {
@@ -152,30 +190,24 @@ void VerticalBar::paintBackground(QPainter* painter)
         painter->scale(1, 1/0.9);
     }
     painter->setPen(Qt::NoPen);
-    paintWing(painter, m_BackgroundColor, 0.8, leftBackgroundPoints, makePerpendicularVector(trackPoints[0], trackPoints[3]));
-    paintWing(painter, m_BackgroundColor, 0.8, rightBackgroundPoints, makePerpendicularVector(trackPoints[2], trackPoints[1]));
+    paintWing(painter, m_BackgroundColor, 0.8, m_LeftWingPolygonPoints.toPointsArray(), makePerpendicularVector(m_MainPolygonPoints.m_TopLeftCorner, m_MainPolygonPoints.m_BottomLeftCorner)); // For left
+    paintWing(painter, m_BackgroundColor, 0.8, m_RightWingPolygonPoints.toPointsArray(), makePerpendicularVector(m_MainPolygonPoints.m_BottomRightCorner, m_MainPolygonPoints.m_TopRightCorner)); // For right
+
     painter->restore();
 }
 
 void VerticalBar::paintTrack(QPainter* painter)
 {
-    static const QPointF trackPoints[4] = {
-       QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, 0),
-       QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, 0),
-       QPointF(4.0 * m_Size / 6.0, m_Size),
-       QPointF(2.0 * m_Size / 6.0, m_Size)
-    };
-
     painter->save();
     painter->setBrush(m_NonActiveColor);
     painter->setPen(m_NonActiveColor);
-    painter->drawConvexPolygon(trackPoints, 4);
+    painter->drawConvexPolygon(m_MainPolygonPoints.toPointsArray().data(), 4);
     painter->restore();
 }
 
 void VerticalBar::paintIndicator(QPainter* painter)
 {
-    qreal wingOffset = m_Size * 0.2 * m_Value;
+    qreal wingOffset = m_Size * qTan(qDegreesToRadians(m_SideAngle)) * m_Value; // NOTE: W tym wypadku walue jest w zakresie 0-1 ale trzeba by (!! TODO:) uzyc Min i Max Value!
     const QPointF progressBarPoints[4] = {
         QPointF(2.0 * m_Size / 6.0 - wingOffset, m_Size - m_Size * m_Value),
         QPointF(4.0 * m_Size / 6.0 + wingOffset, m_Size - m_Size * m_Value),
@@ -196,7 +228,7 @@ void VerticalBar::paintDial(QPainter* painter)
 
     for (int i = 0; i <= m_MaxValue; i++) // TODO: use m_MinValue
     {
-        qreal wingOffset = m_Size * 0.2 * i / m_MaxValue;
+        qreal wingOffset = m_Size * qTan(qDegreesToRadians(m_SideAngle)) * i / m_MaxValue;
 
         qreal lineLength = 0;
         if (i == 0 || i == m_MaxValue)
@@ -253,14 +285,40 @@ void VerticalBar::paintDial(QPainter* painter)
     painter->save();
     painter->setPen(QPen(QBrush(m_DialColor), m_DialLineWidth + 1));
 
-    QPointF pointA = QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2 - m_TrackToDialSpacing, 0);
+    QPointF pointA = QPointF(2.0 * m_Size / 6.0 - m_Size * qTan(qDegreesToRadians(m_SideAngle)) - m_TrackToDialSpacing, 0);
     QPointF pointB = QPointF(2.0 * m_Size / 6.0 - m_TrackToDialSpacing, m_Size);
 
-    QPointF pointC = QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2 + m_TrackToDialSpacing, 0);
+    QPointF pointC = QPointF(4.0 * m_Size / 6.0 + m_Size * qTan(qDegreesToRadians(m_SideAngle)) + m_TrackToDialSpacing, 0);
     QPointF pointD = QPointF(4.0 * m_Size / 6.0 + m_TrackToDialSpacing, m_Size);
 
     painter->drawLine(pointA, pointB);
     painter->drawLine(pointC, pointD);
 
     painter->restore();
+}
+
+void VerticalBar::calculateVerticies()
+{
+    qreal lenghtFactor = qTan(qDegreesToRadians(m_SideAngle));
+
+    m_MainPolygonPoints = {
+       QPointF(2.0 * m_Size / 6.0 - m_Size * lenghtFactor, 0),
+       QPointF(4.0 * m_Size / 6.0 + m_Size * lenghtFactor, 0),
+       QPointF(4.0 * m_Size / 6.0, m_Size),
+       QPointF(2.0 * m_Size / 6.0, m_Size)
+    };
+
+    m_LeftWingPolygonPoints = {
+       QPointF(2.0 * m_Size / 6.0 - m_Size * (0.2 + lenghtFactor), 0),
+       QPointF(3.0 * m_Size / 6.0, 0),
+       QPointF(3.0 * m_Size / 6.0, m_Size),
+       QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, m_Size)
+    };
+
+    m_RightWingPolygonPoints = {
+        QPointF(3.0 * m_Size / 6.0, 0),
+        QPointF(4.0 * m_Size / 6.0 + m_Size * (0.2 + lenghtFactor), 0),
+        QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, m_Size),
+        QPointF(3.0 * m_Size / 6.0, m_Size)
+    };
 }

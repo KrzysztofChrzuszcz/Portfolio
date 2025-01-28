@@ -1,6 +1,9 @@
 #include "hboard.h"
 #include <tuple>
 
+#define MINOR_MARKS_STEP 5
+#define MAIN_MARKS_STEP 20
+
 HorizontalBoard::HorizontalBoard(QQuickItem* parent)
     : AbstractControl(parent)
 {
@@ -15,6 +18,7 @@ void HorizontalBoard::setDiverted(bool isDiverted)
 {
     if (m_Diverted == isDiverted)
         return;
+
     m_Diverted = isDiverted;
     emit divertedChanged();
     update();
@@ -29,11 +33,6 @@ void HorizontalBoard::setDialType(DialType dialType)
     m_DialType = dialType;
     emit dialTypeChanged();
     update();
-}
-
-void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha, const QPointF (&backgroundPoints)[4], const std::tuple<QPointF, QPointF>& normalVector)
-{
-    // TODO
 }
 
 void HorizontalBoard::paintBacklight(QPainter* painter)
@@ -154,7 +153,7 @@ void HorizontalBoard::paintDial(QPainter* painter)
             painter->drawEllipse(frontPoint, 1, 1);
             painter->restore();
 
-            if (i == 0 || i == m_MaxValue) // TODO: Consider common approach for bold markers for given step instead only for first and last
+            if (i % MAIN_MARKS_STEP == 0)
             {
                 painter->save();
                 QString label = QString::number(i);

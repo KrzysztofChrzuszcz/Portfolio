@@ -21,6 +21,7 @@ void Gauge::setBoundingToTrackSpacing(int boundingToTrackSpacing)
 {
     if (m_BoundingToTrackSpacing == boundingToTrackSpacing)
         return;
+
     m_BoundingToTrackSpacing = boundingToTrackSpacing;
     emit boundingToTrackSpacingChanged();
     update();
@@ -30,6 +31,7 @@ void Gauge::setSpanAngle(qreal spanangle)
 {
     if (m_SpanAngle == spanangle)
         return;
+
     m_SpanAngle = spanangle;
     emit spanAngleChanged();
     update();
@@ -39,6 +41,7 @@ void Gauge::setStartAngle(qreal startangle)
 {
     if (m_StartAngle == startangle)
         return;
+
     m_StartAngle = startangle;
     emit startAngleChanged();
     update();
@@ -48,6 +51,7 @@ void Gauge::setProgressWidth(int progresswidth)
 {
     if (m_ProgressWidth == progresswidth)
         return;
+
     m_ProgressWidth = progresswidth;
     emit progressWidthChanged();
     update();
@@ -156,7 +160,7 @@ void Gauge::paintDial(QPainter* painter)
         if (i == m_MaxValue && m_MaxValue == 360)
             continue; /// fix for a problem with double labels in case of full circle
 
-        if (i % 20 == 0) // TODO parameter instead of 20
+        if (i % 20 == 0) // TODO parameter instead of 20 #MAIN_MARKS_STEP
             paintMeasureLabel(painter, outerRect, angle, i);
     }
 
@@ -168,14 +172,14 @@ inline void Gauge::paintMeasureMark(QPainter* painter, QRectF& outerRect, qreal 
     painter->setPen(QPen(m_DialColor));
     // TODO: 
     qreal distanceBetterName = m_BoundingToTrackSpacing - m_TrackToDialSpacing;
-    QPointF pointA = outerRect.center() + QPointF(std::cos(qDegreesToRadians(angle)) * (outerRect.width() / 2 - distanceBetterName), std::sin(qDegreesToRadians(angle)) * (outerRect.height() / 2 - distanceBetterName));
-    qreal lineLength = (i % 20 == 0) ? 10 : 6; // TODO parameter instead of 20
+    QPointF pointA = outerRect.center() + QPointF(qCos(qDegreesToRadians(angle)) * (outerRect.width() / 2 - distanceBetterName), qSin(qDegreesToRadians(angle)) * (outerRect.height() / 2 - distanceBetterName));
+    qreal lineLength = (i % 20 == 0) ? 10 : 6; // TODO parameter instead of 20 #MAIN_MARKS_STEP
     if (i == m_MaxValue)
         lineLength += 2;
 
-    QPointF pointB = pointA + QPointF(std::cos(qDegreesToRadians(angle)) * lineLength, std::sin(qDegreesToRadians(angle)) * lineLength);
+    QPointF pointB = pointA + QPointF(qCos(qDegreesToRadians(angle)) * lineLength, qSin(qDegreesToRadians(angle)) * lineLength);
 
-    if (i % 5 == 0) // TODO parameter instead of 5 (but inside AbstractControl)
+    if (i % 5 == 0) // TODO parameter instead of 5 (but inside AbstractControl) #MINOR_MARKS_STEP
         painter->drawLine(pointA, pointB); // TODO: Add bold for the first and last marks (maybe increase their length also) BUT ONLY IF spanAngle < 360
 
     painter->restore();
@@ -188,8 +192,8 @@ inline void Gauge::paintMeasureLabel(QPainter* painter, QRectF& outerRect, qreal
     // TODO: Rethink those formulas, maybe simplify them
     // TODO2: 
     qreal distanceBetterName = m_BoundingToTrackSpacing - m_TrackToDialSpacing;
-    QPointF pointA = outerRect.center() + QPointF(std::cos(qDegreesToRadians(angle)) * (outerRect.width() / 2 - distanceBetterName), std::sin(qDegreesToRadians(angle)) * (outerRect.height() / 2 - distanceBetterName));
-    QPointF pointC = pointA + QPointF(std::cos(qDegreesToRadians(angle)) * labelRadiance, std::sin(qDegreesToRadians(angle)) * labelRadiance);
+    QPointF pointA = outerRect.center() + QPointF(qCos(qDegreesToRadians(angle)) * (outerRect.width() / 2 - distanceBetterName), qSin(qDegreesToRadians(angle)) * (outerRect.height() / 2 - distanceBetterName));
+    QPointF pointC = pointA + QPointF(qCos(qDegreesToRadians(angle)) * labelRadiance, qSin(qDegreesToRadians(angle)) * labelRadiance);
 
     QFont font = painter->font();
     //int pointSize = font.pointSize(); // TODO: use it for scalability
@@ -209,7 +213,7 @@ inline void Gauge::paintMeasureLabel(QPainter* painter, QRectF& outerRect, qreal
     if (i < numMarks / 2)
     {
         int textOffset = textWidth;
-        pointC = pointA + QPointF(std::cos(qDegreesToRadians(angle)) * (labelRadiance + textOffset), std::sin(qDegreesToRadians(angle)) * (labelRadiance + textOffset));
+        pointC = pointA + QPointF(qCos(qDegreesToRadians(angle)) * (labelRadiance + textOffset), qSin(qDegreesToRadians(angle)) * (labelRadiance + textOffset));
     }
 
     painter->translate(pointC);
