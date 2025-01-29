@@ -53,10 +53,13 @@ private:
     QQmlPropertyMap* m_themeMap;
 };
 
+
 // Concept: class to receive frontend callings and provide background data
 class Backend : public QObject
 {
     Q_OBJECT
+        Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
+        Q_PROPERTY(qreal mirror READ mirror WRITE setMirror NOTIFY mirrorChanged)
 
 public:
     explicit Backend(QObject* parent = nullptr)
@@ -66,6 +69,38 @@ public:
     {
         qWarning() << "Screen mirror toggle";
     }
+
+    qreal value() const { return m_value; }
+    bool  mirror() const { return m_mirror; }
+
+    void setValue(qreal value)
+    {
+        if (m_value != value)
+        {
+            m_value = value;
+            emit valueChanged();
+        }
+    }
+
+    void setMirror(qreal value)
+    {
+        if (m_mirror != value)
+        {
+            m_mirror = value;
+            emit mirrorChanged();
+        }
+    }
+
+
+signals:
+    void    valueChanged();
+    void    mirrorChanged();
+
+public: 
+    qreal   m_value = 0;
+    bool    m_mirror = false;
+    // TODO:
+    // usedTheme
 };
 
 #endif // UTILITIES_H

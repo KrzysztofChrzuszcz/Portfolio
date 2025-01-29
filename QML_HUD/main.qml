@@ -4,7 +4,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
 import CustomControls 1.0
 import Themes 1.0
-//QmlCallFile{DialType :  full}
 
 Window {
 	width: 926
@@ -31,9 +30,8 @@ Window {
     }
 
     property var activeTheme: lightTheme.themeMap
-
-	property real progressValue: 0.0;
-	property bool mirror: false;
+	property real progressValue: backend.value
+	property bool mirror: backend.mirror;
 	
 
 	Rectangle {
@@ -197,8 +195,10 @@ Window {
 						
 						Slider {
 							width: 200
+							value: progressValue
 							onValueChanged: {
-								console.log(value)
+								console.log(value);
+								backend.value = value;
 								progressValue = value;
 								}
 						}
@@ -287,6 +287,7 @@ Window {
 					onClicked: {
 						backend.printSth()
 						mirror = !mirror
+						backend.mirror = mirror
 					}
 				}
     }

@@ -62,14 +62,14 @@ VerticalBar::VerticalBar(QQuickItem* parent)
     // Defaults
     m_TrackToDialSpacing = 5;
     // TODO1: use it  // TODO2: m_SideAngle i dodac zakres <0:18> // Wyjasnienie chcemy aby oba skrzydelka miescily sie w bounding rectangle wiec szerokosc skrzydelka nie moze przekraczac 1/3 wysokosci co daje maksymalny kat 18.44 // TODO3: Na angielski
-    m_SideAngle = 10;
+    m_SideAngle = 0;
     m_DialLineWidth = 1;
     m_DialFontSize = 7;
     m_UpsideDown = false;
 
-    calculateVerticies();
-
     connect(this, SIGNAL(sideAngleChanged()), this, SLOT(calculateVerticies())); // TODO: test in runtime
+
+    //TODO: Assert na range m_SideAngle
 }
 
 void VerticalBar::setSideAngle(qreal angle)
@@ -151,7 +151,7 @@ void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha
     painter->drawConvexPolygon(backgroundPoints.data(), 4);
 }
 
-void VerticalBar::paintBacklight(QPainter* painter)
+void VerticalBar::paintBacklight(QPainter* painter) // NOTE: Problem z angle = 0
 { // TODO: adjust to indicator y
     const std::array<QPointF,4> leftBackgroundPoints = {
        QPointF(2.0 * m_Size / 6.0 - m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * m_Value), m_Size - m_Size * m_Value),
@@ -181,7 +181,7 @@ void VerticalBar::paintBacklight(QPainter* painter)
     painter->restore();
 }
 
-void VerticalBar::paintBackground(QPainter* painter)
+void VerticalBar::paintBackground(QPainter* painter) // NOTE: Problem z angle = 0
 {
     painter->save();
     // TODO: 
