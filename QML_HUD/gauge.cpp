@@ -9,7 +9,8 @@ Gauge::Gauge(QQuickItem* parent)
     // Defaults
     m_MinValue = 0;
     m_MaxValue = 280;
-    m_SpanAngle = 280; // TODO2: zastanowic sie czy rozwazyc ujemny i obrot progressu w druga strone // TODO1: JESLI NIE == > dodac walidacje dla angle ze nie moze byc wieksze niz 360, ze span dodatnie i wieksze= od jakiegos minimum np 90
+    m_SpanAngle = 280; // NOTE: In future negative span angle could change direction of angle of indicator and dial
+    Q_ASSERT(m_SpanAngle >= 0 && m_SpanAngle <= 360);
     m_StartAngle = -50;
     m_ProgressWidth = 10;
     m_BoundingToTrackSpacing = 35;
@@ -30,6 +31,8 @@ void Gauge::setBoundingToTrackSpacing(int boundingToTrackSpacing)
 void Gauge::setSpanAngle(qreal spanangle)
 {
     if (m_SpanAngle == spanangle)
+        return;
+    if (m_SpanAngle < 0 || m_SpanAngle > 360)
         return;
 
     m_SpanAngle = spanangle;
@@ -188,7 +191,7 @@ inline void Gauge::paintMeasureLabel(QPainter* painter, QRectF& outerRect, qreal
 {
     int numMarks = m_MaxValue;
 
-    qreal labelRadiance = 13; // TODO: formula for it, like : m_TrackToDialSpacing + 3
+    qreal labelRadiance = 13; // TODO: formula for it, like : m_TrackToDialSpacing + 3 (or some %)
     // TODO: Rethink those formulas, maybe simplify them
     // TODO2: 
     qreal distanceBetterName = m_BoundingToTrackSpacing - m_TrackToDialSpacing;

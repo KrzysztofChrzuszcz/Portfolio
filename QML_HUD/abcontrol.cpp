@@ -8,7 +8,7 @@ AbstractControl::AbstractControl(QQuickItem* parent)
     m_HorizontalShift(0),
     m_VerticalShift(0),
     m_MirrorView(false),
-    m_ActiveColor(Qt::darkCyan), // TODO: Add m_BackgroundColor based on m_ActiveColor if there is non provided
+    m_ActiveColor(Qt::darkCyan),
     m_NonActiveColor(Qt::lightGray),
     m_DialColor(Qt::black),
     m_DialFontSize(8),
@@ -174,6 +174,7 @@ void AbstractControl::setValue(qreal value)
 {
     if (m_Value == value || value < 0 || value > 1)
         return;
+    // !! TODO: Change m_Value to possible bigger then 1 and add validation in range <m_MinValue ; m_MaxValue>
 
     m_Value = value;
     emit valueChanged();

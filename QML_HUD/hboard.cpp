@@ -37,6 +37,7 @@ void HorizontalBoard::setDialType(DialType dialType)
 
 void HorizontalBoard::paintBacklight(QPainter* painter)
 {
+    // TODO: Use Min and Max Value
     int offset = 10;
     const QPointF indicatorPoints[4] = {
       QPointF(1.0 * m_Size / 8.0,                                   m_Size / 2 + offset),
@@ -96,6 +97,7 @@ void HorizontalBoard::paintTrack(QPainter* painter)
 
 void HorizontalBoard::paintIndicator(QPainter* painter)
 {
+    // TODO: Use Min and Max Value
     const QPointF indicatorPoints[4] = {
       QPointF(1.0 * m_Size / 8.0,                                   m_Size / 2),
       QPointF(1.0 * m_Size / 8.0 + 6.0 * m_Value * m_Size / 8.0 ,   m_Size / 2),

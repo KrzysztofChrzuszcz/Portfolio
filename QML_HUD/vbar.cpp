@@ -2,6 +2,7 @@
 #include <tuple>
 #include <QtMath> 
 
+const int g_MaxSideangle = 18; /// Wings have to fit side space of bounding rectangle (1/3 of width). Because of that maximum angle can be 18.44
 
 VerticalBar::PolygonPoints::PolygonPoints()
 {
@@ -61,20 +62,23 @@ VerticalBar::VerticalBar(QQuickItem* parent)
 {
     // Defaults
     m_TrackToDialSpacing = 5;
-    // TODO1: use it  // TODO2: m_SideAngle i dodac zakres <0:18> // Wyjasnienie chcemy aby oba skrzydelka miescily sie w bounding rectangle wiec szerokosc skrzydelka nie moze przekraczac 1/3 wysokosci co daje maksymalny kat 18.44 // TODO3: Na angielski
     m_SideAngle = 0;
+    Q_ASSERT(m_SideAngle >= 0 && m_SideAngle <= g_MaxSideangle);
     m_DialLineWidth = 1;
     m_DialFontSize = 7;
     m_UpsideDown = false;
+    m_MinValue = 0;
+    m_MaxValue = 1; // TODO: Fix dla dial
 
-    connect(this, SIGNAL(sideAngleChanged()), this, SLOT(calculateVerticies())); // TODO: test in runtime
-
-    //TODO: Assert na range m_SideAngle
+    connect(this, SIGNAL(sideAngleChanged()), this, SLOT(calculateVerticies()));
 }
 
 void VerticalBar::setSideAngle(qreal angle)
 {
     if (m_SideAngle == angle)
+        return;
+
+    if (angle < 0 || angle > g_MaxSideangle)
         return;
 
     m_SideAngle = angle;
@@ -113,7 +117,7 @@ QPointF calculateNormal(const QPointF& p1, const QPointF& p2)
     return normal;
 }
 // TODO: change approach to normal vector as QPointF + distance between 2 segments used with anchor point in the middle of track side
-std::tuple<QPointF, QPointF> makePerpendicularVector(const QPointF& A, const QPointF& B)
+std::tuple<QPointF, QPointF> makePerpendicularVector(const QPointF& A, const QPointF& B) // NOTE: Problem z angle = 0
 {
     qreal midX = (A.x() + B.x()) / 2.0;
     qreal midY = (A.y() + B.y()) / 2.0;
@@ -153,15 +157,17 @@ void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha
 
 void VerticalBar::paintBacklight(QPainter* painter) // NOTE: Problem z angle = 0
 { // TODO: adjust to indicator y
+    qreal value = (m_Value - m_MinValue) / (m_MaxValue - m_MinValue);
+
     const std::array<QPointF,4> leftBackgroundPoints = {
-       QPointF(2.0 * m_Size / 6.0 - m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * m_Value), m_Size - m_Size * m_Value),
-       QPointF(3.0 * m_Size / 6.0, m_Size - m_Size * m_Value),
+       QPointF(2.0 * m_Size / 6.0 - m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * value), m_Size - m_Size * value),
+       QPointF(3.0 * m_Size / 6.0, m_Size - m_Size * value),
        QPointF(3.0 * m_Size / 6.0, m_Size),
        QPointF(2.0 * m_Size / 6.0 - m_Size * 0.2, m_Size)
     };
     const std::array<QPointF, 4> rightBackgroundPoints = {
-        QPointF(3.0 * m_Size / 6.0, m_Size - m_Size * m_Value),
-        QPointF(4.0 * m_Size / 6.0 + m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * m_Value), m_Size - m_Size * m_Value),
+        QPointF(3.0 * m_Size / 6.0, m_Size - m_Size * value),
+        QPointF(4.0 * m_Size / 6.0 + m_Size * (0.2 + qTan(qDegreesToRadians(m_SideAngle)) * value), m_Size - m_Size * value),
         QPointF(4.0 * m_Size / 6.0 + m_Size * 0.2, m_Size),
         QPointF(3.0 * m_Size / 6.0, m_Size)
     };
@@ -207,10 +213,11 @@ void VerticalBar::paintTrack(QPainter* painter)
 
 void VerticalBar::paintIndicator(QPainter* painter)
 {
-    qreal wingOffset = m_Size * qTan(qDegreesToRadians(m_SideAngle)) * m_Value; // NOTE: W tym wypadku walue jest w zakresie 0-1 ale trzeba by (!! TODO:) uzyc Min i Max Value!
+    qreal value = (m_Value - m_MinValue) / (m_MaxValue - m_MinValue);
+    qreal wingOffset = m_Size * qTan(qDegreesToRadians(m_SideAngle)) * value;
     const QPointF progressBarPoints[4] = {
-        QPointF(2.0 * m_Size / 6.0 - wingOffset, m_Size - m_Size * m_Value),
-        QPointF(4.0 * m_Size / 6.0 + wingOffset, m_Size - m_Size * m_Value),
+        QPointF(2.0 * m_Size / 6.0 - wingOffset, m_Size - m_Size * value),
+        QPointF(4.0 * m_Size / 6.0 + wingOffset, m_Size - m_Size * value),
         QPointF(4.0 * m_Size / 6.0, m_Size),
         QPointF(2.0 * m_Size / 6.0, m_Size)
     };
@@ -226,30 +233,32 @@ void VerticalBar::paintDial(QPainter* painter)
 {
     painter->setPen(QPen(QBrush(m_DialColor), m_DialLineWidth));
 
-    for (int i = 0; i <= m_MaxValue; i++) // TODO: use m_MinValue
+    int maxPercentageValue = m_MaxValue * 100;
+
+    for (int i = 0; i <= maxPercentageValue; i++) // TODO: use m_MinValue
     {
-        qreal wingOffset = m_Size * qTan(qDegreesToRadians(m_SideAngle)) * i / m_MaxValue;
+        qreal wingOffset = m_Size * qTan(qDegreesToRadians(m_SideAngle)) * i / maxPercentageValue;
 
         qreal lineLength = 0;
-        if (i == 0 || i == m_MaxValue)
+        if (i == 0 || i == maxPercentageValue)
             lineLength = 12; /// Longest markers for first and last of them
         else if (i % 10 == 0)
             lineLength = 10; /// Labeled markers
         else
             lineLength = 6; /// Basic markers
 
-        QPointF pointA = QPointF(4.0 * m_Size / 6.0 + wingOffset + m_TrackToDialSpacing, m_Size - m_Size * i / m_MaxValue);
-        QPointF pointB = QPointF(4.0 * m_Size / 6.0 + wingOffset + m_TrackToDialSpacing + lineLength, m_Size - m_Size * i / m_MaxValue);
+        QPointF pointA = QPointF(4.0 * m_Size / 6.0 + wingOffset + m_TrackToDialSpacing, m_Size - m_Size * i / maxPercentageValue);
+        QPointF pointB = QPointF(4.0 * m_Size / 6.0 + wingOffset + m_TrackToDialSpacing + lineLength, m_Size - m_Size * i / maxPercentageValue);
 
-        QPointF pointC = QPointF(2.0 * m_Size / 6.0 - wingOffset - m_TrackToDialSpacing, m_Size - m_Size * i / m_MaxValue);
-        QPointF pointD = QPointF(2.0 * m_Size / 6.0 - wingOffset - m_TrackToDialSpacing - lineLength, m_Size - m_Size * i / m_MaxValue);
+        QPointF pointC = QPointF(2.0 * m_Size / 6.0 - wingOffset - m_TrackToDialSpacing, m_Size - m_Size * i / maxPercentageValue);
+        QPointF pointD = QPointF(2.0 * m_Size / 6.0 - wingOffset - m_TrackToDialSpacing - lineLength, m_Size - m_Size * i / maxPercentageValue);
 
         if (i % 5 == 0) // TODO: Parameter for 5
         {
             painter->save();
 
 
-            if (i == 0 || i == m_MaxValue)
+            if (i == 0 || i == maxPercentageValue)
                 painter->setPen(QPen(QBrush(m_DialColor), m_DialLineWidth + 1));
 
             painter->drawLine(pointA, pointB);
@@ -265,8 +274,8 @@ void VerticalBar::paintDial(QPainter* painter)
                 int textWidth = fm.width(label);
                 int additionalOffset = fm.height() / 2 - 1;
                 // TODO: Rethink those formulas, maybe simplify them
-                QPointF labelPointL = QPointF(2.0 * m_Size / 6.0 - wingOffset - m_TrackToDialSpacing - lineLength - m_TrackToDialSpacing - textWidth, m_Size - m_Size * i / m_MaxValue + additionalOffset);
-                QPointF labelPointR = QPointF(4.0 * m_Size / 6.0 + wingOffset + m_TrackToDialSpacing + lineLength + m_TrackToDialSpacing, m_Size - m_Size * i / m_MaxValue + additionalOffset);
+                QPointF labelPointL = QPointF(2.0 * m_Size / 6.0 - wingOffset - m_TrackToDialSpacing - lineLength - m_TrackToDialSpacing - textWidth, m_Size - m_Size * i / maxPercentageValue + additionalOffset);
+                QPointF labelPointR = QPointF(4.0 * m_Size / 6.0 + wingOffset + m_TrackToDialSpacing + lineLength + m_TrackToDialSpacing, m_Size - m_Size * i / maxPercentageValue + additionalOffset);
 
                 painter->save();
                 painter->setFont(font);

@@ -59,7 +59,7 @@ class Backend : public QObject
 {
     Q_OBJECT
         Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
-        Q_PROPERTY(qreal mirror READ mirror WRITE setMirror NOTIFY mirrorChanged)
+        Q_PROPERTY(bool mirror READ mirror WRITE setMirror NOTIFY mirrorChanged)
 
 public:
     explicit Backend(QObject* parent = nullptr)
@@ -82,7 +82,7 @@ public:
         }
     }
 
-    void setMirror(qreal value)
+    void setMirror(bool value)
     {
         if (m_mirror != value)
         {

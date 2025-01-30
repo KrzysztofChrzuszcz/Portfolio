@@ -9,9 +9,7 @@
 #include <QObject>
 #include <QFileSystemWatcher>
 #include <QDebug>
-#include <qvariant.h>
 #include <QVariantMap>
-#include <QtGlobal>
 #include <QWindow>
 
 // X TODO: Umiescic w QMLach wyswietlacz wartosci i jednostki
