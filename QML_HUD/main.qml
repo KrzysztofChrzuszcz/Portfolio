@@ -5,7 +5,6 @@ import QtQuick.Window 2.2
 import CustomControls 1.0
 import Themes 1.0
 
-
 Window {
 	width: 926
     height: 428
@@ -31,9 +30,8 @@ Window {
     }
 
     property var activeTheme: lightTheme.themeMap
-
-	property real progressValue: 0.0;
-	property bool mirror: false;
+	property real progressValue: backend.value
+	property bool mirror: backend.mirror;
 	
 
 	Rectangle {
@@ -93,7 +91,28 @@ Window {
 							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
 							backlightcolor: activeTheme.controlBacklightColor || "cyan"
 							mirrorview: mirror
+							sideangle: 10
 							value: progressValue
+							
+							Text {
+								id: verticalBar1ValueDisplay
+								anchors.horizontalCenter: parent.horizontalCenter
+								anchors.verticalCenter: parent.verticalCenter
+								font.pixelSize: 20
+								font.bold: true
+								font.family: activeTheme.valueDisplayFontFamily
+								color: activeTheme.textColor || "black"
+								text: Math.round(progressValue * 100) + "%"
+								transform: [
+									Scale {
+										xScale: mirror ? -1 : 1
+										yScale: 1
+									},
+									Translate {
+										x: mirror ? verticalBar1ValueDisplay.width : 0
+									}
+								]
+							}
 						}
 						
 						Text {
@@ -101,6 +120,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Turbo Bar"
 							font.pixelSize: 18
+							font.family: activeTheme.labelFontFamily
 							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
@@ -123,6 +143,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter
 							width: 200
 							height: 200
+							dialtype: HorizontalBoard.Bottom
 							activecolor: activeTheme.progressColor || "darkCyan"
 							dialcolor: activeTheme.textColor || "black"
 							backgroundcolor: activeTheme.controlBackgroundColor || "darkCyan"
@@ -132,6 +153,26 @@ Window {
 							verticalshift: 75
 							mirrorview: mirror
 							value: progressValue
+							
+							Text {
+								id: board1ValueDisplay
+								anchors.horizontalCenter: parent.horizontalCenter
+								anchors.verticalCenter: parent.verticalCenter
+								anchors.verticalCenterOffset: 40
+								font.pixelSize: 20
+								font.family: activeTheme.valueDisplayFontFamily
+								color: activeTheme.textColor || "black"
+								text: Math.round(progressValue * 200)/10 + "l/100km"
+								transform: [
+									Scale {
+										xScale: mirror ? -1 : 1
+										yScale: 1
+									},
+									Translate {
+										x: mirror ? board1ValueDisplay.width : 0
+									}
+								]
+							}
 						}
 						
 						Text {
@@ -139,6 +180,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Fuel Consumption"
 							font.pixelSize: 18
+							font.family: activeTheme.labelFontFamily
 							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
@@ -153,8 +195,10 @@ Window {
 						
 						Slider {
 							width: 200
+							value: progressValue
 							onValueChanged: {
-								console.log(value)
+								console.log(value);
+								backend.value = value;
 								progressValue = value;
 								}
 						}
@@ -164,6 +208,7 @@ Window {
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Test Input"
 							font.pixelSize: 18
+							font.family: activeTheme.labelFontFamily
 							color: activeTheme.textColor || "black"
 							transform: [
 								Scale {
@@ -192,12 +237,33 @@ Window {
 							verticalshift: 35
 							mirrorview: mirror
 							value: progressValue
+							
+							Text {
+								id: gauge1ValueDisplay
+								anchors.horizontalCenter: parent.horizontalCenter
+								anchors.verticalCenter: parent.verticalCenter
+								anchors.verticalCenterOffset: 30
+								font.pixelSize: 20
+								font.family: activeTheme.valueDisplayFontFamily
+								color: activeTheme.textColor || "black"
+								text: Math.round(progressValue * 280) + "km/h"
+								transform: [
+									Scale {
+										xScale: mirror ? -1 : 1
+										yScale: 1
+									},
+									Translate {
+										x: mirror ? gauge1ValueDisplay.width : 0
+									}
+								]
+							}
 						}
 						
 						Text {
 							id: gauge1label
 							anchors.horizontalCenter: parent.horizontalCenter 
 							text: "Speed Gauge"
+							font.family: activeTheme.labelFontFamily
 							font.pixelSize: 18
 							color: activeTheme.textColor || "black"
 							transform: [
@@ -221,6 +287,7 @@ Window {
 					onClicked: {
 						backend.printSth()
 						mirror = !mirror
+						backend.mirror = mirror
 					}
 				}
     }

@@ -13,16 +13,16 @@ set(SOURCES
     main.cpp
     abcontrol.cpp
     gauge.cpp
-    vbar.cpp
     hboard.cpp
+    vbar.cpp
 	)
 
 set(INCLUDES
     abcontrol.h
     gauge.h
-    vbar.h
-	utilities.h
     hboard.h
+    vbar.h
+    utilities.h
 )
 
 set(RESOURCES

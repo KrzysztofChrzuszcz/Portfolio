@@ -1,14 +1,16 @@
 #include "hboard.h"
 #include <tuple>
 
+#define MINOR_MARKS_STEP 5
+#define MAIN_MARKS_STEP 20
+
 HorizontalBoard::HorizontalBoard(QQuickItem* parent)
     : AbstractControl(parent)
 {
     // Defaults
     m_TrackToDialSpacing = 5;
     m_Diverted = false;
-    //m_DialType = QString("none");
-    m_DialType = QString("bottom"); // Possible variants: full | bottom | upper | none (or anything)
+    m_DialType = DialType::Bottom;
     m_Scale = 0.9;
 }
 
@@ -16,27 +18,26 @@ void HorizontalBoard::setDiverted(bool isDiverted)
 {
     if (m_Diverted == isDiverted)
         return;
+
     m_Diverted = isDiverted;
     emit divertedChanged();
     update();
 }
 
-void HorizontalBoard::setDialType(const QString& dialType)
+
+void HorizontalBoard::setDialType(DialType dialType)
 {
     if (m_DialType == dialType)
         return;
+
     m_DialType = dialType;
     emit dialTypeChanged();
     update();
 }
 
-void inline paintWing(QPainter* painter, const QColor& color, qreal initialAlpha, const QPointF (&backgroundPoints)[4], const std::tuple<QPointF, QPointF>& normalVector)
-{
-    // TODO
-}
-
 void HorizontalBoard::paintBacklight(QPainter* painter)
 {
+    // TODO: Use Min and Max Value
     int offset = 10;
     const QPointF indicatorPoints[4] = {
       QPointF(1.0 * m_Size / 8.0,                                   m_Size / 2 + offset),
@@ -96,6 +97,7 @@ void HorizontalBoard::paintTrack(QPainter* painter)
 
 void HorizontalBoard::paintIndicator(QPainter* painter)
 {
+    // TODO: Use Min and Max Value
     const QPointF indicatorPoints[4] = {
       QPointF(1.0 * m_Size / 8.0,                                   m_Size / 2),
       QPointF(1.0 * m_Size / 8.0 + 6.0 * m_Value * m_Size / 8.0 ,   m_Size / 2),
@@ -136,7 +138,7 @@ void HorizontalBoard::paintDial(QPainter* painter)
             QPointF topPoint = QPointF(1.0 * m_Size / 8.0 + 6.0 * currentXfactor * m_Size / 8.0, m_Size / 2 - lineLength);
             painter->save();
             // Draw upper dial
-            if (m_DialType == g_FullType || m_DialType == g_Upper)
+            if (m_DialType == DialType::Full || m_DialType == DialType::Upper)
                 painter->drawLine(bottomPoint, topPoint);
 
             // Draw basic laying dial
@@ -145,7 +147,7 @@ void HorizontalBoard::paintDial(QPainter* painter)
             
             // Draw bottom dial
             QPointF frontBottomPoint = QPointF(0.0 * m_Size / 8.0 + 8.0 * currentXfactor * m_Size / 8.0, 4 * m_Size / 7 + lineLength);
-            if (m_DialType == g_FullType || m_DialType == g_Bottom)
+            if (m_DialType == DialType::Full || m_DialType == DialType::Bottom)
                 painter->drawLine(frontPoint, frontBottomPoint);
 
             // Draw front points
@@ -153,7 +155,7 @@ void HorizontalBoard::paintDial(QPainter* painter)
             painter->drawEllipse(frontPoint, 1, 1);
             painter->restore();
 
-            if (i == 0 || i == m_MaxValue) // TODO: Consider common approach for bold markers for given step instead only for first and last
+            if (i % MAIN_MARKS_STEP == 0)
             {
                 painter->save();
                 QString label = QString::number(i);
@@ -163,9 +165,9 @@ void HorizontalBoard::paintDial(QPainter* painter)
                 QFontMetrics fm(font);
                 int textWidth = fm.width(label);
                 QPointF labelPoint = QPoint(frontBottomPoint.x() - textWidth / 2, frontBottomPoint.y() + fm.height());
-                if (m_DialType == g_FullType || m_DialType == g_Upper)
+                if (m_DialType == DialType::Full || m_DialType == DialType::Upper)
                     labelPoint = QPointF(1.0 * m_Size / 8.0 + 6.0 * currentXfactor * m_Size / 8.0 - textWidth / 2, m_Size / 2 - labelOffset);
-                if (m_DialType == g_Bottom)
+                if (m_DialType == DialType::Bottom)
                     labelPoint = QPointF(frontBottomPoint.x() - textWidth / 2, frontBottomPoint.y() + (lineLength - labelOffset) + fm.height());
 
                 painter->drawText(labelPoint, label);
