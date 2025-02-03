@@ -182,13 +182,9 @@ void Color::parseHex()
 	if (foundAmmount == 0)
 		foundAmmount = sscanf_s(m_RawColor.c_str(), "0x%02x%02x%02x%02x", &r, &g, &b, &a);
 
-
 	/// A dead code (due to previous isHex()), but serves as exception usage example
 	if (foundAmmount != 3 && foundAmmount != 4)
 		throw WrongChannelAmountException();
-
-	//if ((foundAmmount == 3)
-		// TODO: Add log about missing alpha and info We fix that
 
 	/// Method parseHex doesn't need range check because max number that can reach is FF that is 255,
 	/// so its not possible to go out of range in this case.
@@ -205,9 +201,6 @@ void Color::parseInt()
 	float b = atoi(chanels[2].c_str()) / 255.f;
 	float a = chanels.size() == 4 ? atoi(chanels[3].c_str()) / 255.f : 1.0f;
 
-	//if (chanels.size() == 3)
-	// TODO: Add log about missing alpha and info We fix that
-
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
 		throw ChannelOutOfRangeException();
 
@@ -222,9 +215,6 @@ void Color::parseFloat()
 	float g = atof(chanels[1].c_str());
 	float b = atof(chanels[2].c_str());
 	float a = chanels.size() == 4 ? atof(chanels[3].c_str()) : 1.0f;
-
-	//if (chanels.size() == 3)
-	// TODO: Add log about missing alpha and info We fix that
 
 	if (r > 1.f || g > 1.f || b > 1.f || a > 1.f)
 		throw ChannelOutOfRangeException();
@@ -248,7 +238,7 @@ void Color::parseText()
 
 	if (!qColor.isValid())
 		throw WrongInputException();
-	//+ log about unknown
+	//+ new error about about unknown color name
 
 	qreal r, g, b, a;
 	qColor.getRgbF(&r, &g, &b, &a);

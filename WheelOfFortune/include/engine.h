@@ -56,7 +56,7 @@ private:
             randomAngle = angleDist(genEngine);
         else
             randomAngle = m_Settings.m_MinRandRange;
-
+        extern const int g_MinimumDurationTime;
         std::uniform_int_distribution<int> durationDist(g_MinimumDurationTime, g_MinimumDurationTime + m_Settings.m_MaxDurationTime);
 
         durationInSeconds = durationDist(genEngine);

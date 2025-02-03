@@ -11,6 +11,7 @@
 class QtDataLoader : public DataLoader
 {
 public:
+                                QtDataLoader(std::shared_ptr<ILogger> logger);
     virtual                     ~QtDataLoader() noexcept = default;
     virtual bool                loadXml(const char* path) override;
 

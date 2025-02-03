@@ -30,8 +30,6 @@ find_package(GLEW REQUIRED)
 find_package(FREEGLUT REQUIRED)
 
 
-#SET(CMAKE_CXX_FLAGS "-O2 -std=c++11")
-
 #=================== INCLUSION OF Project Files ====================#
 set(FORMS_DIR "${CMAKE_SOURCE_DIR}/forms")
 set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/resources")
@@ -87,6 +85,14 @@ target_link_libraries(WheelOfFortune Qt5::Widgets Qt5::OpenGL Qt5::Xml OpenGL::G
 #===================== ENV VARIABLES for DEBUG & RelWithDEBUGInfo =======================#
 target_compile_definitions(WheelOfFortune PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")
 target_compile_definitions(WheelOfFortune PUBLIC "$<$<CONFIG:RELWITHDEBINFO>:DEBUG>")
+
+
+#===================== C++ VERSION =======================#
+#set_target_properties(${PROJECT_NAME} PROPERTIES
+#    CXX_STANDARD 20
+#    CXX_STANDARD_REQUIRED ON
+#)
+
 
 #===================== SOURCE GROUPS (FOR VISUAL STUDIO) =======================#
 

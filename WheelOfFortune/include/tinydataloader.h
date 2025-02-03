@@ -16,6 +16,7 @@ using std::string;
 class TinyDataLoader : public DataLoader
 {
 public:
+                                    TinyDataLoader(std::shared_ptr<ILogger> logger);
     virtual                         ~TinyDataLoader() = default;
     virtual bool                    loadXml(const char* path) override;
 

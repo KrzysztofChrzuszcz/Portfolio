@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <shared_mutex>
+#include <ctime>
+#include <chrono>
 
 using std::string;
 using std::vector;
@@ -52,6 +54,10 @@ public:
     void            setFilePath(string fileName);   //!< Set selected file path to load attempt
     void            drawLots();                     //!< Initiate fortune draw
 
+    void            updateLastChangeTime();
+    std::time_t     getTimestamp() const;
+    bool            hasChanged(std::time_t since);
+            
 private:
     DataState       m_DataState;
     bool            m_DrawLots;
@@ -69,6 +75,7 @@ private:
     int             m_MinRandRange;
     int             m_MaxRandRange;
     RandGenerator   m_RandomGenerator;
+    std::time_t     m_LastChangeTime;
 
 };
 #endif //SETTINGS_H
