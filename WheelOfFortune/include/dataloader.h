@@ -34,7 +34,7 @@ public:
     size_t                              getEntriesCount() noexcept { return m_Entries.size(); } //!< Returns number of entries.
     inline bool                         isCorrupted() const noexcept { return m_DataCorrupted; } //!< Inform about existing some problems with input data
     void                                setErrorFlags(const bitset<4>& mask) noexcept { m_DataCorrupted = true; m_ErrorFlags |= mask; } //!< Set error flags
-    void                                setErrorFlag(int position, bool value = true) noexcept { m_DataCorrupted = true; m_ErrorFlags.set(position, value); if (position == 3) m_Logger->log(LogLevel::Critical, "QtDataLoader", g_WrongPieSettingsMsg); } //!< Set value of flag at given position
+    void                                setErrorFlag(int position, bool value = true) noexcept { m_DataCorrupted = true; m_ErrorFlags.set(position, value); if (position == 3) m_Logger->Log(LogLevel::Critical, "QtDataLoader", g_WrongPieSettingsMsg); } //!< Set value of flag at given position
     inline const bitset<4>&             getErrorFlags() const noexcept { return m_ErrorFlags; }  //!< Allow to read access to ErrorFlags
 
 protected:

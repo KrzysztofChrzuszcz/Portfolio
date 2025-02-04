@@ -7,6 +7,7 @@
 #include <mutex>
 #include <memory>
 #include <string>
+#include <queue>
 
 enum class LogLevel
 {
@@ -20,36 +21,41 @@ enum class LogLevel
 class ILogger
 {
 public:
-    virtual ~ILogger() = default;
-    virtual void log(LogLevel level, const std::string& eventClass, const std::string& message) = 0;
+    virtual                     ~ILogger() = default;
+    virtual void                Log(LogLevel level, const std::string& eventClass, const std::string& message) = 0;
 };
 
 class AbstractSafeLogger : public ILogger
 {
 public:
-    void log(LogLevel level, const std::string& eventClass, const std::string& message) override;
+                                AbstractSafeLogger();
+    virtual                     ~AbstractSafeLogger();
+
+    void                        Log(LogLevel level, const std::string& eventClass, const std::string& message) override;
 
 protected:
-    virtual void writeLog(const std::string& logEntry) = 0;
+    void                        ProcessQueue();
+    virtual void                WriteLog(const std::string& logEntry) = 0;
 
 private:
-    std::mutex m_logMutex;
+    std::mutex                  m_Mutex;
+    std::queue<std::string>     m_Queue;
+    std::condition_variable     m_CV;
+    bool                        m_StopLogging = false;
+    std::thread                 m_WorkerThread;
 };
-
-// TODO: Albo dodac kolejke do AbstractSafeLogger
-// ALBO dodac klase AbstractQueueSafeLogger: 
 
 class AbstractDirectOutputLogger : public ILogger
 {
 public:
 
-    void log(LogLevel level, const std::string& eventClass, const std::string& message) override;
+    void                        Log(LogLevel level, const std::string& eventClass, const std::string& message) override;
 
 protected:
-    virtual void writeLog(LogLevel level, const std::string& logEntry) = 0;
+    virtual void                WriteLog(LogLevel level, const std::string& logEntry) = 0;
 
 private:
-    std::mutex m_logMutex; // TODO: Rozwazyc wspolny poziom posredni dla powyzszych klas
+    std::mutex                  m_LogMutex; // TODO: Rozwazyc wspolny poziom posredni dla powyzszych klas
 };
 
 class FileLogger : public AbstractSafeLogger
@@ -57,16 +63,16 @@ class FileLogger : public AbstractSafeLogger
     friend class LoggerFactory;
     // TODO: m_Config : wybor sposobu zapisu, reakcja na przepelnienie pliku, moze rozszerzenie
 protected:
-    explicit FileLogger(const std::string& filePath);
+    explicit                    FileLogger(const std::string& filePath);
 
 public:
-    ~FileLogger();
+                                ~FileLogger();
 
 protected:
-    void writeLog(const std::string& logEntry) override;
+    void                        WriteLog(const std::string& logEntry) override;
 
 private:
-    std::ofstream m_logFile;
+    std::ofstream               m_File;
 };
 
 class ConsoleLogger : public AbstractSafeLogger
@@ -74,9 +80,9 @@ class ConsoleLogger : public AbstractSafeLogger
     friend class LoggerFactory;
 
 protected:
-    ConsoleLogger() = default;
+                                ConsoleLogger() = default;
 
-    void writeLog(const std::string& logEntry) override;
+    void                        WriteLog(const std::string& logEntry) override;
 };
 #ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
 class QDebugLogger : public AbstractDirectOutputLogger
@@ -84,9 +90,9 @@ class QDebugLogger : public AbstractDirectOutputLogger
     friend class LoggerFactory;
 
 protected:
-    QDebugLogger() = default;
+                                QDebugLogger() = default;
 
-    void writeLog(LogLevel level, const std::string& logEntry) override;
+    void                        WriteLog(LogLevel level, const std::string& logEntry) override;
 };
 #endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
 class OutputLogger : public AbstractDirectOutputLogger
@@ -99,16 +105,16 @@ public:
         wide = 1
     };
 
-    void setType(Type type);
+    void                        SetType(Type type);
 
 protected:
-    OutputLogger() = default;
+                                OutputLogger() = default;
 
-    void writeLog(LogLevel level, const std::string& logEntry) override;
-    void writeLog(LogLevel level, const std::wstring& logEntry); /// Overloaded OutputLogger::writeLog should be use only with wide output type
+    void                        WriteLog(LogLevel level, const std::string& logEntry) override;
+    void                        WriteLog(LogLevel level, const std::wstring& logEntry); /// Overloaded OutputLogger::writeLog should be use only with wide output type
 
 private:
-    Type m_Type = Type::narrow;
+    Type                        m_Type = Type::narrow;
 };
 
 class LoggerFactory
@@ -117,7 +123,7 @@ public:
     static std::shared_ptr<ILogger> createFileLogger(const std::string& filePath);
     static std::shared_ptr<ILogger> createConsoleLogger();
 #ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
-    static std::shared_ptr<ILogger> createQDebugLogger(); // TODO: makro na odciecie od Qt
+    static std::shared_ptr<ILogger> createQDebugLogger();
 #endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
     static std::shared_ptr<ILogger> createOutputLogger();
 };
