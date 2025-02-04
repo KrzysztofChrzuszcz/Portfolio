@@ -23,12 +23,12 @@ public:
                         Fuel(Engine& engine);
     virtual             ~Fuel(); /// Derived classes has to set m_Quit to true;
 
-    virtual void		startEngine() = 0;
+    virtual void        startEngine() = 0;
 
 protected:
     std::atomic<bool>   m_Quit;
-    Engine&				m_Engine;
-    int					m_Delay;
+    Engine&             m_Engine;
+    int                 m_Delay;
 };
 
 
@@ -38,13 +38,13 @@ public:
                         CustomWorkingThreadNewWay(Engine& engine);
                         ~CustomWorkingThreadNewWay();
 
-    void				startEngine() override;
+    void                startEngine() override;
 
 protected:
-    void				run();
+    void                run();
 
 private:
-    std::future<void>	m_Future;
+    std::future<void>   m_Future;
 };
 
 
@@ -54,10 +54,10 @@ public:
                         CustomWorkingThreadOldWay(Engine& engine);
                         ~CustomWorkingThreadOldWay();
 
-    void				startEngine() override;
+    void                startEngine() override;
 
 protected:
-    void				runEngine();
+    void                runEngine();
 };
 
 
@@ -68,15 +68,15 @@ class QtWorkingThread : public QThread, public Fuel
 public:
                         QtWorkingThread(Engine& engine);
                         QtWorkingThread(QObject* parent, Engine& engine);
-    virtual				~QtWorkingThread();
+    virtual             ~QtWorkingThread();
 
-    void				startEngine() override;
+    void                startEngine() override;
 
 protected:
-    void				run() override;
+    void                run() override;
 
 //signals:
-//	void				error(int socketError, const QString& message); // TODO: finish
+//  void                error(int socketError, const QString& message); // TODO: finish
 };
 
 #endif //FUEL_H
