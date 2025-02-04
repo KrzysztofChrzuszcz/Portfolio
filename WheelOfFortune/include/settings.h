@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <shared_mutex>
+#include <ctime>
+#include <chrono>
 
 using std::string;
 using std::vector;
@@ -48,10 +50,15 @@ public:
                     Settings();
 
     inline float    getMinColorBrightness() const { return m_MinColorBrightness; } //!< Inform about currently set minimum color brightness level used to auto adjust colors
-    bool            isDataReady() const noexcept;   //!< Returns true only when loaded data are ready to use
-    void            setFilePath(string fileName);   //!< Set selected file path to load attempt
-    void            drawLots();                     //!< Initiate fortune draw
+    bool            isDataReady() const noexcept;           //!< Returns true only when loaded data are ready to use
+    void            setFilePath(string fileName);           //!< Set selected file path to load attempt
+    void            setDrawLots();                          //!< Initiate fortune draw
+    std::time_t     getTimestamp() const;                   //!< Return time of last settings change
+    bool            hasChanged(std::time_t since) const;    //!< Checks if given timestamp is deferent from last change own timestamp
 
+private:
+    void            updateLastChangeTime();                 //!< Update timestemp of last settings change
+            
 private:
     DataState       m_DataState;
     bool            m_DrawLots;
@@ -69,6 +76,7 @@ private:
     int             m_MinRandRange;
     int             m_MaxRandRange;
     RandGenerator   m_RandomGenerator;
+    std::time_t     m_LastChangeTime;
 
 };
 #endif //SETTINGS_H

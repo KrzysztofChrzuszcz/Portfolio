@@ -1,4 +1,6 @@
 #include "settingswidget.h"
+#include "mainwindow.h"
+
 #include <QDebug>
 
 SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
@@ -16,11 +18,9 @@ SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
 
 SettingsWidget::~SettingsWidget()
 {
+    emit destroyed(this); // signal should be emitted manually OR disconnectControllers method should disconnect all signals one by one
     disconnectControllers();
     delete m_Ui;
-#ifdef DEBUG
-    qDebug() << "Destroyed";
-#endif // DEBUG
 }
 
 void SettingsWidget::initRangeSliders()
@@ -74,7 +74,7 @@ void SettingsWidget::connectControllers()
 
 void SettingsWidget::disconnectControllers()
 {
-    disconnect();
+    disconnect(); /// This may cause issue with QObject::destroyed signal
 }
 
 void SettingsWidget::setInitValues()
@@ -145,20 +145,27 @@ void SettingsWidget::setAutoStart(int state)
 {
     WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->autostart_checkBox)
+    {
         m_Settings.m_AutoStart = m_Ui->autostart_checkBox->isChecked();
+        m_Settings.updateLastChangeTime();
+    }
 }
 
 void SettingsWidget::setAutoAdjust(int state)
 {
     WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->autoAdjust_checkBox)
+    {
         m_Settings.m_AutoAdjust = m_Ui->autoAdjust_checkBox->isChecked();
+        m_Settings.updateLastChangeTime();
+    }
 }
 
 void SettingsWidget::setRandGenerator(int index)
 {
     WriteLock wLock(m_Settings.m_Lock);
     m_Settings.m_RandomGenerator = RandGenerator(index);
+    m_Settings.updateLastChangeTime();
 }
 
 void SettingsWidget::setRefreshFrequency(int index)
@@ -166,7 +173,10 @@ void SettingsWidget::setRefreshFrequency(int index)
     WriteLock wLock(m_Settings.m_Lock);
     if (m_Ui->refreshFrequency_comboBox)
         if (m_Initialized)
+        {
             m_Settings.m_ScreenRefreshFrequencyIndex = index; // m_Ui->refreshFrequency_comboBox->currentIndex();
+            m_Settings.updateLastChangeTime();
+        }
 }
 
 void SettingsWidget::setMinBrightness(int value)
@@ -175,6 +185,7 @@ void SettingsWidget::setMinBrightness(int value)
     if (m_Ui->minBrightness_slider)
     {
         m_Settings.m_MinColorBrightness = m_Ui->minBrightness_slider->value() / 100.f;
+        m_Settings.updateLastChangeTime();
         if (m_Ui->minBrightness_display)
             m_Ui->minBrightness_display->display(m_Ui->minBrightness_slider->value() / 100.0);
     }
@@ -186,6 +197,7 @@ void SettingsWidget::setMaxTime(int value)
     if (m_Ui->maxTime_slider)
     {
         m_Settings.m_MaxDurationTime = m_Ui->maxTime_slider->value();
+        m_Settings.updateLastChangeTime();
         if (m_Ui->maxTime_display)
             m_Ui->maxTime_display->display(m_Settings.m_MaxDurationTime);
     }
@@ -197,6 +209,7 @@ void SettingsWidget::setMinPieAngle(int value)
     if (m_Ui->PieAngleRange_slider)
     {
         m_Settings.m_MinAngle = m_Ui->PieAngleRange_slider->GetLowerValue();
+        m_Settings.updateLastChangeTime();
         if (m_Ui->minPieAngle_display)
             m_Ui->minPieAngle_display->display(m_Settings.m_MinAngle);
         float max = 360.f / (float)m_Settings.m_MinAngle;
@@ -209,6 +222,7 @@ void SettingsWidget::setMaxPieAngle(int value)
     if (m_Ui->PieAngleRange_slider)
     {
         m_Settings.m_MaxAngle = m_Ui->PieAngleRange_slider->GetUpperValue();
+        m_Settings.updateLastChangeTime();
         if (m_Ui->maxPieAngle_display)
             m_Ui->maxPieAngle_display->display(m_Settings.m_MaxAngle);
     }
@@ -220,6 +234,7 @@ void SettingsWidget::setRandMin(int value)
     if (m_Ui->randRange_slider)
     {
         m_Settings.m_MinRandRange = m_Ui->randRange_slider->GetLowerValue();
+        m_Settings.updateLastChangeTime();
         if (m_Ui->randMin_display)
             m_Ui->randMin_display->display(m_Settings.m_MinRandRange);
     }
@@ -231,6 +246,7 @@ void SettingsWidget::setRandMax(int value)
     if (m_Ui->randRange_slider)
     {
         m_Settings.m_MaxRandRange = m_Ui->randRange_slider->GetUpperValue();
+        m_Settings.updateLastChangeTime();
         if (m_Ui->randMax_display)
             m_Ui->randMax_display->display(m_Settings.m_MaxRandRange);
     }

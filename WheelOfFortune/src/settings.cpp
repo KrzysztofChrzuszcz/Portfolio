@@ -23,6 +23,8 @@ Settings::Settings()
 
 	m_RandomGenerator = RandGenerator::standard;
 	m_DataState = DataState::NotSelected;
+
+	updateLastChangeTime();
 }
 
 bool Settings::isDataReady() const noexcept
@@ -44,8 +46,24 @@ void Settings::setFilePath(string fileName)
 	}
 }
 
-void Settings::drawLots()
+void Settings::setDrawLots()
 {
 	WriteLock wLock(m_Lock);
 	m_DrawLots = true;
+}
+
+void Settings::updateLastChangeTime()
+{
+	auto now = std::chrono::system_clock::now();
+	m_LastChangeTime = std::chrono::system_clock::to_time_t(now);
+}
+
+std::time_t Settings::getTimestamp() const
+{
+	return m_LastChangeTime;
+}
+
+bool Settings::hasChanged(std::time_t since) const
+{
+	return since != m_LastChangeTime;
 }

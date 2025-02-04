@@ -4,6 +4,11 @@
 
 extern const Color g_DafaultColor;
 
+QtDataLoader::QtDataLoader(std::shared_ptr<ILogger> logger) :
+    DataLoader(logger)
+{
+}
+
 bool QtDataLoader::loadXml(const char* path)
 {
     if (path == nullptr)
@@ -20,9 +25,7 @@ bool QtDataLoader::loadXml(const char* path)
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
         fullSuccess = false;
-#ifdef DEBUG
-        qDebug() << "Cannot read file" << file.errorString();
-#endif // DEBUG
+        m_Logger->log(LogLevel::Error, "QtDataLoader", std::string("Cannot read file ") + file.errorString().toStdString());
     }
     QXmlStreamReader reader(&file);
 
@@ -36,16 +39,13 @@ bool QtDataLoader::loadXml(const char* path)
                     while (reader.readNextStartElement())
                         if (reader.name() == "option")
                         {
-                            QXmlStreamAttributes& attributes = reader.attributes();
-                            QString color = "Qt::black";
+                            const QXmlStreamAttributes& attributes = reader.attributes();
+                            QString color = "black";
                             if (attributes.hasAttribute("color"))
                                 color = attributes.value("color").toString();
+                            QString title = reader.readElementText(); /// readElementText must be after get attributes
+                            m_Logger->log(LogLevel::Info, "QtDataLoader", "Loaded positon name: " + title.toStdString() + ", color: " + color.toStdString());
 
-                            QString title = reader.readElementText();
-#ifdef DEBUG
-                            qDebug(qPrintable(title));
-                            qDebug(qPrintable(color));
-#endif // DEBUG
                             try
                             {
                                 m_Entries.push_back({ title.toStdString(), Color(color.toStdString()) });
@@ -54,9 +54,8 @@ bool QtDataLoader::loadXml(const char* path)
                             {
                                 m_Entries.push_back({ title.toStdString(), g_DafaultColor });
                                 m_DataCorrupted = true;
-#ifdef DEBUG
-                                qDebug("Nothing wrong has happen thanks to default color, but there is issue with given color: %s\n", color.toStdString().c_str());
-#endif // DEBUG
+                                m_Logger->log(LogLevel::Warning, "QtDataLoader", "Nothing wrong has happened thanks to default color, but there is issue with given color: " + color.toStdString());
+
                                 try
                                 {
                                     throw;
@@ -64,14 +63,17 @@ bool QtDataLoader::loadXml(const char* path)
                                 catch (WrongInputException& wie)
                                 {
                                     m_ErrorFlags.set(0);
+                                    m_Logger->log(LogLevel::Critical, "QtDataLoader", g_WrongInputMsg);
                                 }
                                 catch (ChannelOutOfRangeException& coore)
                                 {
                                     m_ErrorFlags |= bitset<4>(1 << 1);
+                                    m_Logger->log(LogLevel::Critical, "QtDataLoader", g_ChannelOutOfRangeMsg);
                                 }
                                 catch (WrongChannelAmountException& wcae)
                                 {
                                     m_ErrorFlags |= bitset<4>(1 << 2);
+                                    m_Logger->log(LogLevel::Critical, "QtDataLoader", g_WrongChannelAmountMsg);
                                 }
                             }
                         }
@@ -88,12 +90,10 @@ bool QtDataLoader::loadXml(const char* path)
             fullSuccess = false;
         }
     }
-    else if (reader.hasError())
+
+    if (reader.hasError())
     {
-#ifdef DEBUG      
-        qDebug() << reader.errorString();
-#endif // DEBUG
-        // TODO: log error
+        m_Logger->log(LogLevel::Error, "QtDataLoader", reader.errorString().toStdString());
     }
 
     return fullSuccess;

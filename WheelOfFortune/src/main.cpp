@@ -6,6 +6,7 @@
 #include "fuel.h"
 #include "engine.h"
 #include "dataloader.h"
+#include "logger.h"
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
 #include "tinydataloader.h"
@@ -23,17 +24,28 @@
 
 int main(int argc, char* argv[]) {
 	QApplication app(argc, argv);
+
+#if defined(DEBUG) && defined(MINIMUM_USAGE_OF_QT_FRAMEWORK)
+	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createOutputLogger();
+#endif // DEBUG && MINIMUM_USAGE_OF_QT_FRAMEWORK
+#if defined(DEBUG) && !defined(MINIMUM_USAGE_OF_QT_FRAMEWORK)
+	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createQDebugLogger();
+#endif //  DEBUG && !MINIMUM_USAGE_OF_QT_FRAMEWORK
+#ifndef DEBUG
+	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createFileLogger("log.txt");
+#endif // !DEBUG
+
 	Settings settings;
-	MainWindow window(settings);
+	MainWindow window(settings, fileLogger);
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
-	TinyDataLoader dataLoader;
+	TinyDataLoader dataLoader(fileLogger);
 #endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
 #ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
-	QtDataLoader dataLoader;
+	QtDataLoader dataLoader(fileLogger);
 #endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
 
-	Engine engine(window, dataLoader); // TODO: Scalic z WorkingThread NOTE: NIE! musi byc podmianka na watek z SLTa.
+	Engine engine(window, dataLoader);
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
 	// The new one doesn't stop yet.
