@@ -54,7 +54,7 @@ bool QtDataLoader::loadXml(const char* path)
                             {
                                 m_Entries.push_back({ title.toStdString(), g_DafaultColor });
                                 m_DataCorrupted = true;
-                                m_Logger->log(LogLevel::Warning, "QtDataLoader", "Nothing wrong has happen thanks to default color, but there is issue with given color: " + color.toStdString());
+                                m_Logger->log(LogLevel::Warning, "QtDataLoader", "Nothing wrong has happened thanks to default color, but there is issue with given color: " + color.toStdString());
 
                                 try
                                 {
@@ -90,7 +90,8 @@ bool QtDataLoader::loadXml(const char* path)
             fullSuccess = false;
         }
     }
-    else if (reader.hasError())
+
+    if (reader.hasError())
     {
         m_Logger->log(LogLevel::Error, "QtDataLoader", reader.errorString().toStdString());
     }

@@ -36,6 +36,9 @@ private:
     std::mutex m_logMutex;
 };
 
+// TODO: Albo dodac kolejke do AbstractSafeLogger
+// ALBO dodac klase AbstractQueueSafeLogger: 
+
 class AbstractDirectOutputLogger : public ILogger
 {
 public:
@@ -46,13 +49,13 @@ protected:
     virtual void writeLog(LogLevel level, const std::string& logEntry) = 0;
 
 private:
-    std::mutex m_logMutex;
+    std::mutex m_logMutex; // TODO: Rozwazyc wspolny poziom posredni dla powyzszych klas
 };
 
 class FileLogger : public AbstractSafeLogger
 {
     friend class LoggerFactory;
-
+    // TODO: m_Config : wybor sposobu zapisu, reakcja na przepelnienie pliku, moze rozszerzenie
 protected:
     explicit FileLogger(const std::string& filePath);
 

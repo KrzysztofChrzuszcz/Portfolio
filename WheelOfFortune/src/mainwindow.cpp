@@ -26,6 +26,8 @@ MainWindow::MainWindow(Settings& settings, std::shared_ptr<ILogger> logger, QWid
     connect(m_Ui->actionDraw, SIGNAL(triggered()), this, SLOT(drawLots()));
     connect(m_Ui->displaySettings, SIGNAL(triggered()), this, SLOT(displaySettings()));
     connect(this, SIGNAL(errorSignal(const QString&)), this, SLOT(displayErrorWindow(const QString&)));
+
+    m_SettingsTimestamp = m_Settings.getTimestamp();
 }
 
 MainWindow::~MainWindow()
@@ -40,7 +42,7 @@ std::weak_ptr<CustomOpenGlWidget> MainWindow::getWidget()
 
 void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
 {
-    m_Logger->log(LogLevel::Warning, "MainWindow", "Spotted a problem with the selected file.");
+    m_Logger->log(LogLevel::Warning, "MainWindow", "Selected file has corrupted data.");
 
     if (flags[0])
         emit errorSignal(g_WrongInputMsg.c_str());
@@ -75,7 +77,7 @@ void MainWindow::openFileBrowser()
 
 void MainWindow::drawLots()
 {
-    m_Settings.drawLots();
+    m_Settings.setDrawLots();
 }
 
 void MainWindow::displaySettings()
@@ -84,7 +86,7 @@ void MainWindow::displaySettings()
     SettingsWidget* popup = new SettingsWidget(m_Settings, this);
     popup->setAttribute(Qt::WA_DeleteOnClose);
     popup->setWindowFlags(Qt::Popup); // https://forum.qt.io/topic/115599/qt-popup-window-behaviour/10
+    connect(popup, &SettingsWidget::destroyed, this, &MainWindow::logSettingsChange, Qt::DirectConnection);
     popup->move(this->geometry().topLeft());
     popup->show();
-    connect(popup, &QObject::destroyed, this, &MainWindow::logSettingsChange, Qt::QueuedConnection);
 }

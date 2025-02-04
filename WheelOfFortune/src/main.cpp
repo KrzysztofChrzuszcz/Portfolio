@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 	QtDataLoader dataLoader(fileLogger); // fileLogger
 #endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
 
-	Engine engine(window, dataLoader); // TODO: Scalic z WorkingThread NOTE: NIE! musi byc podmianka na watek z SLTa.
+	Engine engine(window, dataLoader);
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
 	// The new one doesn't stop yet.

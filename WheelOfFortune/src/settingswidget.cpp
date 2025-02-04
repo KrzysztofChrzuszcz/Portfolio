@@ -13,25 +13,13 @@ SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
     setInitValues();
     connectControllers();
     displayValues();
-
-    if (parent)
-    {
-        MainWindow* parentWindow = reinterpret_cast<MainWindow*>(parent);
-        connect(this, &QObject::destroyed, parentWindow, &MainWindow::logSettingsChange, Qt::AutoConnection);
-    }
 }
 
 SettingsWidget::~SettingsWidget()
 {
+    emit destroyed(this); // signal should be emitted manually OR disconnectControllers method should disconnect all signals one by one
     disconnectControllers();
-    //emit destroyed(this);
-    deleteLater();
     delete m_Ui;
-
-    // TODO: skasowac
-#ifdef DEBUG
-    qDebug() << "Destroyed";
-#endif // DEBUG
 }
 
 void SettingsWidget::initRangeSliders()
@@ -85,7 +73,7 @@ void SettingsWidget::connectControllers()
 
 void SettingsWidget::disconnectControllers()
 {
-    disconnect();
+    disconnect(); /// This may cause issue with QObject::destroyed signal
 }
 
 void SettingsWidget::setInitValues()

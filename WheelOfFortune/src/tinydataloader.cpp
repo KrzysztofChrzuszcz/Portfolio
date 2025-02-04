@@ -50,7 +50,7 @@ bool TinyDataLoader::loadXml(const char* path)
                 }
                 catch (...)
                 {
-                    m_Logger->log(LogLevel::Warning, "TinyDataLoader", "Nothing wrong has happen thanks to default color, but there is issue with given color: " + std::string(color));
+                    m_Logger->log(LogLevel::Warning, "TinyDataLoader", "Nothing wrong has happened thanks to default color, but there is issue with given color: " + std::string(color));
                     m_DataCorrupted = true;
 
                     try

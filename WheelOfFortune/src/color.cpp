@@ -238,7 +238,7 @@ void Color::parseText()
 
 	if (!qColor.isValid())
 		throw WrongInputException();
-	//+ new error about about unknown color name
+	//TODO: add new exception about unknown color name
 
 	qreal r, g, b, a;
 	qColor.getRgbF(&r, &g, &b, &a);

@@ -38,11 +38,11 @@ private slots:
     void                                    displayErrorWindow(const QString& message);     //!< Displays Warning Window inform about error with given message
 
 private:
-    Ui::MainWindow*                         m_Ui;
-    Settings&                               m_Settings;
-    std::time_t                             m_SettingsTimestamp;
-    std::shared_ptr<CustomOpenGlWidget>     m_OpenGlWidget;
-    std::shared_ptr<ILogger>                m_Logger;
+    Ui::MainWindow*                         m_Ui;                                           //!< UserInterface form pointer
+    Settings&                               m_Settings;                                     //!< Reference to global settings
+    std::time_t                             m_SettingsTimestamp;                            //!< Time of last modification of settings by user
+    std::shared_ptr<CustomOpenGlWidget>     m_OpenGlWidget;                                 //!< Widget to present wheel of fortune with help of OpenGL
+    std::shared_ptr<ILogger>                m_Logger;                                       //!< Common logger for application
     // TODO: Add precompiled language versions
     // dodac wersje jezykowe, BEZ wyboru. Kompilacja wersji Polskiej i Angielskiej. np. poprzez wybor innego mainwindow.ui
 
