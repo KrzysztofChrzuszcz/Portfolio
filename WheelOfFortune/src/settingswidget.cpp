@@ -1,7 +1,8 @@
 #include "settingswidget.h"
+#include "mainwindow.h"
+
 #include <QDebug>
 
-#include "mainwindow.h"
 SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
     QDialog(parent),
     m_Settings(settings),

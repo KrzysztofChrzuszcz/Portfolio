@@ -25,25 +25,24 @@
 int main(int argc, char* argv[]) {
 	QApplication app(argc, argv);
 
-#ifdef DEBUG
-#ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
+#if defined(DEBUG) && defined(MINIMUM_USAGE_OF_QT_FRAMEWORK)
 	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createOutputLogger();
-#endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
-#ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
+#endif // DEBUG && MINIMUM_USAGE_OF_QT_FRAMEWORK
+#if defined(DEBUG) && !defined(MINIMUM_USAGE_OF_QT_FRAMEWORK)
 	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createQDebugLogger();
-#endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
-#endif // DEBUG
+#endif //  DEBUG && !MINIMUM_USAGE_OF_QT_FRAMEWORK
 #ifndef DEBUG
 	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createFileLogger("log.txt");
 #endif // !DEBUG
+
 	Settings settings;
-	MainWindow window(settings, fileLogger); // fileLogger
+	MainWindow window(settings, fileLogger);
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
-	TinyDataLoader dataLoader(fileLogger); // fileLogger
+	TinyDataLoader dataLoader(fileLogger);
 #endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
 #ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
-	QtDataLoader dataLoader(fileLogger); // fileLogger
+	QtDataLoader dataLoader(fileLogger);
 #endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
 
 	Engine engine(window, dataLoader);
