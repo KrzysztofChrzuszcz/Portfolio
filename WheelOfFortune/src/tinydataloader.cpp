@@ -42,7 +42,7 @@ bool TinyDataLoader::loadXml(const char* path)
                 std::wstring wtitle = converter.from_bytes(encodedText ? encodedText : "");
                 std::string title = depolonise(wtitle); /// Used later freeglut2 library is not applicable for polish signs. So there is a need to change all special signs to English equivalent. 
                 std::string color = string(optionElem->Attribute("color"));
-                m_Logger->log(LogLevel::Info, "TinyDataLoader", "Loaded positon name: " + title + ", color: " + color);
+                m_Logger->Log(LogLevel::Info, "TinyDataLoader", "Loaded positon name: " + title + ", color: " + color);
 
                 try
                 {
@@ -50,7 +50,7 @@ bool TinyDataLoader::loadXml(const char* path)
                 }
                 catch (...)
                 {
-                    m_Logger->log(LogLevel::Warning, "TinyDataLoader", "Nothing wrong has happened thanks to default color, but there is issue with given color: " + std::string(color));
+                    m_Logger->Log(LogLevel::Warning, "TinyDataLoader", "Nothing wrong has happened thanks to default color, but there is issue with given color: " + std::string(color));
                     m_DataCorrupted = true;
 
                     try
@@ -60,17 +60,17 @@ bool TinyDataLoader::loadXml(const char* path)
                     catch (WrongInputException& wie)
                     {
                         m_ErrorFlags.set(0);
-                        m_Logger->log(LogLevel::Critical, "TinyDataLoader", g_WrongInputMsg);
+                        m_Logger->Log(LogLevel::Critical, "TinyDataLoader", g_WrongInputMsg);
                     }
                     catch (ChannelOutOfRangeException& coore)
                     {
                         m_ErrorFlags |= bitset<4>(1 << 1);
-                        m_Logger->log(LogLevel::Critical, "TinyDataLoader", g_ChannelOutOfRangeMsg);
+                        m_Logger->Log(LogLevel::Critical, "TinyDataLoader", g_ChannelOutOfRangeMsg);
                     }
                     catch (WrongChannelAmountException& wcae)
                     {
                         m_ErrorFlags |= bitset<4>(1 << 2);
-                        m_Logger->log(LogLevel::Critical, "TinyDataLoader", g_WrongChannelAmountMsg);
+                        m_Logger->Log(LogLevel::Critical, "TinyDataLoader", g_WrongChannelAmountMsg);
                     }
                 }
 
@@ -79,7 +79,7 @@ bool TinyDataLoader::loadXml(const char* path)
         }
 
     if (err != XML_SUCCESS)
-        m_Logger->log(LogLevel::Error, "TinyDataLoader", std::string("Cannot read file ") + path);
+        m_Logger->Log(LogLevel::Error, "TinyDataLoader", std::string("Cannot read file ") + path);
 
     return fullSuccess; 
 }

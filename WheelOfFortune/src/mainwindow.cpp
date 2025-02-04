@@ -17,7 +17,7 @@ MainWindow::MainWindow(Settings& settings, std::shared_ptr<ILogger> logger, QWid
     m_OpenGlWidget = std::shared_ptr<CustomOpenGlWidget>(findChild<CustomOpenGlWidget*>("customOpenGlWidget"));
     if (m_OpenGlWidget == nullptr)
     {
-        m_Logger->log(LogLevel::Error, "MainWindow", "Issue with GUI form. CustmOpenGLWidget is missing!");
+        m_Logger->Log(LogLevel::Error, "MainWindow", "Issue with GUI form. CustmOpenGLWidget is missing!");
     }
     else
         m_OpenGlWidget.get()->bindWithSettings(settings);
@@ -42,7 +42,7 @@ std::weak_ptr<CustomOpenGlWidget> MainWindow::getWidget()
 
 void MainWindow::alarmLoadingDataError(const bitset<4>& flags)
 {
-    m_Logger->log(LogLevel::Warning, "MainWindow", "Selected file has corrupted data.");
+    m_Logger->Log(LogLevel::Warning, "MainWindow", "Selected file has corrupted data.");
 
     if (flags[0])
         emit errorSignal(g_WrongInputMsg.c_str());
@@ -64,7 +64,7 @@ void MainWindow::displayErrorWindow(const QString& message)
 void MainWindow::logSettingsChange(QObject* obj)
 {
     if (m_Settings.hasChanged(m_SettingsTimestamp))
-        m_Logger->log(LogLevel::Info, "MainWindow", "Settings have changed");
+        m_Logger->Log(LogLevel::Info, "MainWindow", "Settings have changed");
 }
 
 void MainWindow::openFileBrowser()
@@ -72,7 +72,7 @@ void MainWindow::openFileBrowser()
     // TODO: Add predirectives for Debug/ Release for default path 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "RelWithDebInfo/resources/data", tr("XML Files (*.xml)"));
     m_Settings.setFilePath(fileName.toStdString());
-    m_Logger->log(LogLevel::Info, "MainWindow", "Opened file: " + fileName.toStdString());
+    m_Logger->Log(LogLevel::Info, "MainWindow", "Opened file: " + fileName.toStdString());
 }
 
 void MainWindow::drawLots()

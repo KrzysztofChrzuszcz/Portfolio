@@ -25,7 +25,7 @@ inline std::string logLevelToString(LogLevel level)
     }
 }
 
-std::string currentDateTime()
+inline std::string currentDateTime()
 {
     auto now = std::time(nullptr);
     char buf[80];
@@ -33,27 +33,61 @@ std::string currentDateTime()
     return std::string(buf);
 }
 
-void AbstractSafeLogger::log(LogLevel level, const std::string& eventClass, const std::string& message)
+AbstractSafeLogger::AbstractSafeLogger()
 {
-   
-    std::string logEntry = std::string("{") + currentDateTime() + "} [" + logLevelToString(level) + "] (" + eventClass + "): " + message;
-
-    std::lock_guard<std::mutex> lock(m_logMutex);
-    writeLog(logEntry);
+    m_WorkerThread = std::thread(&AbstractSafeLogger::ProcessQueue, this);
 }
 
-void AbstractDirectOutputLogger::log(LogLevel level, const std::string& eventClass, const std::string& message)
+AbstractSafeLogger::~AbstractSafeLogger()
+{
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
+        m_StopLogging = true;
+    }
+    m_CV.notify_all();
+    if (m_WorkerThread.joinable())
+        m_WorkerThread.join();
+}
+
+void AbstractSafeLogger::ProcessQueue()
+{
+    while (true)
+    {
+        std::unique_lock<std::mutex> lock(m_Mutex);
+        m_CV.wait(lock, [this]() { return !m_Queue.empty() || m_StopLogging; });
+
+        while (!m_Queue.empty())
+        {
+            WriteLog(m_Queue.front());
+            m_Queue.pop();
+        }
+
+        if (m_StopLogging && m_Queue.empty())
+            break;
+    }
+}
+
+void AbstractSafeLogger::Log(LogLevel level, const std::string& eventClass, const std::string& message)
 {
     std::string logEntry = std::string("{") + currentDateTime() + "} [" + logLevelToString(level) + "] (" + eventClass + "): " + message;
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
+        m_Queue.push(logEntry);
+    }
+    m_CV.notify_one();
+}
 
-    std::lock_guard<std::mutex> lock(m_logMutex);
-    writeLog(level, logEntry);
+void AbstractDirectOutputLogger::Log(LogLevel level, const std::string& eventClass, const std::string& message)
+{
+    std::string logEntry = std::string("{") + currentDateTime() + "} [" + logLevelToString(level) + "] (" + eventClass + "): " + message;
+    std::lock_guard<std::mutex> lock(m_LogMutex);
+    WriteLog(level, logEntry);
 }
 
 FileLogger::FileLogger(const std::string& filePath)
 {
-    m_logFile.open(filePath, std::ios::app);
-    if (!m_logFile.is_open())
+    m_File.open(filePath, std::ios::app);
+    if (!m_File.is_open())
     {
         throw std::runtime_error("Unable to open log file");
     }
@@ -61,26 +95,26 @@ FileLogger::FileLogger(const std::string& filePath)
 
 FileLogger::~FileLogger()
 {
-    if (m_logFile.is_open())
+    if (m_File.is_open())
     {
-        m_logFile.close();
+        m_File.close();
     }
 }
 
-void FileLogger::writeLog(const std::string& logEntry)
+void FileLogger::WriteLog(const std::string& logEntry)
 {
-    if (m_logFile.is_open())
+    if (m_File.is_open())
     {
-        m_logFile << logEntry << std::endl;
+        m_File << logEntry << std::endl;
     }
 }
 
-void ConsoleLogger::writeLog(const std::string& logEntry)
+void ConsoleLogger::WriteLog(const std::string& logEntry)
 {
     std::printf("%s\n", logEntry.c_str());
 }
 #ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
-void QDebugLogger::writeLog(LogLevel level, const std::string& logEntry)
+void QDebugLogger::WriteLog(LogLevel level, const std::string& logEntry)
 {
     switch (level)
     {
@@ -100,12 +134,12 @@ void QDebugLogger::writeLog(LogLevel level, const std::string& logEntry)
     }
 }
 #endif // !MINIMUM_USAGE_OF_QT_FRAMEWORK
-void OutputLogger::setType(Type type)
+void OutputLogger::SetType(Type type)
 {
     m_Type = type;
 }
 
-void OutputLogger::writeLog(LogLevel level, const std::string& logEntry)
+void OutputLogger::WriteLog(LogLevel level, const std::string& logEntry)
 {
     if (m_Type == Type::narrow)
     {
@@ -128,10 +162,10 @@ void OutputLogger::writeLog(LogLevel level, const std::string& logEntry)
     }
 
     if (m_Type == Type::wide)
-        writeLog(level, std::wstring(logEntry.begin(), logEntry.end()));
+        WriteLog(level, std::wstring(logEntry.begin(), logEntry.end()));
 }
 
-void OutputLogger::writeLog(LogLevel level, const std::wstring& logEntry)
+void OutputLogger::WriteLog(LogLevel level, const std::wstring& logEntry)
 {
     if (m_Type == Type::narrow)
         return; /// Overloaded OutputLogger::writeLog should be use only with wide output type
