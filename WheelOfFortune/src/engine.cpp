@@ -213,7 +213,7 @@ void Engine::processData()
 
 	m_Settings.m_DataState = DataState::Ready;
 	
-	if (m_Settings.m_AutoStart)	// NOTE: m_AutoStart in settings should only change m_Settings.m_DrawLots on true
+	if (m_Settings.m_AutoStart)	// IDEA: m_AutoStart in settings should only change m_Settings.m_DrawLots on true
 		changeState(Stage::FortuneDraw);
 	else
 		changeState(Stage::Idle);
@@ -225,14 +225,14 @@ void Engine::waitForOrder()
 
 	if(m_Settings.m_DataState == DataState::Selected)
 	{
-		if (m_WheelOfFortune) // TODO: clear later (after Task9)
+		if (m_WheelOfFortune)
 			m_WheelOfFortune->resetHighlight();
 
 		changeState(Stage::DataLoading);
 	}
 	if (m_Settings.m_DataState == DataState::Ready && m_Settings.m_DrawLots)
 	{
-		if (m_WheelOfFortune) // TODO: clear later (after Task9)
+		if (m_WheelOfFortune)
 			m_WheelOfFortune->resetHighlight();
 		m_Settings.m_DrawLots = false;
 		changeState(Stage::FortuneDraw);
@@ -250,8 +250,6 @@ void Engine::fortuneDraw()
 	{
 		changeState(Stage::Idle);
 		throw std::out_of_range("Invalid RandGenerator value");
-		// TODO: Log
-		// return;
 	}
 
 	(this->*generateRandData)(randomAngle, durationInSeconds);
@@ -305,20 +303,12 @@ void Engine::animationExtinguishing()
 
 void Engine::sumUp()
 {
-	// TODO: TASK 9
-	// Add label(wordart) with result, slowly disappearing after time; confetti gif, sound effect (fanfare)
 	if (m_WheelOfFortune)
 	{
 		m_WheelOfFortune->highlightPie();
 		if (!m_OpenGlWidget.expired())
 			(*m_OpenGlWidget.lock()).update();
 	}
-	// IDEA
-	// Class Timestamp
-	// Timestamp ticket1 = now() + sumUpSomeAnimationTime; // play gif, show wordart, slowly hid wordart, timeout/finishTime/changeStateTime, maybe play sound effect time
 
-	//if (isEnclapsed())
-	//if (m_WheelOfFortune)
-	//	m_WheelOfFortune->resetHighLight();
 	changeState(Stage::Idle);
 }

@@ -71,7 +71,7 @@ void QtWheelOfFortune::drawBoardCenter()
 	m_Painter.setBrush(Qt::black);
 	m_Painter.drawEllipse(innerRectangle);
 
-	// Ornament outer circle
+	// ornament outer circle
 	QPen outerPen(Qt::black, 0.005, Qt::DotLine, Qt::RoundCap);
 	m_Painter.setPen(outerPen);
 	m_Painter.drawArc(outerRectangle, 0, 360 * 16);
@@ -108,7 +108,6 @@ void QtWheelOfFortune::drawPiePiece(const QString& text, const QColor& color, fl
 	m_Painter.drawPie(rectangle, (180 - m_PieAngle / 2.0f) * 16, m_PieAngle * 16);
 	m_Painter.restore();
 
-	// TODO: Solve issue with FONT size while scale is in range -0.5:0.5
 	// draw label
 	m_Painter.save();
 	m_Painter.rotate(rotationAngle);

@@ -3,7 +3,7 @@
 #include <cmath>
 
 const int g_DefaultSize = 500;
-extern const Color g_HighlightRimColor("#FFFEC8"); // TODO: Cross-check that.
+extern const Color g_HighlightRimColor("#FFFEC8");
 constexpr float g_Epsilon = 0.0001f;
 constexpr float g_FullRotation = 360.0f;
 

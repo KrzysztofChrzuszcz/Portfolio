@@ -14,7 +14,9 @@ MainWindow::MainWindow(Settings& settings, std::shared_ptr<ILogger> logger, QWid
     m_Settings(settings)
 {
     m_Ui->setupUi(this);
-    m_OpenGlWidget = std::shared_ptr<CustomOpenGlWidget>(findChild<CustomOpenGlWidget*>("customOpenGlWidget"));
+    if (CustomOpenGlWidget* customOpenGlWidget = findChild<CustomOpenGlWidget*>("customOpenGlWidget"))
+        m_OpenGlWidget = std::shared_ptr<CustomOpenGlWidget>(customOpenGlWidget);
+
     if (m_OpenGlWidget == nullptr)
     {
         m_Logger->Log(LogLevel::Error, "MainWindow", "Issue with GUI form. CustmOpenGLWidget is missing!");
@@ -69,7 +71,6 @@ void MainWindow::logSettingsChange(QObject* obj)
 
 void MainWindow::openFileBrowser()
 {
-    // TODO: Add predirectives for Debug/ Release for default path 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "RelWithDebInfo/resources/data", tr("XML Files (*.xml)"));
     m_Settings.setFilePath(fileName.toStdString());
     m_Logger->Log(LogLevel::Info, "MainWindow", "Opened file: " + fileName.toStdString());

@@ -2,7 +2,7 @@
 #include "stb_image.h" /// Image-loading library that supports several popular formats.
 #include "glwheeloffortune.h"
 
-#include <windows.h> // TODO: add commentary why it's important in here and readme file
+#include <windows.h>
 #include <GL/freeglut.h> /// Used for glutStrokeString
 #include <cmath>
 
@@ -45,18 +45,12 @@ void GlWheelOfFortune::drawIcon()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         int nrChannels;
-        // unsigned char* data = stbi_load("resources/images/logo.bmp", &width, &height, &nrChannels, 0);
-        // unsigned char* data = stbi_load("resources/images/logo.jpg", &width, &height, &nrChannels, 0);
-        // Reminder: above lines left for test cases of library loading (could by used in gTest example)
-        unsigned char* data = stbi_load("resources/images/logo.png", &width, &height, &nrChannels, 0); // Works only while manual executable file run (not with VisualStudio debbug)
+        unsigned char* data = stbi_load("resources/images/logo.png", &width, &height, &nrChannels, 0); // Works only while manual execute release file (not with VisualStudio debbug)
         if (data)
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // TODO: GL_RGBA
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         }
-        else
-        {
-            // std::cout << "Failed to load texture" << std::endl;
-        }
+
         stbi_image_free(data);
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -78,7 +72,7 @@ void GlWheelOfFortune::drawIcon()
 
 void GlWheelOfFortune::drawBoardContour()
 {
-    glLineWidth(10); // TODO: scaling with text
+    glLineWidth(10);
     glColor3f(0.f, 0.f, 0.f);
     glColor3f(128.f / 255.f, 128.f / 255.f, 0.f);
     drawCircleShape(0.f, 0.f, 0.95f);
@@ -88,7 +82,7 @@ void GlWheelOfFortune::drawBoardContour()
 
 void GlWheelOfFortune::drawBoardCenter()
 {
-    glLineWidth(3); // TODO: scaling with text
+    glLineWidth(3);
     glColor3f(128.f / 255.f, 128.f / 255.f, 0.0);
     drawCircleShape(0.f, 0.f, 0.105f, true, false); // background circle
     glColor3f(0.f, 0.f, 0.f);
@@ -207,10 +201,6 @@ void GlWheelOfFortune::drawPieShape(float radius, float angle, float rotation, b
 
 void GlWheelOfFortune::drawLabel(float radiusRatio, float rotationAngle, const string& name, float lineWidth, bool highlight)
 {
-    // TODO1: text scaling
-    // TODO2: New way of text rendering
-    // https://learnopengl.com/In-Practice/Text-Rendering
-    // https://www.youtube.com/watch?v=QRw3nMffPDk&list=PLysLvOneEETPlOI_PI4mJnocqIpr2cSHS&index=34
     GLfloat halfWidth = (GLfloat)m_Size.m_Width / 2.f;
     GLfloat halfHeight = (GLfloat)m_Size.m_Height / 2.f;
     GLfloat r = min(halfWidth, halfHeight) * 0.9f; /// I'd like to shift text anchor a little from contour
@@ -234,8 +224,7 @@ void GlWheelOfFortune::drawLabel(float radiusRatio, float rotationAngle, const s
         glRotatef(-1.f * rotationAngle, 0.f, 0.f, 1.f); // set rotation angle
         glTranslatef(0.f, -1.f * scaleFactor * textHeight / 2.f, 0.f); // adjust text anchor
         glTranslatef(-1.f * r * radiusRatio, 0.f, 0.f); // shift to contour side
-        glScalef(scaleFactor, scaleFactor, 1.f); // use textWidth i textHeight to calculate scale
-        //glDisable(GL_LINE_SMOOTH);
+        glScalef(scaleFactor, scaleFactor, 1.f);
         glLineWidth(lineWidth);
         glutStrokeString(GLUT_STROKE_ROMAN, testText);
         glFlush();

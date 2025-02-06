@@ -10,6 +10,9 @@ namespace Ui {
 class Settings;
 }
 
+/**
+ * \brief SettingsWidget Qt Dialog to present settings GUI
+ */
 class SettingsWidget : public QDialog
 {
     Q_OBJECT

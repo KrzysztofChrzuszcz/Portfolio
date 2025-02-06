@@ -126,7 +126,6 @@ bool Color::isKnown()
 bool Color::isIntForm()
 {
 	std::regex pattern("([0-9]{1,3}[,]?){3,4}");
-	//std::regex pattern("^(([0-9]{1,3}),){2,3}[0-9]{1,3}$"); // ?
 	std::smatch match;
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;
@@ -137,7 +136,6 @@ bool Color::isIntForm()
 bool Color::isFloatForm()
 {
 	std::regex pattern("([0-1].[0-9]{1,5}[,]?){3,4}");
-	//std::regex pattern("^((0\\.\\d+|1\\.0+),){2,3}(0\\.\\d+|1\\.0+)$");
 	std::smatch match;
 	if (std::regex_match(m_RawColor, match, pattern))
 		return true;

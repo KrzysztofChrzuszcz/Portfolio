@@ -174,7 +174,7 @@ void SettingsWidget::setRefreshFrequency(int index)
     if (m_Ui->refreshFrequency_comboBox)
         if (m_Initialized)
         {
-            m_Settings.m_ScreenRefreshFrequencyIndex = index; // m_Ui->refreshFrequency_comboBox->currentIndex();
+            m_Settings.m_ScreenRefreshFrequencyIndex = index;
             m_Settings.updateLastChangeTime();
         }
 }

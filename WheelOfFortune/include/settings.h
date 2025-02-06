@@ -63,7 +63,6 @@ private:
     DataState       m_DataState;
     bool            m_DrawLots;
     Lock            m_Lock;
-
     bool            m_AutoStart;
     bool            m_AutoAdjust;
     string          m_FilePath;
