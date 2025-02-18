@@ -32,13 +32,14 @@ public:
                         Engine(MainWindow&, DataLoader&);
                         ~Engine();
 
-    void                run();                          //!< Main Engine method
-    void                setRandomMethod(int index);     //!< Set method to generate random data
-    uint                getScreenRefreshFrequency();    //!< Returns current screen refresh frequency from settings
+    void                run();                                  //!< Main Engine method
+    void                setRandomMethod(int index);             //!< Set method to generate random data
+    uint                getScreenRefreshFrequency();            //!< Returns current screen refresh frequency from settings
+    void                updateScreenRefreshingParameters(double& delay); //!< Update values of variables strictly connected with screen refreshing.
 
 private:
-    void                changeState(Stage newState);    //!< Changes engine state
-    bool                validate();                     //!< Validates loaded data
+    void                changeState(Stage newState);            //!< Changes engine state
+    bool                validate();                             //!< Validates loaded data
 
     // Example usage of function pointer instead preferred std::function (suits demonstration purpose)
     void                (Engine::*generateRandData)(double&, int&); //!< Function pointer to use selected generate method
@@ -61,28 +62,30 @@ private:
 
         durationInSeconds = durationDist(genEngine);
     }
-    void                waitForOrder();                 //!< Idle state method. Depends on settings and menu buttons
-    void                loadData();                     //!< Load and adjust data from selected input file if the one is correct
-    void                processData();                  //!< Calculate entries and pass them to main GUI part
-    void                fortuneDraw();                  //!< Random draw of rotation and time of execution
-    void                animate();                      //!< Fast animation of the wheel
-    void                animationExtinguishing();       //!< Slowing down the wheel
-    void                sumUp();                        //!< Result presentation within sparks/water feature
+    void                waitForOrder();                         //!< Idle state method. Depends on settings and menu buttons
+    void                loadData();                             //!< Load and adjust data from selected input file if the one is correct
+    void                processData();                          //!< Calculate entries and pass them to main GUI part
+    void                fortuneDraw();                          //!< Random draw of rotation and time of execution
+    void                animate();                              //!< Fast animation of the wheel
+    void                animationExtinguishing();               //!< Slowing down the wheel
+    void                sumUp();                                //!< Result presentation within sparks/water feature
 
 
 private:
     DataLoader&         m_DataLoader;
     Settings&           m_Settings;
+    std::time_t         m_SettingsTimestamp;                    //!< Time of last modification of settings by user
     MainWindow&         m_MainWindow;
-    Stage               m_Stage;                        //!< Current stage
+    Stage               m_Stage;                                //!< Current stage
     std::weak_ptr<CustomOpenGlWidget> 
-                        m_OpenGlWidget;                 //!< Widget with OpenGL (canvas)
-    WheelOfFortune*     m_WheelOfFortune;               //!< Main part of GUI
+                        m_OpenGlWidget;                         //!< Widget with OpenGL (canvas)
+    WheelOfFortune*     m_WheelOfFortune;                       //!< Main part of GUI
 
-    int                 m_FastAnimationAngle;           //!< Whole angle to rotate during fast animation
-    int                 m_SlowingDownAngle;             //!< Whole angle to rotate during extinguishing animation
-    int                 m_CurrentAngle;                 //!< Current rotation angle of the wheel
-    int                 m_Step;                         //!< Step of rotation angle animation while one widget refresh
+    int                 m_FastAnimationAngle;                   //!< Whole angle to rotate during fast animation
+    int                 m_ExtinguishingAngle;                   //!< Whole angle to rotate during extinguishing animation
+    int                 m_CurrentAngle;                         //!< Current rotation angle of the wheel
+    int                 m_Step;                                 //!< Step of rotation angle animation while one widget refresh
+    int                 m_ExtinguishingAngleChangeThreshold;    //!< Threshold of step decreasing during animation extinguishing
 };
 
 #endif //ENGINE_H

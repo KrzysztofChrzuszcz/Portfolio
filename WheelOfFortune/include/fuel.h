@@ -24,11 +24,12 @@ public:
     virtual             ~Fuel(); /// Derived classes has to set m_Quit to true;
 
     virtual void        startEngine() = 0;
+    void                updateScreenRefreshing();
 
 protected:
     std::atomic<bool>   m_Quit;
     Engine&             m_Engine;
-    int                 m_Delay;
+    double              m_Delay;
 };
 
 
@@ -74,9 +75,6 @@ public:
 
 protected:
     void                run() override;
-
-//signals:
-//  void                error(int socketError, const QString& message); // TODO: finish
 };
 
 #endif //FUEL_H
