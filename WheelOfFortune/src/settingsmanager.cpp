@@ -3,7 +3,8 @@
 //const std::string g_SettingsDumpFileName("settings.csv"); // Other way of data storage, left to highlight the issues of extensibility
 const std::string g_SettingsDumpFileName("settings.json");
 
-SettingsManager::SettingsManager() :
+SettingsManager::SettingsManager(std::shared_ptr<ILogger> logger) :
+    m_Logger(std::move(logger)),
     m_DataProvider(g_SettingsDumpFileName)
 {
 }
@@ -28,7 +29,17 @@ void SettingsManager::load()
     // Better way
     string json;
     if (m_DataProvider.load(json))
-        m_Settings.fromJSON(json);
+    {
+        try
+        {
+            m_Settings.fromJSON(json);  
+        }
+        catch (const std::exception& e)
+        {
+            m_Logger->Log(LogLevel::Error, "SettingsManager", "Serious issue with settings.json file! Data corrupted.");
+            return;
+        }
+    }
 }
 
 bool SettingsManager::isDataReady() const noexcept

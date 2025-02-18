@@ -12,7 +12,7 @@ CSVDataProvider::CSVDataProvider(const std::string& filePath) :
     m_FilePath(filePath.c_str())
 {
     assert(!filePath.empty());
-    // TODO: moze assert na .csv
+    assert(filePath.substr(filePath.length() - 4) == ".csv");
 }
 
 CSVDataProvider::~CSVDataProvider()
@@ -23,7 +23,7 @@ CSVDataProvider::~CSVDataProvider()
     }
 }
 
-bool CSVDataProvider::dump(StringList& input)
+bool CSVDataProvider::dump(StringList& input) noexcept
 {
     m_File.open(m_FilePath, std::ios::out);
     if (m_File.is_open())
@@ -45,7 +45,7 @@ bool CSVDataProvider::dump(StringList& input)
     return false;
 }
 
-bool CSVDataProvider::load(StringList& output)
+bool CSVDataProvider::load(StringList& output) noexcept
 {
     m_File.open(m_FilePath, std::ios::in);
     if (!m_File.is_open())
@@ -78,14 +78,14 @@ JSONDataProvider::JSONDataProvider(const std::string& filePath) :
     m_FilePath(filePath.c_str())
 {
     assert(!filePath.empty());
-    // TODO: moze assert na .json
+    assert(filePath.substr(filePath.length() - 5) == ".json");
 }
 
 JSONDataProvider::~JSONDataProvider()
 {
 }
 
-bool JSONDataProvider::dump(std::string& input)
+bool JSONDataProvider::dump(std::string& input) noexcept
 {
     std::ofstream file(m_FilePath);
     if (!file.is_open())
@@ -105,7 +105,7 @@ bool JSONDataProvider::dump(std::string& input)
     return true;
 }
 
-bool JSONDataProvider::load(std::string& output)
+bool JSONDataProvider::load(std::string& output) noexcept
 {
     std::ifstream file(m_FilePath);
 

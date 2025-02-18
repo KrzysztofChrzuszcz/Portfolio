@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createFileLogger("log.txt");
 #endif // !DEBUG
 
-	SettingsManager settingsManager;
+	SettingsManager settingsManager(fileLogger);
 	settingsManager.load();
 	MainWindow window(settingsManager, fileLogger);
 

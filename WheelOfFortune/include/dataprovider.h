@@ -15,10 +15,12 @@ template <typename T>
 class IDataProvider
 {
 public:
-    bool                dump(T& input);
-    bool                load(T& output);
+                                ~IDataProvider() = default;
 
+    virtual bool                dump(T& input) noexcept = 0;
+    virtual bool                load(T& output) noexcept = 0;
 };
+
 
 typedef std::list<std::string> StringList;
 class CSVDataProvider : public IDataProvider<StringList>
@@ -27,8 +29,8 @@ public:
                         CSVDataProvider(const std::string& filePath);
                         ~CSVDataProvider();
 
-    bool                dump(StringList& input);
-    bool                load(StringList& output);
+    bool                dump(StringList& input) noexcept override;
+    bool                load(StringList& output) noexcept override;
 
 private:
     const char*         m_FilePath;
@@ -47,8 +49,8 @@ public:
                         ~JSONDataProvider();
 
 
-    bool                dump(std::string& input);
-    bool                load(std::string& output);
+    bool                dump(std::string& input) noexcept override;
+    bool                load(std::string& output) noexcept override;
 
 private:
     const char*         m_FilePath;
