@@ -7,6 +7,7 @@
 #include "engine.h"
 #include "dataloader.h"
 #include "logger.h"
+#include "settingsmanager.h"
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
 #include "tinydataloader.h"
@@ -35,8 +36,9 @@ int main(int argc, char* argv[]) {
 	std::shared_ptr<ILogger> fileLogger = LoggerFactory::createFileLogger("log.txt");
 #endif // !DEBUG
 
-	Settings settings;
-	MainWindow window(settings, fileLogger);
+	SettingsManager settingsManager;
+	settingsManager.load();
+	MainWindow window(settingsManager, fileLogger);
 
 #ifdef MINIMUM_USAGE_OF_QT_FRAMEWORK
 	TinyDataLoader dataLoader(fileLogger);

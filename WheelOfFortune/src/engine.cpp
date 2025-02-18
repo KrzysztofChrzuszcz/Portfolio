@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 const double M_PHI = (1.0 + sqrt(5)) / 2.0;
+const double g_GoldenRatio = 1.0 / M_PHI;
 const int g_MinimumDurationTime = 8;
 const int g_MaxDuplications = 24; // = 360 / 15 (minimal pie angle range in settings)
 
@@ -18,12 +19,15 @@ Engine::Engine(MainWindow& mainWindow, DataLoader& dataLoader):
 {
 	m_CurrentAngle = 0;
 	m_FastAnimationAngle = 0;
-	m_SlowingDownAngle = 0;
+	m_ExtinguishingAngle = 0;
+	m_ExtinguishingAngleChangeThreshold = 0;
 	m_Step = 0;
 
 	m_OpenGlWidget = mainWindow.getWidget();
 	if (!m_OpenGlWidget.expired())
 		m_WheelOfFortune = (*m_OpenGlWidget.lock()).getGui();
+
+	m_SettingsTimestamp = m_Settings.getTimestamp();
 }
 
 Engine::~Engine()
@@ -105,6 +109,31 @@ uint Engine::getScreenRefreshFrequency()
 	return m_Settings.m_ScreenRefreshFrequencies[m_Settings.m_ScreenRefreshFrequencyIndex];
 }
 
+void Engine::updateScreenRefreshingParameters(double& delay)
+{
+	if (m_Settings.hasChanged(m_SettingsTimestamp))
+	{
+		ReadLock rLock(m_Settings.m_Lock);
+		m_SettingsTimestamp = m_Settings.m_LastChangeTime;
+		
+		double newDelay = 1000. / m_Settings.m_ScreenRefreshFrequencies[m_Settings.m_ScreenRefreshFrequencyIndex];
+		double ratio = newDelay/ delay;
+
+		if (delay != newDelay)
+		{
+			delay = newDelay;
+			if (m_Stage == Stage::Animation || m_Stage == Stage::SlowingDown)
+			{
+				m_Step = std::max(m_Step * ratio, 2.0); // We can not go below 2 because of below formula
+				if (m_Stage == Stage::SlowingDown)
+					m_ExtinguishingAngleChangeThreshold = m_CurrentAngle / (m_Step - 1);
+				else
+					m_ExtinguishingAngleChangeThreshold = m_ExtinguishingAngle / (m_Step - 1);
+			}			
+		}
+	}
+}
+
 void Engine::changeState(Stage newState)
 {
 	m_Stage = newState;
@@ -116,7 +145,7 @@ bool Engine::validate()
 	int maxPositionsAmount = 360.f / m_Settings.m_MinAngle;
 
 	// Check entries amount 
-	/// There is only point to visualise at least 2 positions and it is not possible to visualize more then max amount with given min pie angle range setting
+	/// There is only point to visualize at least 2 positions and it is not possible to visualize more then max amount with given min pie angle range setting
 	if (entriesAmount <= 1 || entriesAmount > maxPositionsAmount)
 		m_DataLoader.setErrorFlag(3);
 
@@ -254,13 +283,14 @@ void Engine::fortuneDraw()
 
 	(this->*generateRandData)(randomAngle, durationInSeconds);
 
-	double goldenRatio = 1.f / M_PHI;
-	m_FastAnimationAngle = randomAngle * goldenRatio;
-	m_SlowingDownAngle = randomAngle * ( 1.f - goldenRatio);
+	m_FastAnimationAngle = randomAngle * g_GoldenRatio;
+	m_ExtinguishingAngle = randomAngle * ( 1.f - g_GoldenRatio);
 
-	m_Step = randomAngle * getScreenRefreshFrequency() / durationInSeconds / 1000.0; // step angle per millisecond
+	m_Step = randomAngle / durationInSeconds * getScreenRefreshFrequency() / 1000; // step angle per millisecond
 
-	m_CurrentAngle = m_SlowingDownAngle; /// reset sign for local static variable inside Engine::animationExtinguishing()
+	m_ExtinguishingAngleChangeThreshold = m_ExtinguishingAngle / (m_Step - 1);
+
+	m_CurrentAngle = m_ExtinguishingAngle;
 	changeState(Stage::Animation);
 }
 
@@ -281,12 +311,7 @@ void Engine::animate()
 
 void Engine::animationExtinguishing()
 {
-	/// Because there is only one instance of engine I could present here unusual usage of local static variable.
-	static int changeAngle; // angle on which step value decrease
-	if (m_SlowingDownAngle == m_CurrentAngle)
-		changeAngle = m_SlowingDownAngle / (m_Step - 1);
-
-	if (m_Step > 0 && m_CurrentAngle / changeAngle == m_Step - 2)
+	if (m_Step > 0 && m_CurrentAngle / m_ExtinguishingAngleChangeThreshold == m_Step - 2)
 		--m_Step;
 
 	if (m_CurrentAngle - m_Step >= 0)

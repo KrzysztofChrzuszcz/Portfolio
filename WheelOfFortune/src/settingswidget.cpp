@@ -18,7 +18,7 @@ SettingsWidget::SettingsWidget(Settings& settings, QWidget* parent) :
 
 SettingsWidget::~SettingsWidget()
 {
-    emit destroyed(this); // signal should be emitted manually OR disconnectControllers method should disconnect all signals one by one
+    emit destroyed(this); // Signal should be emitted manually OR disconnectControllers method should disconnect all signals one by one
     disconnectControllers();
     delete m_Ui;
 }
@@ -74,7 +74,8 @@ void SettingsWidget::connectControllers()
 
 void SettingsWidget::disconnectControllers()
 {
-    disconnect(); /// This may cause issue with QObject::destroyed signal
+    disconnect(); /// This have consequence of not emitting inherited signals like QObject::destroyed signal
+    /// NOTE: This approach was chosen due to demonstrate usage of emit Qt signal in the class destructor. (And make this method shorter by the way.)
 }
 
 void SettingsWidget::setInitValues()

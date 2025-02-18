@@ -1,5 +1,7 @@
 ﻿#include "fuel.h"
 
+#include <cmath>
+
 const uint SCREEN_REFRESH_FREQUENCY(50); // [Hz]
 
 using std::this_thread::sleep_for;
@@ -14,6 +16,11 @@ Fuel::Fuel(Engine& engine) :
 
 Fuel::~Fuel()
 {
+}
+
+void Fuel::updateScreenRefreshing()
+{
+    m_Engine.updateScreenRefreshingParameters(m_Delay);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,8 +44,9 @@ void CustomWorkingThreadNewWay::run()
 {
     while (!m_Quit)
     {
+        updateScreenRefreshing();
         m_Engine.run();
-        m_Future.wait_for(std::chrono::milliseconds(m_Delay));
+        m_Future.wait_for(std::chrono::milliseconds(std::lround(m_Delay)));
     }
 
     // https://stackoverflow.com/questions/22653022/how-to-terminate-a-stdfuture
@@ -51,6 +59,7 @@ void CustomWorkingThreadNewWay::run()
     m_Future = std::async(std::launch::async, [&]() {
         while (!stopToken.stop_requested())
         {
+            updateScreenRefreshing();
             m_Engine.run();
             std::this_thread::sleep_for(milliseconds(m_Delay));
         }
@@ -82,8 +91,9 @@ void CustomWorkingThreadOldWay::runEngine()
 {
     while (!m_Quit)
     {
+        updateScreenRefreshing();
         m_Engine.run();
-        sleep_for(milliseconds(m_Delay));
+        sleep_for(milliseconds(std::lround(m_Delay)));
     }
 }
 
@@ -117,6 +127,7 @@ void QtWorkingThread::run()
 {
     while (!m_Quit)
     {
+        updateScreenRefreshing();
         m_Engine.run();
         Sleep(m_Delay);
     }

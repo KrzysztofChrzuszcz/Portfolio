@@ -1,7 +1,7 @@
 # Wheel Of Fortune
 
 ## Description
-Wheel Of Fortune helps time organization or just making decision about next activity. Just by simply receiving list of options in XML format We can start lottery.
+Wheel Of Fortune helps with time organization or making decision about next activity. Just by simply receiving list of options in XML format We can start fortune draw.
 
 
 ## Visuals

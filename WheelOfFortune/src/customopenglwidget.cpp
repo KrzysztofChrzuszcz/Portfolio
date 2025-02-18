@@ -49,9 +49,9 @@ void CustomOpenGlWidget::paintGL()
 #endif // MINIMUM_USAGE_OF_QT_FRAMEWORK
 }
 
-void CustomOpenGlWidget::bindWithSettings(const Settings& settings)
+void CustomOpenGlWidget::bindWithSettings(const SettingsManager& settingsManager)
 {
-    m_WhelOfFortune.get()->isDataReady = std::bind(&Settings::isDataReady, &settings);
+    m_WhelOfFortune.get()->isDataReady = std::bind(&SettingsManager::isDataReady, &settingsManager);
 }
 
 void CustomOpenGlWidget::initializeGL()

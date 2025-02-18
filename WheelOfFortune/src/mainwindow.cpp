@@ -7,11 +7,11 @@
 #include <QString>
 #include <QMessageBox>
 
-MainWindow::MainWindow(Settings& settings, std::shared_ptr<ILogger> logger, QWidget *parent) :
+MainWindow::MainWindow(SettingsManager& settingsManager, std::shared_ptr<ILogger> logger, QWidget *parent) :
     QMainWindow(parent),
     m_Logger(std::move(logger)),
     m_Ui(new Ui::MainWindow),
-    m_Settings(settings)
+    m_SettingsManager(settingsManager)
 {
     m_Ui->setupUi(this);
     if (CustomOpenGlWidget* customOpenGlWidget = findChild<CustomOpenGlWidget*>("customOpenGlWidget"))
@@ -22,14 +22,14 @@ MainWindow::MainWindow(Settings& settings, std::shared_ptr<ILogger> logger, QWid
         m_Logger->Log(LogLevel::Error, "MainWindow", "Issue with GUI form. CustmOpenGLWidget is missing!");
     }
     else
-        m_OpenGlWidget.get()->bindWithSettings(settings);
+        m_OpenGlWidget.get()->bindWithSettings(m_SettingsManager);
 
     connect(m_Ui->actionChooseFile, SIGNAL(triggered()), this, SLOT(openFileBrowser()));
     connect(m_Ui->actionDraw, SIGNAL(triggered()), this, SLOT(drawLots()));
     connect(m_Ui->displaySettings, SIGNAL(triggered()), this, SLOT(displaySettings()));
     connect(this, SIGNAL(errorSignal(const QString&)), this, SLOT(displayErrorWindow(const QString&)));
 
-    m_SettingsTimestamp = m_Settings.getTimestamp();
+    m_SettingsTimestamp = m_SettingsManager.getTimestamp();
 }
 
 MainWindow::~MainWindow()
@@ -63,31 +63,34 @@ void MainWindow::displayErrorWindow(const QString& message)
     QMessageBox::critical(this, tr("Error Window"), message);
 }
 
-void MainWindow::logSettingsChange(QObject* obj)
+void MainWindow::onSettingsClosed(QObject* obj)
 {
-    if (m_Settings.hasChanged(m_SettingsTimestamp))
+    if (m_SettingsManager.hasChanged(m_SettingsTimestamp))
+    {
+        m_SettingsManager.dump();
         m_Logger->Log(LogLevel::Info, "MainWindow", "Settings have changed");
+    }
 }
 
 void MainWindow::openFileBrowser()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "RelWithDebInfo/resources/data", tr("XML Files (*.xml)"));
-    m_Settings.setFilePath(fileName.toStdString());
+    m_SettingsManager.setFilePath(fileName.toStdString());
     m_Logger->Log(LogLevel::Info, "MainWindow", "Opened file: " + fileName.toStdString());
 }
 
 void MainWindow::drawLots()
 {
-    m_Settings.setDrawLots();
+    m_SettingsManager.setDrawLots();
 }
 
 void MainWindow::displaySettings()
 {
-    m_SettingsTimestamp = m_Settings.getTimestamp();
-    SettingsWidget* popup = new SettingsWidget(m_Settings, this);
+    m_SettingsTimestamp = m_SettingsManager.getTimestamp();
+    SettingsWidget* popup = new SettingsWidget(m_SettingsManager.getSettings(), this);
     popup->setAttribute(Qt::WA_DeleteOnClose);
     popup->setWindowFlags(Qt::Popup); // https://forum.qt.io/topic/115599/qt-popup-window-behaviour/10
-    connect(popup, &SettingsWidget::destroyed, this, &MainWindow::logSettingsChange, Qt::DirectConnection);
+    connect(popup, &SettingsWidget::destroyed, this, &MainWindow::onSettingsClosed, Qt::DirectConnection);
     popup->move(this->geometry().topLeft());
     popup->show();
 }

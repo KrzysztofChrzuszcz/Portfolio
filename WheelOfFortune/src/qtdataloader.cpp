@@ -1,5 +1,6 @@
 #include "qtdataloader.h"
 
+#include <QtXml>
 #include <QXmlStreamReader>
 
 extern const Color g_DafaultColor;

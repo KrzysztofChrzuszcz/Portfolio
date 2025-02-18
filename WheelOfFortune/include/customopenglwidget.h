@@ -2,7 +2,7 @@
 #define CUSTOMOPENGLWIDGET_H
 
 #include "global.h"
-#include "settings.h"
+#include "settingsmanager.h"
 #include "wheeloffortune.h"
 
 #include <memory>
@@ -24,7 +24,7 @@ public:
     inline WheelOfFortune*          getGui() { return &*m_WhelOfFortune; }
     // inline WheelOfFortune*       getGui() { return m_WhelOfFortune.get(); }
     void                            paintGL() override;
-    void                            bindWithSettings(const Settings& conf);
+    void                            bindWithSettings(const SettingsManager& settings);
 
 
 protected:

@@ -29,7 +29,7 @@ public:
                                         DataLoader(std::shared_ptr<ILogger> logger) : m_Logger(std::move(logger)) {}
     virtual                             ~DataLoader() noexcept = default;
     virtual bool                        loadXml(const char* path) = 0; //!< Result informs of success in file open and founding proper structure.
-    void                                adjust(const Settings& conf) { std::for_each(m_Entries.begin(), m_Entries.end(), [&](Entry& e) { e.m_Color.adjustBrightness(conf.getMinColorBrightness()); }); } //!< Adjust input data for better visibility. For now I need to adjust only brightness, so it's a good place for simple lambda usage as example.
+    void                                adjust(const Settings& settings) { std::for_each(m_Entries.begin(), m_Entries.end(), [&](Entry& e) { e.m_Color.adjustBrightness(settings.getMinColorBrightness()); }); } //!< Adjust input data for better visibility. For now I need to adjust only brightness, so it's a good place for simple lambda usage as example.
     const vector<Entry>&                getEntries() noexcept { return m_Entries; } //!< In this case i allow compiler to decide about adding inline to getter
     size_t                              getEntriesCount() noexcept { return m_Entries.size(); } //!< Returns number of entries.
     inline bool                         isCorrupted() const noexcept { return m_DataCorrupted; } //!< Inform about existing some problems with input data

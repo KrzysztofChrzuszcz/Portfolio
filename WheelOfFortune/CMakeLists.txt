@@ -29,6 +29,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(FREEGLUT REQUIRED)
 
+find_package(RapidJSON CONFIG REQUIRED)
 
 #=================== INCLUSION OF Project Files ====================#
 set(FORMS_DIR "${CMAKE_SOURCE_DIR}/forms")
@@ -78,6 +79,12 @@ target_include_directories(WheelOfFortune PRIVATE ${FORMS_DIR})
 target_include_directories(WheelOfFortune PRIVATE ${INCLUDE_DIR})
 target_include_directories(WheelOfFortune PRIVATE ${SOURCE_DIR})
 
+# Add the RapidJSON
+if (RapidJSON_FOUND)
+    target_include_directories(WheelOfFortune PRIVATE ${RapidJSON_INCLUDE_DIRS})
+else()
+    message(FATAL_ERROR "RapidJSON not found! Make sure it is installed via vcpkg.")
+endif()
 
 #===================== LINKING LIBRARIES =======================#
 target_link_libraries(WheelOfFortune Qt5::Widgets Qt5::OpenGL Qt5::Xml OpenGL::GL freeglut)

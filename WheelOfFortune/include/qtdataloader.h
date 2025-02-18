@@ -3,8 +3,6 @@
 
 #include "dataloader.h"
 
-#include <QtXml>
-
 /**
  * \brief QtDataLoader Qt implementation data loader
  */
