@@ -2,10 +2,159 @@
 
 #include <regex>
 #include <vector>
+#include <unordered_map>
 
 using std::vector;
 
-extern const Color g_DafaultColor(string("0.5,0.5,0.5,1.0"));
+static const std::unordered_map<std::string, ColorF> g_Colors = {
+    {"aliceblue",            {0.941f, 0.973f, 1.000f, 1.0f}},
+    {"antiquewhite",         {0.980f, 0.922f, 0.843f, 1.0f}},
+    {"aqua",                 {0.000f, 1.000f, 1.000f, 1.0f}},
+    {"aquamarine",           {0.498f, 1.000f, 0.831f, 1.0f}},
+    {"azure",                {0.941f, 1.000f, 1.000f, 1.0f}},
+    {"beige",                {0.961f, 0.961f, 0.863f, 1.0f}},
+    {"bisque",               {1.000f, 0.894f, 0.769f, 1.0f}},
+    {"black",                {0.000f, 0.000f, 0.000f, 1.0f}},
+    {"blanchedalmond",       {1.000f, 0.922f, 0.804f, 1.0f}},
+    {"blue",                 {0.000f, 0.000f, 1.000f, 1.0f}},
+    {"blueviolet",           {0.541f, 0.169f, 0.886f, 1.0f}},
+    {"brown",                {0.647f, 0.165f, 0.165f, 1.0f}},
+    {"burlywood",            {0.871f, 0.722f, 0.529f, 1.0f}},
+    {"cadetblue",            {0.373f, 0.620f, 0.627f, 1.0f}},
+    {"chartreuse",           {0.498f, 1.000f, 0.000f, 1.0f}},
+    {"chocolate",            {0.824f, 0.412f, 0.118f, 1.0f}},
+    {"coral",                {1.000f, 0.498f, 0.314f, 1.0f}},
+    {"cornflowerblue",       {0.392f, 0.584f, 0.929f, 1.0f}},
+    {"cornsilk",             {1.000f, 0.973f, 0.863f, 1.0f}},
+    {"crimson",              {0.863f, 0.078f, 0.235f, 1.0f}},
+    {"cyan",                 {0.000f, 1.000f, 1.000f, 1.0f}},
+    {"darkblue",             {0.000f, 0.000f, 0.545f, 1.0f}},
+    {"darkcyan",             {0.000f, 0.545f, 0.545f, 1.0f}},
+    {"darkgoldenrod",        {0.722f, 0.525f, 0.043f, 1.0f}},
+    {"darkgray",             {0.663f, 0.663f, 0.663f, 1.0f}},
+    {"darkgreen",            {0.000f, 0.392f, 0.000f, 1.0f}},
+    {"darkgrey",             {0.663f, 0.663f, 0.663f, 1.0f}},
+    {"darkkhaki",            {0.741f, 0.718f, 0.420f, 1.0f}},
+    {"darkmagenta",          {0.545f, 0.000f, 0.545f, 1.0f}},
+    {"darkolivegreen",       {0.333f, 0.420f, 0.184f, 1.0f}},
+    {"darkorange",           {1.000f, 0.549f, 0.000f, 1.0f}},
+    {"darkorchid",           {0.600f, 0.196f, 0.800f, 1.0f}},
+    {"darkred",              {0.545f, 0.000f, 0.000f, 1.0f}},
+    {"darksalmon",           {0.914f, 0.588f, 0.478f, 1.0f}},
+    {"darkseagreen",         {0.561f, 0.737f, 0.561f, 1.0f}},
+    {"darkslateblue",        {0.282f, 0.239f, 0.545f, 1.0f}},
+    {"darkslategray",        {0.184f, 0.310f, 0.310f, 1.0f}},
+    {"darkslategrey",        {0.184f, 0.310f, 0.310f, 1.0f}},
+    {"darkturquoise",        {0.000f, 0.808f, 0.820f, 1.0f}},
+    {"darkviolet",           {0.580f, 0.000f, 0.827f, 1.0f}},
+    {"deeppink",             {1.000f, 0.078f, 0.576f, 1.0f}},
+    {"deepskyblue",          {0.000f, 0.749f, 1.000f, 1.0f}},
+    {"dimgray",              {0.412f, 0.412f, 0.412f, 1.0f}},
+    {"dimgrey",              {0.412f, 0.412f, 0.412f, 1.0f}},
+    {"dodgerblue",           {0.118f, 0.565f, 1.000f, 1.0f}},
+    {"firebrick",            {0.698f, 0.133f, 0.133f, 1.0f}},
+    {"floralwhite",          {1.000f, 0.980f, 0.941f, 1.0f}},
+    {"forestgreen",          {0.133f, 0.545f, 0.133f, 1.0f}},
+    {"fuchsia",              {1.000f, 0.000f, 1.000f, 1.0f}},
+    {"gainsboro",            {0.863f, 0.863f, 0.863f, 1.0f}},
+    {"ghostwhite",           {0.973f, 0.973f, 1.000f, 1.0f}},
+    {"gold",                 {1.000f, 0.843f, 0.000f, 1.0f}},
+    {"goldenrod",            {0.855f, 0.647f, 0.125f, 1.0f}},
+    {"gray",                 {0.502f, 0.502f, 0.502f, 1.0f}},
+    {"green",                {0.000f, 0.502f, 0.000f, 1.0f}},
+    {"greenyellow",          {0.678f, 1.000f, 0.184f, 1.0f}},
+    {"grey",                 {0.502f, 0.502f, 0.502f, 1.0f}},
+    {"honeydew",             {0.941f, 1.000f, 0.941f, 1.0f}},
+    {"hotpink",              {1.000f, 0.412f, 0.706f, 1.0f}},
+    {"indianred",            {0.804f, 0.361f, 0.361f, 1.0f}},
+    {"indigo",               {0.294f, 0.000f, 0.510f, 1.0f}},
+    {"ivory",                {1.000f, 1.000f, 0.941f, 1.0f}},
+    {"khaki",                {0.941f, 0.902f, 0.549f, 1.0f}},
+    {"lavender",             {0.902f, 0.902f, 0.980f, 1.0f}},
+    {"lavenderblush",        {1.000f, 0.941f, 0.961f, 1.0f}},
+    {"lawngreen",            {0.486f, 0.988f, 0.000f, 1.0f}},
+    {"lemonchiffon",         {1.000f, 0.980f, 0.804f, 1.0f}},
+    {"lightblue",            {0.678f, 0.847f, 0.902f, 1.0f}},
+    {"lightcoral",           {0.941f, 0.502f, 0.502f, 1.0f}},
+    {"lightcyan",            {0.878f, 1.000f, 1.000f, 1.0f}},
+    {"lightgoldenrodyellow", {0.980f, 0.980f, 0.824f, 1.0f}},
+    {"lightgray",            {0.827f, 0.827f, 0.827f, 1.0f}},
+    {"lightgreen",           {0.565f, 0.933f, 0.565f, 1.0f}},
+    {"lightgrey",            {0.827f, 0.827f, 0.827f, 1.0f}},
+    {"lightpink",            {1.000f, 0.714f, 0.757f, 1.0f}},
+    {"lightsalmon",          {1.000f, 0.627f, 0.478f, 1.0f}},
+    {"lightseagreen",        {0.125f, 0.698f, 0.667f, 1.0f}},
+    {"lightskyblue",         {0.529f, 0.808f, 0.980f, 1.0f}},
+    {"lightslategray",       {0.467f, 0.533f, 0.600f, 1.0f}},
+    {"lightslategrey",       {0.467f, 0.533f, 0.600f, 1.0f}},
+    {"lightsteelblue",       {0.690f, 0.769f, 0.871f, 1.0f}},
+    {"lightyellow",          {1.000f, 1.000f, 0.878f, 1.0f}},
+    {"lime",                 {0.000f, 1.000f, 0.000f, 1.0f}},
+    {"limegreen",            {0.196f, 0.804f, 0.196f, 1.0f}},
+    {"linen",                {0.980f, 0.941f, 0.902f, 1.0f}},
+    {"magenta",              {1.000f, 0.000f, 1.000f, 1.0f}},
+    {"maroon",               {0.502f, 0.000f, 0.000f, 1.0f}},
+    {"mediumaquamarine",     {0.400f, 0.804f, 0.667f, 1.0f}},
+    {"mediumblue",           {0.000f, 0.000f, 0.804f, 1.0f}},
+    {"mediumorchid",         {0.729f, 0.333f, 0.827f, 1.0f}},
+    {"mediumpurple",         {0.576f, 0.439f, 0.859f, 1.0f}},
+    {"mediumseagreen",       {0.235f, 0.702f, 0.443f, 1.0f}},
+    {"mediumslateblue",      {0.482f, 0.408f, 0.933f, 1.0f}},
+    {"mediumspringgreen",    {0.000f, 0.980f, 0.604f, 1.0f}},
+    {"mediumturquoise",      {0.282f, 0.820f, 0.800f, 1.0f}},
+    {"mediumvioletred",      {0.780f, 0.082f, 0.522f, 1.0f}},
+    {"midnightblue",         {0.098f, 0.098f, 0.439f, 1.0f}},
+    {"mintcream",            {0.961f, 1.000f, 0.980f, 1.0f}},
+    {"mistyrose",            {1.000f, 0.894f, 0.882f, 1.0f}},
+    {"moccasin",             {1.000f, 0.894f, 0.710f, 1.0f}},
+    {"navajowhite",          {1.000f, 0.871f, 0.678f, 1.0f}},
+    {"navy",                 {0.000f, 0.000f, 0.502f, 1.0f}},
+    {"oldlace",              {0.992f, 0.961f, 0.902f, 1.0f}},
+    {"olive",                {0.502f, 0.502f, 0.000f, 1.0f}},
+    {"olivedrab",            {0.420f, 0.557f, 0.137f, 1.0f}},
+    {"orange",               {1.000f, 0.647f, 0.000f, 1.0f}},
+    {"orangered",            {1.000f, 0.271f, 0.000f, 1.0f}},
+    {"orchid",               {0.855f, 0.439f, 0.839f, 1.0f}},
+    {"palegoldenrod",        {0.933f, 0.910f, 0.667f, 1.0f}},
+    {"palegreen",            {0.596f, 0.984f, 0.596f, 1.0f}},
+    {"paleturquoise",        {0.686f, 0.933f, 0.933f, 1.0f}},
+    {"palevioletred",        {0.859f, 0.439f, 0.576f, 1.0f}},
+    {"papayawhip",           {1.000f, 0.937f, 0.835f, 1.0f}},
+    {"peachpuff",            {1.000f, 0.855f, 0.725f, 1.0f}},
+    {"peru",                 {0.804f, 0.522f, 0.247f, 1.0f}},
+    {"pink",                 {1.000f, 0.753f, 0.796f, 1.0f}},
+    {"plum",                 {0.867f, 0.627f, 0.867f, 1.0f}},
+    {"powderblue",           {0.690f, 0.878f, 0.902f, 1.0f}},
+    {"purple",               {0.502f, 0.000f, 0.502f, 1.0f}},
+    {"red",                  {1.000f, 0.000f, 0.000f, 1.0f}},
+    {"rosybrown",            {0.737f, 0.561f, 0.561f, 1.0f}},
+    {"royalblue",            {0.255f, 0.412f, 0.882f, 1.0f}},
+    {"saddlebrown",          {0.545f, 0.271f, 0.075f, 1.0f}},
+    {"salmon",               {0.980f, 0.502f, 0.447f, 1.0f}},
+    {"sandybrown",           {0.957f, 0.643f, 0.376f, 1.0f}},
+    {"seagreen",             {0.180f, 0.545f, 0.341f, 1.0f}},
+    {"seashell",             {1.000f, 0.961f, 0.933f, 1.0f}},
+    {"sienna",               {0.627f, 0.322f, 0.176f, 1.0f}},
+    {"silver",               {0.753f, 0.753f, 0.753f, 1.0f}},
+    {"skyblue",              {0.529f, 0.808f, 0.922f, 1.0f}},
+    {"slateblue",            {0.416f, 0.353f, 0.804f, 1.0f}},
+    {"slategray",            {0.439f, 0.502f, 0.565f, 1.0f}},
+    {"slategrey",            {0.439f, 0.502f, 0.565f, 1.0f}},
+    {"snow",                 {1.000f, 0.980f, 0.980f, 1.0f}},
+    {"springgreen",          {0.000f, 1.000f, 0.498f, 1.0f}},
+    {"steelblue",            {0.275f, 0.510f, 0.706f, 1.0f}},
+    {"tan",                  {0.824f, 0.706f, 0.549f, 1.0f}},
+    {"teal",                 {0.000f, 0.502f, 0.502f, 1.0f}},
+    {"thistle",              {0.847f, 0.749f, 0.847f, 1.0f}},
+    {"tomato",               {1.000f, 0.388f, 0.278f, 1.0f}},
+    {"turquoise",            {0.251f, 0.878f, 0.816f, 1.0f}},
+    {"violet",               {0.933f, 0.510f, 0.933f, 1.0f}},
+    {"wheat",                {0.961f, 0.871f, 0.702f, 1.0f}},
+    {"white",                {1.000f, 1.000f, 1.000f, 1.0f}},
+    {"whitesmoke",           {0.961f, 0.961f, 0.961f, 1.0f}},
+    {"yellow",               {1.000f, 1.000f, 0.000f, 1.0f}},
+    {"yellowgreen",          {0.604f, 0.804f, 0.196f, 1.0f}}
+};
 
 inline vector<string> split(string s, const string& delimiter) /// We would like to have a copy due to not integrate in original input string
 {
@@ -25,8 +174,7 @@ inline vector<string> split(string s, const string& delimiter) /// We would like
 }
 
 Color::Color(string rawColor) :
-	m_RawColor(rawColor),
-	m_ColorF({ 0.5f,0.5f,0.5f,0.5f })
+	m_RawColor(rawColor)
 {
 	parse();
 }
@@ -114,11 +262,15 @@ bool Color::isText()
 
 bool Color::isKnown()
 {
+#ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
 	// Qt version
 	if (QColor::colorNames().contains(QString(m_RawColor.c_str()), Qt::CaseInsensitive))
 		return true;
-
-	// TODO: non-Qt version
+#endif
+	// non-Qt version
+    auto it = g_Colors.find(toLowerString(m_RawColor));
+    if (it != g_Colors.end())
+        return true;
 
 	return false;
 }
@@ -165,7 +317,7 @@ void Color::parse()
 
 	if (isText() && isKnown())
 	{
-		parseText(); // TODO: non-Qt version
+		parseText();
 		return;
 	}
 
@@ -225,20 +377,28 @@ void Color::parseText()
 	/*
 	A name from the list of colors defined in the list of SVG color keyword names provided by the World Wide Web Consortium;
 	for example, "steelblue" or "gainsboro". These color names work on all platforms.
+    basic color name: https://www.w3.org/TR/SVG11/types.html#ColorKeywords
 	*/
 
-	// TODO: non-Qt version
-	// A. switch with listed color names
-	// B. use external file
-	// C. use third-party library for example : https://github.com/svgpp/svgpp
+    // non-Qt Version
+    auto it = g_Colors.find(toLowerString(m_RawColor));
+    if (it != g_Colors.end())
+    {
+        m_ColorF = it->second;
+        return;
+    }
+#ifndef MINIMUM_USAGE_OF_QT_FRAMEWORK
+    // Qt Version (has to be second because throws exception in case of lack of color name in the base)
+    QColor qColor(m_RawColor.c_str());
 
-	QColor qColor(m_RawColor.c_str());
-
-	if (!qColor.isValid())
-		throw WrongInputException();
-	//TODO: add new exception about unknown color name
-
-	qreal r, g, b, a;
-	qColor.getRgbF(&r, &g, &b, &a);
-	m_ColorF = { (float)r, (float)g, (float)b, (float)a }; /// For demonstration purposes I've used C style cast instead C++ static_cast which would be better
+    if (!qColor.isValid())
+        throw WrongInputException();
+    else
+    {
+        qreal r, g, b, a;
+        qColor.getRgbF(&r, &g, &b, &a);
+        m_ColorF = { (float)r, (float)g, (float)b, (float)a }; /// For demonstration purposes I've used C style cast instead C++ static_cast which would be better
+        return;
+    }
+#endif
 }

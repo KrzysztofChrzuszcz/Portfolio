@@ -3,8 +3,6 @@
 #include <QtXml>
 #include <QXmlStreamReader>
 
-extern const Color g_DafaultColor;
-
 QtDataLoader::QtDataLoader(std::shared_ptr<ILogger> logger) :
     DataLoader(logger)
 {

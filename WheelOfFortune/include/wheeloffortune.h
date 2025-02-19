@@ -10,6 +10,8 @@
 
 typedef unsigned int uint;
 
+extern const Color g_HighlightRimColor;
+
 /**
  * \brief WheelOfFortune interface of main GUI part. 
  * Providing universal usage of GUI regardless of used library to implement it.

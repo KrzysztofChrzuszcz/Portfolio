@@ -6,6 +6,7 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
+#include <type_traits>
 
 #include <QColor>
 
@@ -43,13 +44,38 @@ public:
     }
 };
 
-// Provides maximum precision
-struct ColorF
+template <typename T>
+struct IColor
 {
-    float   m_R;
-    float   m_G;
-    float   m_B;
-    float   m_A;
+    static_assert(std::is_arithmetic_v<T>, "T must be a numeric type!");
+
+    T     m_R;
+    T     m_G;
+    T     m_B;
+    T     m_A;
+    //  Rule of Zero
+};
+
+//typedef IColor<int> ColorI; // for pre C++11 change to this
+using ColorI = IColor<int>;
+
+// Provides maximal precision
+struct ColorF : public IColor<float>
+{
+    // Rule of Five
+    ColorF() { m_R = 0.5f; m_G = 0.5f; m_B = 0.5f; m_A = 1.0f; }
+
+    ColorF(float r, float g, float b, float a = 1.0f) : IColor<float>{ r, g, b, a } {}
+
+    ~ColorF() = default;
+
+    ColorF(const ColorF& other) = default;
+
+    ColorF& operator=(const ColorF& other) = default;
+
+    ColorF(ColorF&& other) noexcept = default;
+
+    ColorF& operator=(ColorF&& other) noexcept = default;
 
     ColorF operator+(float const& skalar)
     {
@@ -62,7 +88,7 @@ struct ColorF
         return result;
     }
 
-    ColorF operator*=(float const& skalar)
+    ColorF& operator*=(float const& skalar)
     {
         m_R = (m_R * skalar) > 1.f ? 1.f : (m_R * skalar);
         m_G = (m_G * skalar) > 1.f ? 1.f : (m_G * skalar);
@@ -72,22 +98,13 @@ struct ColorF
     }
 };
 
-struct ColorI
-{
-    int     m_R;
-    int     m_G;
-    int     m_B;
-    int     m_A;
-};
-
-
 /**
  * \brief Color is universal class to read and parse input color.
  * The class is able to throw exceptions that prevents creating instance.
  * 
  * \note
  * Supported input RGB formating: hex (ex. #FF00FF) ; csv RGB  (ex. 255,0,255) ; by percent/factor (ex. 1.0,0.0,1.0) ; by name (ex. "Magenta")
- * Please notice! CYMK, HLS, HSV, and names out of Qt basic colors enum list are not supported.
+ * Please notice! CYMK, HLS, HSV, and names out of basic colors list are not supported.
  */
 class Color
 {
@@ -116,9 +133,11 @@ private:
     void            parseText();    //!< Parse raw color from SVG color names to float RGBA form
 
 private:
-    string          m_RawColor;     //!< Color in raw form reread from file
-    ColorF          m_ColorF;       //!< Parsed color in float RGBA form
+    const string    m_RawColor;     //!< Color in raw form reread from file
+    ColorF          m_ColorF;       //!< Parsed color in float RGBA form (Can be adjusted)
     bool            m_IsBrighten;   //!< Marks if color was brighten in result of adjustBrightness method
 };
+
+const Color g_DafaultColor(string("0.5,0.5,0.5,1.0"));
 
 #endif //COLOR_H

@@ -7,8 +7,6 @@
 using namespace std;
 using namespace tinyxml2;
 
-extern const Color g_DafaultColor;
-
 TinyDataLoader::TinyDataLoader(std::shared_ptr<ILogger> logger) :
     DataLoader(logger)
 {
@@ -46,10 +44,11 @@ bool TinyDataLoader::loadXml(const char* path)
 
                 try
                 {
-                    m_Entries.push_back({ title, Color(string(color)) });
+                    m_Entries.push_back({ title, Color(color) });
                 }
                 catch (...)
                 {
+                    m_Entries.push_back({ title, g_DafaultColor });
                     m_Logger->Log(LogLevel::Warning, "TinyDataLoader", "Nothing wrong has happened thanks to default color, but there is issue with given color: " + std::string(color));
                     m_DataCorrupted = true;
 
