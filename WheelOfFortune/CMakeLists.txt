@@ -42,6 +42,7 @@ include_directories(${INCLUDE_DIR})
 
 file(GLOB_RECURSE SOURCES
     "${FORMS_DIR}/*.ui"
+    "${RESOURCES_DIR}/*.rc"
     "${RESOURCES_DIR}/*.qrc"
     "${RESOURCES_DIR}/*.xml"
     "${RESOURCES_DIR}/*.gif"

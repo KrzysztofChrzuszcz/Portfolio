@@ -33,6 +33,10 @@ CustomWorkingThreadNewWay::CustomWorkingThreadNewWay(Engine& engine) :
 CustomWorkingThreadNewWay::~CustomWorkingThreadNewWay()
 {
     m_Quit = true;
+    if (m_Future.valid())
+    {
+        m_Future.wait();
+    }
 }
 
 void CustomWorkingThreadNewWay::startEngine()
@@ -46,7 +50,7 @@ void CustomWorkingThreadNewWay::run()
     {
         updateScreenRefreshing();
         m_Engine.run();
-        m_Future.wait_for(std::chrono::milliseconds(std::lround(m_Delay)));
+        std::this_thread::sleep_for(std::chrono::milliseconds(std::lround(m_Delay)));
     }
 
     // https://stackoverflow.com/questions/22653022/how-to-terminate-a-stdfuture
@@ -83,11 +87,11 @@ CustomWorkingThreadOldWay::~CustomWorkingThreadOldWay()
 
 void CustomWorkingThreadOldWay::startEngine()
 {
-    std::thread thread(&CustomWorkingThreadOldWay::runEngine, this);
+    std::thread thread(&CustomWorkingThreadOldWay::run, this);
     thread.detach();
 }
 
-void CustomWorkingThreadOldWay::runEngine()
+void CustomWorkingThreadOldWay::run()
 {
     while (!m_Quit)
     {
